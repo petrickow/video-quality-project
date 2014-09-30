@@ -1,0 +1,70 @@
+<html>
+<head>
+<title>Chat Demo</title>
+<link href="../lib/css/demo-common.css" rel="stylesheet" type="text/css" media="all" />
+</head>
+<body>
+<h1>Chat Demo</h1>
+Pick a Username: 
+<input type="text" id="userName">
+<input type="button" value="Change" onclick="changeUserName()">
+<br />
+<textarea id="chatMessages" rows="20" cols="60"></textarea>
+<br />
+Message: 
+<input type="text" id="chatText" onkeypress="checkForEnter(event)">
+<input type="button" value="Chat" onclick="chat()">
+<script type="text/javascript" src="../lib/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="../lib/js/streamhub-min.js"></script>
+<script type="text/javascript">
+	var chatRoomName = "ChatRoom";
+
+	function chatUpdated(topic, data) {
+		var chatMessagesBox = document.getElementById('chatMessages');
+		if (!!data.chat) {
+			chatMessagesBox.value += "\n" + data.user + ": " + data.chat;
+		} else if (!!data.notification) {
+			chatMessagesBox.value += "\n>>> " + data.notification;
+		}
+		chatMessagesBox.scrollTop = chatMessagesBox.scrollHeight;
+	}
+	
+	function chat() {
+		var message = document.getElementById('chatText').value;
+		var json = "{'chat':'" + escapeQuotes(message) + "'}";
+		hub.publish(chatRoomName, json);
+	}
+	
+	function changeUserName() {
+		var userName = document.getElementById('userName').value;
+		if (userName != null && userName.length > 0) {
+			var userNameJson = "{'user':'" + escapeQuotes(userName) + "'}";
+			hub.publish(chatRoomName, userNameJson);
+		}
+	}
+	
+	function escapeQuotes(sString) {
+		return sString.replace(/(\')/gi, "\\$1").replace(/(\\\\\')/gi, "\\'");
+	}
+	
+	function checkForEnter(e){
+		var e = e || event;
+		var key = e.keyCode || e.charCode;
+		
+		if(key == 13){
+			chat();
+		}
+		
+		return true;
+	}
+</script>
+<script type="text/javascript">
+	var hub = new StreamHub();
+	var sServerUrl = "http://localhost:7979/streamhub/";
+	hub.connect(sServerUrl);
+	hub.subscribe(chatRoomName, chatUpdated);
+</script>
+<p class="demo-description">This example uses pure Javascript and HTML.</p>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>Stock Demo</title>
+<link href="../lib/css/stockdemo.css" rel="stylesheet" type="text/css" media="all" />
+<link href="../lib/css/demo-common.css" rel="stylesheet" type="text/css" media="all" />
+</head>
+<body>
+<h1>Stock Demo</h1>
+
+<table summary="Stocks">
+	<tr><th>Symbol</th><th>Company</th><th colspan="2">Last Price</th><th>Change</th></tr>
+	<tr id="BA"><td>-</td><td>-</td><td class="price">-</td><td class="arrow"></td><td class="change"></td></tr>
+	<tr id="BAC"><td>-</td><td>-</td><td class="price">-</td><td class="arrow"></td><td class="change"></td></tr>
+	<tr id="C"><td>-</td><td>-</td><td class="price">-</td><td class="arrow"></td><td class="change"></td></tr>
+	<tr id="KO"><td>-</td><td>-</td><td class="price">-</td><td class="arrow"></td><td class="change"></td></tr>
+	<tr id="MCD"><td>-</td><td>-</td><td class="price">-</td><td class="arrow"></td><td class="change"></td></tr>
+	<tr id="WMT"><td>-</td><td>-</td><td class="price">-</td><td class="arrow"></td><td class="change"></td></tr>
+</table>
+
+<script type="text/javascript" src="../lib/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="../lib/js/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" src="../lib/js/streamhub-min.js"></script>
+<script type="text/javascript">
+	function priceChangeListener(sTopic, oData) {
+		var trElement = document.getElementById(sTopic);
+		var symbolElement = trElement.childNodes[0];
+		var nameElement = trElement.childNodes[1];
+		var lastElement = trElement.childNodes[2];
+		var arrowElement = trElement.childNodes[3];
+		var changeElement = trElement.childNodes[4];
+		setText(symbolElement, oData.Symbol);
+		setText(nameElement, oData.Company);
+		setText(lastElement, oData.LastPrice);
+		var imageSrc = (oData.Direction == "up") ? "../lib/images/green_up_arrow.gif" : "../lib/images/red_down_arrow.gif";
+		var imageTag = "<img width=\"16\" height=\"16\" src=\"" + imageSrc + "\">";
+		setText(arrowElement, imageTag);
+		var changeText = oData.Change + " (" + oData.PercentChange + ")";
+		
+		if (oData.Change.charAt(0) == '-') {
+			changeText = "<div style=\"color:#a03\">" + changeText + "<" + "/div>";
+		} else {
+			changeText = "<div style=\"color:green\">" + changeText + "<" + "/div>";
+		}
+		
+		setText(changeElement, changeText);
+		
+		try {
+			$("#" + sTopic).effect('highlight', {}, 700);
+		} catch(e) {
+			// IE6 can throw an exception here occasionally
+			$("#" + sTopic).css("background", "#fff");
+		}
+	}
+
+	function setText(eElement, sText) {
+		eElement.innerHTML = sText;
+	}
+</script>
+<script type="text/javascript">
+	var hub = new StreamHub();
+	var sServerUrl = "http://localhost:7979/streamhub/";
+	hub.connect(sServerUrl);
+	hub.subscribe("BA", priceChangeListener);
+	hub.subscribe("BAC", priceChangeListener);
+	hub.subscribe("C", priceChangeListener);
+	hub.subscribe("KO", priceChangeListener);
+	hub.subscribe("MCD", priceChangeListener);
+	hub.subscribe("WMT", priceChangeListener);
+</script>
+<p class="demo-description">This example uses pure Javascript and HTML.  The jQuery UI library is used to highlight each row as real-time updates are received from the StreamHub server. The jQuery UI library is available under either the MIT or GPL v2 license.  More information can be found on the <a href="http://jquery.com/" target="_blank">jQuery</a> website.</p>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>YUI Integration Demo</title>
+	<link rel="stylesheet" type="text/css" href="../lib/css/yuidemo.css">
+	<link rel="stylesheet" type="text/css" href="../lib/css/demo-common.css">
+	<link rel="stylesheet" type="text/css" href="../lib/yui/build/datatable/assets/skins/sam/datatable.css">
+	<script type="text/javascript" src="../lib/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
+	<script type="text/javascript" src="../lib/yui/build/dragdrop/dragdrop-min.js"></script> 
+	<script type="text/javascript" src="../lib/yui/build/element/element-min.js"></script> 
+	<script type="text/javascript" src="../lib/yui/build/datasource/datasource-min.js"></script> 
+	<script type="text/javascript" src="../lib/yui/build/datatable/datatable-min.js"></script> 
+	<script type="text/javascript">
+	
+		// Utility method for finding the index of an item in an array	
+		function indexOf(oItem, pArray) {
+			for (var i = 0; i < pArray.length; i++) {
+				if (oItem === pArray[i]) {
+					return i;
+				}
+			}
+			
+			return -1;
+		}
+
+		var lastPriceCache = {};
+
+		var priceHighlighter = function(elLiner, oRecord, oColumn, oData) {
+			var sSymbol = oRecord.getData("Symbol");
+			var nLastPrice = (lastPriceCache[sSymbol] === undefined) ? 0.0 : lastPriceCache[sSymbol];
+			var nCurrentPrice = parseFloat(oRecord.getData("LastPrice"));
+			
+			if (nCurrentPrice > nLastPrice) {
+		        YAHOO.util.Dom.addClass(elLiner.parentNode, "up");
+		        setTimeout(function() {
+		        	YAHOO.util.Dom.removeClass(elLiner.parentNode, "up");	
+		        }, 500);
+		    } 
+		    else { 
+		        YAHOO.util.Dom.addClass(elLiner.parentNode, "down");
+		       	setTimeout(function() {
+		        	YAHOO.util.Dom.removeClass(elLiner.parentNode, "down");	
+		        }, 500);
+			}
+			
+		    elLiner.innerHTML = nCurrentPrice;
+			lastPriceCache[sSymbol] = nCurrentPrice;
+		}; 
+
+		YAHOO.widget.DataTable.Formatter.PriceHighlighter = priceHighlighter; 
+	</script>
+</head>
+<body class="yui-skin-sam">
+    <h1>YUI Integration Demo</h1>
+    <div id="tableContainer">
+    </div>
+    <script type="text/javascript" src="../lib/js/streamhub-min.js"></script>
+    <script type="text/javascript">
+		var sServerUrl = "http://localhost:7979/streamhub/";
+		var symbols = ["BA","BAC","C","KO","MCD","WMT"];
+        
+		function updateListener(sTopic, oData){
+		    var rowIndex = indexOf(sTopic, symbols);
+			dataTable.updateRow(rowIndex, oData);            
+		}
+
+		var columnDefs = [
+	        {key:"Symbol", label: "Symbol",  sortable:false, resizeable:true, width:70},
+	        {key:"Company", label: "Company", sortable:false, resizeable:true, width:150},
+	        {key:"LastPrice", label: "Last", sortable:false, resizeable:true, width:70, className:"right", formatter : YAHOO.widget.DataTable.Formatter.PriceHighlighter},
+	        {key:"Change", label: "Change", sortable:false, resizeable:true, width:70, className:"right"},
+	        {key:"PercentChange", label: "% Change", sortable:false, resizeable:true, width:80, className:"right"}
+		];
+
+		var dataSource = new YAHOO.util.DataSource({});
+		dataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
+		dataSource.responseSchema = {
+			resultsList: ".",
+			fields: [
+				{ key: "Symbol" },
+				{ key: "Company" },
+				{ key: "LastPrice" },
+				{ key: "Change" },
+				{ key: "PercentChange" }
+			]
+		};
+ 
+		var dataTable = new YAHOO.widget.DataTable("tableContainer", columnDefs, dataSource);
+        
+		for (var i = 0; i < symbols.length; i++) {
+			dataTable.addRow({
+				"Symbol" : symbols[i],
+				"Company" : "-",
+				"LastPrice" : "-",
+				"Change" : "-",
+				"PercentChange" : "-"
+			}, i);
+		}
+
+		var hub = new StreamHub();
+		hub.connect(sServerUrl);
+		hub.subscribe(symbols, updateListener);
+    </script>
+    <p class="demo-description">This example uses the YUI 2 DataTable component.  All of the YUI Library components are provided free of charge under a BSD license.  For more information, visit the <a href="http://developer.yahoo.com/yui/" target="_blank">YUI</a> website.</p>
+</body>
+</html>

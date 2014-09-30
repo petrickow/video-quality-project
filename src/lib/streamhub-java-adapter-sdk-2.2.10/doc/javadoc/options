@@ -1,0 +1,29 @@
+-classpath
+'E:/Documents and Settings/CC/workspace/streamhub-2.2.9/target/classes;E:/Documents and Settings/CC/.m2/repository/log4j/log4j/1.2.14/log4j-1.2.14.jar;E:/Documents and Settings/CC/.m2/repository/org/json/json/20080701/json-20080701.jar'
+-encoding
+'Cp1252'
+-overview
+'E:/Documents and Settings/CC/workspace/streamhub-2.2.9/src/main/javadoc/overview.html'
+-public
+-quiet
+-source
+'1.5'
+-sourcepath
+'E:/Documents and Settings/CC/workspace/streamhub-2.2.9/src/main/java/com/streamhub/api;E:/Documents and Settings/CC/workspace/streamhub-2.2.9/src/main/java/com/streamhub/nio;E:/Documents and Settings/CC/workspace/streamhub-2.2.9/src/main/javadoc'
+-author
+-bottom
+'Copyright &copy; 2009 <a href="http://www.stream-hub.com">StreamHub<a>.   					Tutorials, news and guides can be found on the <a href="http://streamhub.blogspot.com/">StreamHub Comet Blog</a>.'
+-charset
+'UTF-8'
+-d
+'E:/Documents and Settings/CC/workspace/streamhub-2.2.9/target/javadoc'
+-docencoding
+'UTF-8'
+-doctitle
+'StreamHub Java API'
+-link
+'http://java.sun.com/j2se/1.5.0/docs/api'
+-use
+-version
+-windowtitle
+'streamhub 2.2.10 API'
