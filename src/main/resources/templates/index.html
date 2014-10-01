@@ -4,6 +4,8 @@
 <title>Video Quality Manager</title>
 <script type="text/javascript" src="js/angular.min.js"></script>
 <script type="text/javascript" src="app.js"></script>
+<script type="text/javascript" src="../static/js/wstest.js" th:src="@{/js/wstest.js}"></script>
+
 <link href="../static/css/test.css" th:href="@{/css/test.css}"
 	rel="stylesheet" media="screen" />
 </head>
@@ -12,6 +14,7 @@
 		<h1>Video Quality Manager</h1>
 	</header>
 	<!--<main-contend></main-content>-->
+	<button onclick="WebSocketTest()">WS-test</button>
 	<!--<settings></settings>-->
 	<footer class="footer"> Cato Danielsen, Artur Gareis, Maria
 		Oltean, Michael Timpelan </footer>
