@@ -14,9 +14,6 @@
 	</parent>
 
 	<properties>
-		<streamhub.artifact.name>streamhub</streamhub.artifact.name>
-		<streamhub.version>2.2.10</streamhub.version>
-
 		<start-class>server.Application</start-class>
 	</properties>
 
@@ -25,11 +22,29 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-hornetq</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.hornetq</groupId>
+			<artifactId>hornetq-server</artifactId>
+			<version>2.4.3.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>4.0.21.Final</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-websocket</artifactId>
+			<version>4.0.0.RELEASE</version>
+		</dependency>
 
 	</dependencies>
 

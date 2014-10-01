@@ -30,7 +30,7 @@ public class ViewController {
     @RequestMapping("/")
     public String index() {
     	
-    	return "boom";
+    	return "index";
     }
 
     

@@ -1,10 +1,9 @@
 package server;
 
 import java.util.ArrayList;
-import java.nio.file.*;
-
-
-
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.TextMessage;
 /*
  * Updates web clients model based on analyzed metadata
  * try to make this as a push-like service/streaming data to
@@ -12,10 +11,13 @@ import java.nio.file.*;
  * Does it have to keep track of clients? Or should we
  * have the clients poll the server for new information?
  */
-public class UpdaterService implements Runnable {
+public class UpdaterService implements Runnable  {
 	
-	ArrayList<String> webClients;
-		
+	ArrayList<String> webClients; //store this in a better way
+	
+	/**
+	 * Constructor creates listener for websockets?
+	 */
 	public UpdaterService() {
 		
 	}
