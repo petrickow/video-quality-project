@@ -1,4 +1,1 @@
-var app = angular.module('videoQualityManager', []);
-
-
- 
+var app = angular.module('video-quality-manager', ['directives']);

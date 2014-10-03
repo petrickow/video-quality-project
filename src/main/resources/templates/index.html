@@ -2,24 +2,28 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <title>Video Quality Manager</title>
-<script type="text/javascript" src="js/angular.min.js"></script>
-<script type="text/javascript" src="app.js"></script>
+<script type="text/javascript" src="../static/js/angular.min.js"></script>
+<script type="text/javascript" src="../static/js/app.js"></script>
+<script type="text/javascript" src="../static/js/directives.js"></script>
 <script type="text/javascript" src="../static/js/wstest.js" th:src="@{/js/wstest.js}"></script>
+<script type="text/javascript" src="../static/js/stream-handler.js"></script>
 
+<link href="../static/css/bootstrap.css"
+	rel="stylesheet" media="screen" />
 <link href="../static/css/test.css" th:href="@{/css/test.css}"
 	rel="stylesheet" media="screen" />
 </head>
-<body>
+<body data-ng-app="video-quality-manager">
 	<header class="header">
 		<h1>Video Quality Manager</h1>
         <button onclick="WebSocketTest()">WS-test</button>
 	</header>
-	<!--<main-contend></main-content>-->
 	<section class="main-contend">
         <section class="profiles">
             
         </section>
-        <section class="video-streams-pane">
+        <section class="video-streams-pane" data-ng-controller="StreamHandler as handler">
+            <button data-ng-click="handler.getData()">GetData!!!</button>
             <section class="sort-selections">
             </section>
             <section class="filter-selections">
@@ -37,7 +41,7 @@
         </section>
     </section>
 	<!--<settings></settings>-->
-	<footer class="footer"> Cato Danielsen, Artur Gareis, Maria
-		Oltean, Michael Timpelan </footer>
+	<footer class="footer">Cato Danielsen, Artur Gareis, Maria
+		Oltean, Michael Timpelan</footer>
 </body>
 </html>

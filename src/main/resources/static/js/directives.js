@@ -1,6 +1,8 @@
 var app =  angular.module('directives', []);
-app.directive("videoStream", function() {
+app.directive("videoStream", function () {
+    "use strict";
     return {
-      restrict: 'E',
-      templateUrl: "../templates/template-video-stream.html"
+        restrict: 'E',
+        templateUrl: "template-video-stream.html"
     };
+});
