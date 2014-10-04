@@ -47,11 +47,18 @@ input += "<rtept lat=\"49.48850873\" lon=\"8.45866455\" speed=\"1.118034\" acc=\
 input += "<rtept lat=\"49.48850218\" lon=\"8.45868691\" speed=\"0.75\" acc=\"5.0\"/>";
 input += "</rte>";
 
-app.controller('StreamHandler', function(){
-    this.parser = new DOMParser();
-    this.data = this.parser.parseFromString(input,"text/xml");
-    this.getData = function(){
-        alert("Testdata: "+ this.data.getElementsByTagName('rtept')[0].getAttribute('lat'));
-        //alert("Testdata: ");
-    }
-});
+app.controller('StreamHandler', [
+    'Socket',
+    function (Socket) {
+        "use strict";
+        this.messages = Socket.messages;
+    //'function(){
+    //this.parser = new DOMParser();
+    //this.data =       this.parser.parseFromString(input,"text/xml");
+        this.getData = function () {
+        //alert("Testdata: "+ this.data.getElementsByTagName('rtept')[0].getAttribute('lat'));
+            console.log(this.messages);
+            //alert("Testdata: ");
+            alert("Testdata: " + Socket.messages);
+        };
+    }]);

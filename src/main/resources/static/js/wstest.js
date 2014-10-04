@@ -15,7 +15,7 @@ function WebSocketTest()
      { 
         var received_msg = evt.data;
         //alert("From server\n " + evt.data);
-        console.log(evt);
+        //console.log(evt);
      };
      ws.onclose = function()
      { 
