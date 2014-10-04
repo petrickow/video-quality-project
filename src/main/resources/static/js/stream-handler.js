@@ -1,4 +1,4 @@
-input = "<rte>";
+var input = "<rte>";
 input += "<rtept lat=\"49.488449\" lon=\"8.45795854\" speed=\"0.75\" acc=\"5.0\"/>";
 input += "<rtept lat=\"49.48845729\" lon=\"8.45795141\" speed=\"0.75\" acc=\"5.0\"/>";
 input += "<rtept lat=\"49.48846988\" lon=\"8.45796832\" speed=\"0.75\" acc=\"5.0\"/>";

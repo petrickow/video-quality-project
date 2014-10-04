@@ -2,6 +2,7 @@ package server;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.websocket.Session;
 
@@ -16,7 +17,9 @@ import org.springframework.web.socket.TextMessage;
  * have the clients poll the server for new information?
  */
 public class UpdaterService {
-	
+	// better aproach? Easier to look up if the session is stored
+	HashMap<String, WebSocketSession> clients = new HashMap<String, WebSocketSession>();
+	// simple first itteration implementation
 	static ArrayList<WebSocketSession> webClients; //store this in a better way
 	
 	/**
@@ -37,13 +40,18 @@ public class UpdaterService {
 			}
 		}
 	}
-	
+		
 	protected static boolean add(WebSocketSession session) {
-		// might be redundant check, have to read up on arraylists
+		// buuu, id is just incrementing int as string...
+		System.out.println("Session id is: " + session.getId());
 		if (webClients.contains(session)) {
 			return false;
 		} else {
 			return webClients.add(session);
-		}
+		} 
+	}
+	
+	protected static boolean add(String uniqueId) {
+		return false;
 	}
 }
