@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.websocket.Session;
 
@@ -21,7 +22,7 @@ import org.springframework.web.socket.TextMessage;
 public class UpdaterService {
 	
 	// better aproach? Easier to look up if the session is stored
-	static HashMap<String, WebSocketSession> clients = new HashMap<String, WebSocketSession>();
+	static ConcurrentHashMap<String, WebSocketSession> clients = new ConcurrentHashMap<String, WebSocketSession>();
 	
 	protected static void update(TextMessage message) {
 		System.out.println("Sending to " + clients.size());
@@ -41,13 +42,9 @@ public class UpdaterService {
 	}
 		
 	protected static boolean add(WebSocketSession session) {
-		if (clients.containsKey(session.getId())) {
-			return false;
-		}
-		else {
-			clients.put(session.getId(), session);
-			return true;
-		}
+		clients.putIfAbsent(session.getId(), session);
+		return true;
+		
 	}
 	
 	protected static boolean remove(String uniqueId) {

@@ -9,34 +9,49 @@
 <link href="../static/css/test.css" th:href="@{/css/test.css}"
 	rel="stylesheet" media="screen" />
 </head>
-<body class="container-fluid" data-ng-app="video-quality-manager">
-	<header class="header">
+<body class="container" data-ng-app="video-quality-manager">
+    <header class="header">
 		<h1>Video Quality Manager</h1>
 	</header>
-	<section class="main-contend">
-       	<button class="btn btn-info btn-lg" id="websocket-test" onclick="WebSocketTest()">WS-test</button>
-        
-        <section class="profiles">
-            
-        </section>
-        <section class="video-streams-pane" data-ng-controller="StreamHandler as handler">
-            <button class="btn btn-info btn-lg" data-ng-click="handler.getData()">GetData!!!</button>
-            <section class="sort-selections">
+    <ul class="nav nav-pills nav-stacked pull-left">
+      <li class="active">
+        <a href="#">
+          <span class="badge pull-right">42</span>
+          Lowest shakiness
+        </a>
+      </li>
+      <li class="">
+        <a href="#">
+          <span class="badge pull-right">42</span>
+          Highest sound quality
+        </a>
+      </li>        
+    </ul>
+    <div class="jumbotron">    
+    	<section class="main-contend">
+            <section class="profiles">
+                
+
             </section>
-            <section class="filter-selections">
+            <section class="video-streams-pane" data-ng-controller="StreamHandler as handler">
+                <button class="btn btn-info btn-lg" data-ng-click="handler.getData()">GetData!!!</button>
+                <section class="sort-selections">
+                </section>
+                <section class="filter-selections">
+                </section>
+                
+                <table class="video-streams-table">
+                    <tbody>
+                        <video-stream></video-stream>
+                    </tbody>
+                </table>
             </section>
-            
-            <table class="video-streams-table">
-                <tbody>
-                    <video-stream></video-stream>
-                </tbody>
-            </table>
+            <section class="history">
+            </section>
+            <section class="map">
+            </section>
         </section>
-        <section class="history">
-        </section>
-        <section class="map">
-        </section>
-    </section>
+    </div>    
 	<!--<settings></settings>-->
 	<footer class="footer">
 		Cato Danielsen, Artur Gareis, Maria Oltean, Michael Timpelan
