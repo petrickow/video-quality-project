@@ -1,9 +1,11 @@
 body {
-	margin-left: 20%;
-	margin-right: 20%;
+	margin-left: 0%;
+	margin-right: 0%;
 	text-align: center;
 }
 
 button {
 		
 }
+
+map, div[map] {display:block; width: 600px; height: 400px}
