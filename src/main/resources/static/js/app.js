@@ -13,12 +13,11 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
         console.log("connection established...");
     };
     ws.onmessage = function (event) {
-        $rootScope.$apply(function () {
+         $rootScope.$apply(function () {
             Service.messages = event.data; //.push(event.data);
             console.log(event);
-            //console.log(event.data);
             console.log(Service.messages);
-        });
+         });
     };
     ws.onclose = function () {
         // websocket is closed.

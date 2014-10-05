@@ -62,3 +62,6 @@ app.controller('StreamHandler', [
             alert("Testdata: " + Socket.messages);
         };
     }]);
+
+/*app.controller('StreamHandler', function() {
+});*/
