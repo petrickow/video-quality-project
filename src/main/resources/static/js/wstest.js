@@ -7,6 +7,7 @@ function WebSocketTest()
      var ws = new WebSocket("ws://localhost:8080/subscribeToMetadata");
      ws.onopen = function()
      {
+    	document.getElementById("websocket-test").disabled = true;
         // Web Socket is connected, send data using send()
         ws.send("I want a connection");
         alert("Message is sent...");
@@ -15,7 +16,7 @@ function WebSocketTest()
      { 
         var received_msg = evt.data;
         //alert("From server\n " + evt.data);
-        console.log(evt);
+        //console.log(evt);
      };
      ws.onclose = function()
      { 
