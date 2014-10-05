@@ -8,4 +8,9 @@ button {
 		
 }
 
-map, div[map] {display:block; width: 600px; height: 400px}
+map, div[map] {display:block; width: 400px; height: 300px}
+
+#video-section {
+	height: 500px;
+	width: 550px;
+}

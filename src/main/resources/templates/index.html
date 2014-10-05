@@ -13,37 +13,27 @@
     <header class="header">
 		<h1>Video Quality Manager</h1>
     </header>
-    <ul class="nav nav-pills nav-stacked pull-left">
-      <li class="active">
-        <a href="#">
-          <span class="badge pull-right">42</span>
-          Lowest shakiness
-        </a>
-      </li>
-      <li class="">
-        <a href="#">
-          <span class="badge pull-right">42</span>
-          Highest sound quality
-        </a>
-      </li>        
-    </ul>
-    <div class="jumbotron">   
-    	<section class="main-contend">
-        <div class="row">
-          <div class="col-md-3">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          </div>
-          <div class="col-md-4">        
-            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>      
-          </div>
-          <div class="col-md-3">        
-            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>      
-          </div>
-        </div> 
-            <section class="profiles">
-                
 
-            </section>
+    	<section class="main-contend">
+
+          <section class="profiles">
+            <ul class="nav nav-pills nav-stacked pull-left">
+              <li class="active">
+                <a href="#">
+                  <span class="badge pull-right">42</span>
+                  Lowest shakiness
+                </a>
+              </li>
+              <li class="">
+                <a href="#">
+                  <span class="badge pull-right">42</span>
+                  Highest sound quality
+                </a>
+              </li>        
+            </ul>
+          </section>
+
+          <div id="video-section" class="jumbotron pull-left">           
             <section class="video-streams-pane" data-ng-controller="StreamHandler as handler">
                 <button class="btn btn-info btn-lg" data-ng-click="handler.getData()">GetData!!!</button>
                 <section class="sort-selections">
@@ -59,15 +49,18 @@
             </section>
             <section class="history">
             </section>
+          </div>
 
-        </section>
-    </div>
-    <section class="map pull-right">
-      <map zoom="14" center="[49.49, 8.48]" ng-app="ngMap">
-      <marker position="[49.48, 8.49]" title="drag me" draggable="true"></marker>
-      <marker position="[49.48, 8.48]" title="you" icon="https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"></marker>
-      </map>
-    </section>    
+          <div class="pull-right">  
+            <section class="map">
+                <map zoom="13" center="[49.49, 8.48]" ng-app="ngMap">
+                <marker position="[49.48, 8.49]" title="drag me" draggable="true"></marker>
+                <marker position="[49.48, 8.48]" title="you" icon="https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"></marker>
+                </map>
+            </section>
+          </div>
+      </section>
+
 	<!--<settings></settings>-->
 	<footer class="footer">
 		Cato Danielsen, Artur Gareis, Maria Oltean, Michael Timpelan
