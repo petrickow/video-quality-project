@@ -1,4 +1,4 @@
-package server;
+package server.core;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,6 +10,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.socket.TextMessage;
+
+import server.service.UpdaterService;
 
 @ComponentScan
 @EnableAutoConfiguration

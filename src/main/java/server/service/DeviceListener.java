@@ -1,4 +1,4 @@
-package server;
+package server.service;
 
 /*
  * Receive data from devices and pass on to analyzer
