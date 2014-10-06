@@ -4,11 +4,16 @@ app.directive("videoStream", ['Socket', function (Socket) {
     return {
         restrict: 'E',
         templateUrl: "template-video-stream.html",
+        replace: true,
         controller: function () {
         //alert("Testdata: "+ this.data.getElementsByTagName('rtept')[0].getAttribute('lat'));
             this.message = "No data received!";
             this.updateMessage = function () {
-                this.message = Socket.messages;
+                this.message = 
+                    "Latitude: " + Socket.messages["lat"] + "\ " + 
+                    "Longitude: " + Socket.messages["lon"] + "\ " +
+                    "Speed: " + Socket.messages["speed"]  + "\ " +
+                    "Accuracy: " + Socket.messages["acc"];
                 return this.message;
             }
         },
