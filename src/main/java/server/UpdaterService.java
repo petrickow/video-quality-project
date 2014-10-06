@@ -1,9 +1,15 @@
-package server.service;
+package server;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.websocket.Session;
+
+import org.hornetq.api.core.client.ClientSession;
+import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.TextMessage;
 /*
@@ -18,8 +24,8 @@ public class UpdaterService {
 	// better aproach? Easier to look up if the session is stored
 	static ConcurrentHashMap<String, WebSocketSession> clients = new ConcurrentHashMap<String, WebSocketSession>();
 	
-	public static void update(TextMessage message) {
-		System.out.println("Sending to " + clients.size() + " clients");
+	protected static void update(TextMessage message) {
+		System.out.println("Sending to " + clients.size());
 		
 		for (Entry<String, WebSocketSession> s : clients.entrySet()) {
 			try {
@@ -37,7 +43,6 @@ public class UpdaterService {
 		
 	protected static boolean add(WebSocketSession session) {
 		clients.putIfAbsent(session.getId(), session);
-		System.out.println("New connection id: " + session.getId());
 		return true;
 		
 	}
