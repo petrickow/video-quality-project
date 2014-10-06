@@ -33,7 +33,7 @@ class ImJustRunning implements Runnable {
 		// TODO Quick and dirty XML send remove once real XML Reader is
 		// implemented
 		File file = new File(System.getProperty("user.dir")
-				+ "/src/main/resources/testXML/test.xml");
+				+ "/src/main/resources/testXML/test1.xml");
 		try {
 
 			FileReader in = new FileReader(file);

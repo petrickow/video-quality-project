@@ -20,6 +20,7 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
              input = parser.parseFromString(event.data, "text/xml");
              data = input.getElementsByTagName('rtept')[0];
              Service.messages = {}; //.push(event.data);
+             Service.messages.lat = data.getAttribute('id');
              Service.messages.lat = data.getAttribute('lat');
              Service.messages.lon = data.getAttribute('lon');
              Service.messages.speed = data.getAttribute('speed');
