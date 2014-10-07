@@ -32,8 +32,13 @@ class ImJustRunning implements Runnable {
 	public void run() {
 		// TODO Quick and dirty XML send remove once real XML Reader is
 		// implemented
+		//test XML reader
+		
+		
 		File file = new File(System.getProperty("user.dir")
 				+ "/src/main/resources/testXML/test1.xml");
+		
+		new StaXParserForXML(file.toString());
 		try {
 
 			FileReader in = new FileReader(file);
