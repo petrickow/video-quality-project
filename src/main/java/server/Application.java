@@ -40,6 +40,7 @@ class ImJustRunning implements Runnable {
 		// TODO Quick and dirty XML send remove once real XML Reader is
 		// implemented
 
+                new StaXParserForXML(this.file.toString());
 		try {
 
 			FileReader in = new FileReader(this.file);
