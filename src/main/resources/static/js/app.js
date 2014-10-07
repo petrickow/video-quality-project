@@ -23,7 +23,6 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
                 
                 var message = {};
                 message.id = data.getAttribute('id');
-                console.log(message.id);
                 message.lat = data.getAttribute('lat');
                 message.lon = data.getAttribute('lon');
                 message.speed = data.getAttribute('speed');
@@ -42,20 +41,18 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
                     currentStream.index = 0;
                 }
                 currentStream.data[currentStream.index++] = message;
-                console.log(event);
-                console.log(currentStream.data[0]);
-                console.log(currentStream.index);
+                //console.log(event);
                 // TODO enable TypeCheck
                 } catch (e){ 
                 // } catch (e if e instanceof TypeError){
-                console.log("Waiting for data...");
-            }
+                    //console.log("Waiting for data...");
+                }
          });
         
     };
     ws.onclose = function () {
         // websocket is closed.
-        console.log("Connection is closed...");
+        //console.log("Connection is closed...");
     };
     
     return Service;
