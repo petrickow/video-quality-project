@@ -19,8 +19,8 @@ public class Application {
 		/*
 		 * Start the services and listener
 		 */
-		new Thread(new ImJustRunning()).start();
-		;
+		new Thread(new ImJustRunning("test1.xml")).start();
+		new Thread(new ImJustRunning("test2.xml")).start();
 
 		SpringApplication.run(Application.class, args);
 	}
@@ -28,15 +28,21 @@ public class Application {
 
 class ImJustRunning implements Runnable {
 
+	File file;
+
+	public ImJustRunning(String xml) {
+		this.file = new File(System.getProperty("user.dir")
+				+ "/src/main/resources/testXML/" + xml);
+	}
+
 	@Override
 	public void run() {
 		// TODO Quick and dirty XML send remove once real XML Reader is
 		// implemented
-		File file = new File(System.getProperty("user.dir")
-				+ "/src/main/resources/testXML/test1.xml");
+
 		try {
 
-			FileReader in = new FileReader(file);
+			FileReader in = new FileReader(this.file);
 			BufferedReader br = new BufferedReader(in);
 			String line;
 			while ((line = br.readLine()) != null)
