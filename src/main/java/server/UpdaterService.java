@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -15,12 +16,14 @@ import org.springframework.web.socket.WebSocketSession;
  * have the clients poll the server for new information?
  */
 public class UpdaterService {
+	private static Logger log = Logger.getLogger(UpdaterService.class.getName());
+
 
 	// better aproach? Easier to look up if the session is stored
 	static ConcurrentHashMap<String, WebSocketSession> clients = new ConcurrentHashMap<String, WebSocketSession>();
 
 	protected synchronized static void update(TextMessage message) {
-		System.out.println("Sending to " + clients.size());
+		log.info("Websocket map has " + clients.size() + " entries");
 
 		for (Entry<String, WebSocketSession> s : clients.entrySet())
 			try {
@@ -29,8 +32,7 @@ public class UpdaterService {
 				else
 					clients.remove(s.getKey());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error("IO error when sending to webclient via websocket", e);
 			}
 	}
 

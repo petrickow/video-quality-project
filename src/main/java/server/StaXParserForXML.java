@@ -15,6 +15,7 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.socket.TextMessage;
 
 public class StaXParserForXML {
@@ -25,6 +26,9 @@ public class StaXParserForXML {
 	static final String SPEED = "speed";
 	static final String ACC = "acc";
 
+	private static Logger log = Logger.getLogger(StaXParserForXML.class.getName());
+
+	
 	public StaXParserForXML(String file) {
 
 		readXML(file);
@@ -77,7 +81,6 @@ public class StaXParserForXML {
 							}
 							if (attribute.getName().toString().equals(ACC)) {
 								item.setAcc(attribute.getValue());
-								System.out.println("reading corectililyy");
 							}
 						}
 					}
@@ -91,9 +94,10 @@ public class StaXParserForXML {
 						items.add(item);
 					}
 				}
-				if (item != null) 
-					
+				if (item != null) { 
+					log.info("Passing item to UpdaterService: " + item.toString());
 					UpdaterService.update(new TextMessage(item.toString()));
+				}
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
