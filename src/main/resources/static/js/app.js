@@ -4,8 +4,7 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
     "use strict";
     var maxCachedItems = 1000;
     var Service = {};
-    Service.data = [];
-    Service.index = 0;
+    Service.stream = {};
     var ws_url = "ws://localhost:8080/subscribeToMetadata";
     var ws = new WebSocket(ws_url);
     var parser = new DOMParser();
@@ -21,22 +20,34 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
             try{
                 input = parser.parseFromString(event.data, "text/xml");
                 data = input.getElementsByTagName('rtept')[0];
+                
                 var message = {};
                 message.id = data.getAttribute('id');
+                console.log(message.id);
                 message.lat = data.getAttribute('lat');
                 message.lon = data.getAttribute('lon');
                 message.speed = data.getAttribute('speed');
                 message.acc = data.getAttribute('acc');
-                //prevents from running out of memory
-                if(Service.index > maxCachedItems){
-                    Service.index = 0;
+                
+                if(typeof Service.stream[message.id] == "undefined") {
+                    Service.stream[message.id] = {};
+                    Service.stream[message.id].data = [];
+                    Service.stream[message.id].index = 0;
                 }
-                Service.data[Service.index] = message;
-                Service.index = Service.index + 1;
+                
+                var currentStream = Service.stream[message.id];
+                
+                //prevents from running out of memory
+                if(currentStream.index > maxCachedItems){
+                    currentStream.index = 0;
+                }
+                currentStream.data[currentStream.index++] = message;
                 console.log(event);
-                console.log(Service.index);
-                console.log(Service.data[Service.data.length - 1]);
-                } catch (e){
+                console.log(currentStream.data[0]);
+                console.log(currentStream.index);
+                // TODO enable TypeCheck
+                } catch (e){ 
+                // } catch (e if e instanceof TypeError){
                 console.log("Waiting for data...");
             }
          });

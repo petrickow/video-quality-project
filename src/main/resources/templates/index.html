@@ -55,13 +55,25 @@
                             <td>50%</td>
                             <td>Video1</td>
                             <td>
-                                Latitude: {{ stream.getLatitude() }} <br />
-                                Longitude: {{ stream.getLongitude() }} <br />
-                                Speed: {{ stream.getSpeed() }} <br />
-                                Accuracy: {{ stream.getAccuracy() }}
+                                Latitude: {{ stream.getLatitude("1") }} <br />
+                                Longitude: {{ stream.getLongitude("1") }} <br />
+                                Speed: {{ stream.getSpeed("1") }} <br />
+                                Accuracy: {{ stream.getAccuracy("1") }}
                             </td>
                             <td>Volume: 666%</td>
                             <td>___/^\_/\/\_</td>
+                        </tr>
+                        <tr>
+                            <td>150%</td>
+                            <td>Video2</td>
+                            <td>
+                                Latitude: {{ stream.getLatitude("2") }} <br />
+                                Longitude: {{ stream.getLongitude("2") }} <br />
+                                Speed: {{ stream.getSpeed("2") }} <br />
+                                Accuracy: {{ stream.getAccuracy("2") }}
+                            </td>
+                            <td>Volume: 1337%</td>
+                            <td>_/^\_/\/\___</td>
                         </tr>
                     </tbody>
                 </table>
