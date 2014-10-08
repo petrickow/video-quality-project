@@ -14,3 +14,20 @@ map, div[map] {display:block; width: 400px; height: 500px}
 	height: 500px;
 	width: 540px;
 }
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
