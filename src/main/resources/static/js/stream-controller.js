@@ -7,39 +7,49 @@ app.controller('StreamController', [
         this.longitude = "No data received!";
         this.speed = "No data received!";
         this.accuracy = "No data received!";
+        this.ids = [];
+        
+        this.getStreams = function () {
+            this.ids = Object.keys(Socket.stream);
+            return this.ids;
+        }
 
-        this.getLatitude = function () {
+        this.getLatitude = function (id) {
             try {
-                this.latitude = Socket.data[Socket.index - 1].lat;
+                var currentStream = Socket.stream[id];
+                var currentValue = currentStream.data[currentStream.index - 1];
+                this.latitude = currentValue.lat;
             } catch (e) {
-                console.log("Initializing Accuracy at Index: " + Socket.index);
             }
             return this.latitude;
         };
         
-        this.getLongitude = function () {
+        this.getLongitude = function (id) {
             try {
-                this.longitude = Socket.data[0].lon;
+                var currentStream = Socket.stream[id];
+                var currentValue = currentStream.data[currentStream.index - 1];
+                this.longitude = currentValue.lon;
             } catch (e) {
-                console.log("Initializing Accuracy at Index: " + Socket.index);
             }
             return this.longitude;
         };
         
-        this.getSpeed = function () {
+        this.getSpeed = function (id) {
             try {
-                this.speed = Socket.data[Socket.index - 1].speed;
+                var currentStream = Socket.stream[id];
+                var currentValue = currentStream.data[currentStream.index - 1];
+                this.speed = currentValue.speed;
             } catch (e) {
-                console.log("Initializing Speed at Index: " + Socket.index);
             }
             return this.speed;
         };
         
-        this.getAccuracy = function () {
+        this.getAccuracy = function (id) {
             try {
-                this.accuracy = Socket.data[Socket.index - 1].acc;
+                var currentStream = Socket.stream[id];
+                var currentValue = currentStream.data[currentStream.index - 1];
+                this.accuracy = currentValue.acc;
             } catch (e) {
-                console.log("Initializing Accuracy at Index: " + Socket.index);
             }
             return this.accuracy;
         };
