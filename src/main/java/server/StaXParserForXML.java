@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -28,6 +32,7 @@ public class StaXParserForXML {
 	public StaXParserForXML(String file) {
 
 		readXML(file);
+		//jsonFilefromXML(file);
 	}
 
 	/*
@@ -91,9 +96,11 @@ public class StaXParserForXML {
 						items.add(item);
 					}
 				}
-				if (item != null) 
-					
+				
+				if (item != null) {
+				
 					UpdaterService.update(new TextMessage(item.toString()));
+				}
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -102,5 +109,25 @@ public class StaXParserForXML {
 		}
 		return items;
 	}
-
+	public JsonArray jsonFilefromXML(String file){
+		//sending data as a json 
+		List<XMLCreator> mylist = readXML(file);
+		JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+		for (XMLCreator listItems: mylist){
+			if (listItems !=null){
+			jsonArrayBuilder.add(Json.createObjectBuilder()
+				.add("ID", listItems.getId())
+				.add("LON",listItems.getLon())
+				.add("LAT",listItems.getLat())
+				.add("SPEED",listItems.getSpeed())
+				.add("ACC",listItems.getAcc()));
+			
+			}
+		}
+		
+		JsonArray values = jsonArrayBuilder.build();
+		
+		return values;
+	}
+	
 }
