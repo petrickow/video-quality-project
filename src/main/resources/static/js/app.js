@@ -16,7 +16,21 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
     };
     ws.onmessage = function (event) {
     	var jsonData = JSON.parse(event.data);
-    	console.log(jsonData)
+    	console.log(jsonData);
+//        $rootScope.$apply(function () {
+//            if(typeof Service.stream["1"] == "undefined") {
+//                    Service.stream["1"] = {};
+//                    Service.stream["1"].data = [];
+//                    Service.stream["1"].index = 0;
+//                }
+//            var currentStream = Service.stream["1"];
+//            
+//            //prevents from running out of memory
+//            if(currentStream.index > maxCachedItems){
+//                currentStream.index = 0;
+//            }
+//            currentStream.data[currentStream.index++] = jsonData;
+//        });
     	/*
          $rootScope.$apply(function () { 
             try{

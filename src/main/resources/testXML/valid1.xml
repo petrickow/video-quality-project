@@ -15,14 +15,14 @@
   </logItem>
 
 
-	<LogItem dateTime="2014-10-08T11:02:32.532+00:00">
-		<Name>Location</Name>
-		<Entry type="speed">0.0</Entry>
-		<Entry type="altritude">157.0</Entry>
-		<Entry type="longitude">10.71814526</Entry>
-		<Entry type="latitude">59.94112553</Entry>
-		<Entry type="accuracy">58.0</Entry>
-		<Entry type="provider">gps</Entry>
-	</LogItem>
+	<logItem dateTime="2014-10-07T15:58:23.794+0230">
+		<name>Location</name>
+		<entry type="speed">0.0</entry>
+		<entry type="altritude">157.0</entry>
+		<entry type="longitude">10.71814526</entry>
+		<entry type="latitude">59.94112553</entry>
+		<entry type="accuracy">58.0</entry>
+		<entry type="provider">gps</entry>
+	</logItem>
 
 </logFile>
