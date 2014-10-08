@@ -15,7 +15,9 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
         console.log("connection established...");
     };
     ws.onmessage = function (event) {
-        
+    	var jsonData = JSON.parse(event.data);
+    	console.log(jsonData)
+    	/*
          $rootScope.$apply(function () { 
             try{
                 input = parser.parseFromString(event.data, "text/xml");
@@ -48,7 +50,7 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
                     //console.log("Waiting for data...");
                 }
          });
-        
+        */
     };
     ws.onclose = function () {
         // websocket is closed.

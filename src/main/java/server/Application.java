@@ -24,8 +24,8 @@ public class Application {
 		 */
 		log = Logger.getLogger(Logger.class);
 		log.info("Logger started");
-		new Thread(new ImJustRunning("test1.xml")).start();
-		new Thread(new ImJustRunning("test2.xml")).start();
+		new Thread(new ImJustRunning("valid1.xml")).start();
+		//new Thread(new ImJustRunning("test2.xml")).start();
 
 		SpringApplication.run(Application.class, args);
 	}
@@ -46,7 +46,8 @@ class ImJustRunning implements Runnable {
 	public void run() {
 		
 		/*** This part is for testing the device listener, it is not finished at the moment
-		 * It is a completely clean approach, not using StaXParser, but using some of the code from the class 
+		 * It is a completely clean approach, not using StaXParser, but using some of the code from the class
+		 */ 
 		holdFor(5);
 											// 	ugly-bugly but only for testing
 		DeviceListener deviceListener = new DeviceListener(System.getProperty("user.dir") + "/src/main/resources/testXML/schema.xsd");
@@ -62,14 +63,14 @@ class ImJustRunning implements Runnable {
 			}
 			holdFor(2);
 		}
-		***/
+		/***/
 
 		/*** For testing the StaXParserForXML
 		//new StaXParserForXML(this.file.toString()); //this immediately sends data
 		***/
 		
 		
-		/*** The good ol' somplified testing-program, no validiation of schema and no sensor data ***/
+		/*** The good ol' somplified testing-program, no validiation of schema and no sensor data 
 		try {
 			FileReader in = new FileReader(this.file);
 			BufferedReader br = new BufferedReader(in);
@@ -90,6 +91,7 @@ class ImJustRunning implements Runnable {
 		} catch (InterruptedException e) {
 			log.error("Interruption", e);
 		}
+		***/
 	}
 	
 	private synchronized void holdFor(int sec) {
