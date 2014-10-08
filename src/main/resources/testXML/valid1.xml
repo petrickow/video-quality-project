@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<logFile dateTime="2014-10-07T13:56:24.129+0320">
+  <appName>Name of app here</appName>
+
+  <logItem dateTime="2014-10-07T13:57:23.794+0000">
+    <name>Rotation</name>
+    <entry type="azimuth">1.2424232</entry>
+    <entry type="pitch">2.03242352</entry>
+    <entry type="roll">0.23423424</entry>
+  </logItem>
+
+  <logItem dateTime="2014-10-07T13:58:23.794+0230">
+    <name>Acceleration</name>
+    <entry type="force">0.2342225</entry>
+  </logItem>
+
+</logFile>

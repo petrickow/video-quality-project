@@ -44,12 +44,32 @@ class ImJustRunning implements Runnable {
 
 	@Override
 	public void run() {
-		// TODO Quick and dirty XML send remove once real XML Reader is
-		// implemented
+		
+		/*** This part is for testing the device listener, it is not finished at the moment
+		 * It is a completely clean approach, not using StaXParser, but using some of the code from the class 
+		holdFor(5);
+											// 	ugly-bugly but only for testing
+		DeviceListener deviceListener = new DeviceListener(System.getProperty("user.dir") + "/src/main/resources/testXML/schema.xsd");
+		
+		// keep received xml every two seconds
+		while (true) {  
+			
+			try {
+				deviceListener.test_receivedMetaData(this.file.getPath());
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			holdFor(2);
+		}
+		***/
 
-		// new StaXParserForXML(this.file.toString()); //this immediately sends data
-		// all data
-
+		/*** For testing the StaXParserForXML
+		//new StaXParserForXML(this.file.toString()); //this immediately sends data
+		***/
+		
+		
+		/*** The good ol' somplified testing-program, no validiation of schema and no sensor data ***/
 		try {
 			FileReader in = new FileReader(this.file);
 			BufferedReader br = new BufferedReader(in);
@@ -69,6 +89,14 @@ class ImJustRunning implements Runnable {
 			log.error("IO error", e);
 		} catch (InterruptedException e) {
 			log.error("Interruption", e);
+		}
+	}
+	
+	private synchronized void holdFor(int sec) {
+		try {
+			this.wait(sec * 1000);
+		} catch (InterruptedException e) {
+			log.error("interrupted", e);
 		}
 	}
 }
