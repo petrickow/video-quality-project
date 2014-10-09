@@ -1,5 +1,7 @@
 package server;
 
+import server.model.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.UUID;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLEventReader;
@@ -43,15 +46,17 @@ public class DeviceListener {
 	
 	// Note to self: schemapath, device-list with id, logger 
 	String schemaPath;
-	
+	UUID id;
 	
 	/***
 	 * When receiving a xml from device, the xml is converted to apropriate format and 
 	 * broadcasted to web clients using UpdaterService class
-	 * @param xmsPath is the path to schema used for validation
+	 * @param xmsPath is t
+	 * he path to schema used for validation
 	 */
-	public DeviceListener(String xmsPath) { 
+	public DeviceListener(String xmsPath, UUID id) { 
 		this.schemaPath = xmsPath;
+		this.id = id;
 	}
 	
 	
@@ -66,7 +71,7 @@ public class DeviceListener {
 			//parse xml to suitable format for update
 			String message = new String();
 			try {
-				message = convertXml(xmlPath);
+				message = convertXmlToModel(xmlPath);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -85,52 +90,18 @@ public class DeviceListener {
 	 * @param xmlPath TODO, change to the file received from device
 	 * @return JSON-valid string for use in text message to clients
 	 */
-	private String convertXml(String xmlPath) throws Exception{
+	private GenericMetaDataModel convertXmlToModel(String xmlPath) throws Exception{
 		
+		// check name
+		// if location
+		// 		create location model
+		// if rotation
+		// 		create rotation model
+		// add uuid.toString to model
 		
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		InputStream input = new FileInputStream(xmlPath);	
-        
-        /*
-         * If we want to insert JSON array boundaries for multiple elements,
-         * we need to set the <code>autoArray</code> property.
-         * If our XML source was decorated with <code>&lt;?xml-multiple?&gt;</code>
-         * processing instructions, we'd set the <code>multiplePI</code>
-         * property instead.
-         * With the <code>autoPrimitive</code> property set, element text gets
-         * automatically converted to JSON primitives (number, boolean, null).
-         */
-        JsonXMLConfig config = new JsonXMLConfigBuilder()
-            .autoArray(true)
-            .autoPrimitive(true)
-            .prettyPrint(true)
-            .build();
-        try {
-            /*
-             * Create source (XML).
-             */
-            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(input);
-            Source source = new StAXSource(reader);
+		// return GenericMetaDataModel
+		return new RotationModel();
 
-            /*
-             * Create result (JSON).
-             */
-            XMLStreamWriter writer = new JsonXMLOutputFactory(config).createXMLStreamWriter(output);
-            Result result = new StAXResult(writer);
-
-            /*
-             * Copy source to result via "identity transform".
-             */
-             TransformerFactory.newInstance().newTransformer().transform(source, result);
-        } finally {
-            /*
-             * As per StAX specification, XMLStreamReader/Writer.close() doesn't close
-             * the underlying stream.
-             */
-            output.close();
-            input.close();
-        }
-		return output.toString();
 	}
 	
 	private static boolean validateXMLSchema(String xsdPath, String xmlPath){

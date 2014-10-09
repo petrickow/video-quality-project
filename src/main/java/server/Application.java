@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.jgroups.util.UUID;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
@@ -31,6 +32,13 @@ public class Application {
 	}
 }
 
+
+
+/***
+ * Im simulating a device
+ * @author taco
+ *
+ */
 class ImJustRunning implements Runnable {
 
 	File file;
@@ -50,7 +58,7 @@ class ImJustRunning implements Runnable {
 		 */ 
 		holdFor(5);
 											// 	ugly-bugly but only for testing
-		DeviceListener deviceListener = new DeviceListener(System.getProperty("user.dir") + "/src/main/resources/testXML/schema.xsd");
+		DeviceListener deviceListener = new DeviceListener(System.getProperty("user.dir") + "/src/main/resources/testXML/schema.xsd", UUID.randomUUID());
 		
 		// keep received xml every two seconds
 		while (true) {  
