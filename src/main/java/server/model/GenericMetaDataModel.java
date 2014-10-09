@@ -1,7 +1,9 @@
 package server.model;
 
+import java.util.Date;
+
 public class GenericMetaDataModel {
-	
+	private String dateTime;
 	private String id;
 	private String name;
 	
@@ -19,6 +21,12 @@ public class GenericMetaDataModel {
 	}	
 	
 	
+	public String getDateTime() {
+		return dateTime;
+	}
+	public void setDateTime(String dateTime) {
+		this.dateTime = dateTime;
+	}
 	public String convertToJSONString () {
 		return "Some JSON-like stirng";
 	}

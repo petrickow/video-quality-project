@@ -18,7 +18,7 @@
 	<logItem dateTime="2014-10-07T15:58:23.794+0230">
 		<name>Location</name>
 		<entry type="speed">0.0</entry>
-		<entry type="altritude">157.0</entry>
+		<entry type="altitude">157.0</entry>
 		<entry type="longitude">10.71814526</entry>
 		<entry type="latitude">59.94112553</entry>
 		<entry type="accuracy">58.0</entry>

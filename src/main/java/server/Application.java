@@ -56,13 +56,14 @@ class ImJustRunning implements Runnable {
 		/*** This part is for testing the device listener, it is not finished at the moment
 		 * It is a completely clean approach, not using StaXParser, but using some of the code from the class
 		 */ 
+		
 		holdFor(5);
 											// 	ugly-bugly but only for testing
 		DeviceListener deviceListener = new DeviceListener(System.getProperty("user.dir") + "/src/main/resources/testXML/schema.xsd", UUID.randomUUID());
 		
 		// keep received xml every two seconds
 		while (true) {  
-			
+			System.out.println("im here !!!!!!!!!!!!!!");
 			try {
 				deviceListener.test_receivedMetaData(this.file.getPath());
 			} catch (FileNotFoundException e) {
