@@ -17,4 +17,9 @@ public class GenericMetaDataModel {
 	public void setName(String name) {
 		this.name = name;
 	}	
+	
+	
+	public String convertToJSONString () {
+		return "Some JSON-like stirng";
+	}
 }

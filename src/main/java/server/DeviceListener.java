@@ -69,7 +69,7 @@ public class DeviceListener {
 		
 		if (validateXMLSchema(schemaPath, xmlPath)) {
 			//parse xml to suitable format for update
-			String message = new String();
+			GenericMetaDataModel message = new GenericMetaDataModel(); // TODO not like this
 			try {
 				message = convertXmlToModel(xmlPath);
 			} catch (Exception e) {
@@ -78,7 +78,7 @@ public class DeviceListener {
 			}
 			
 			
-			UpdaterService.update(new TextMessage(message));
+			UpdaterService.update(new TextMessage(message.convertToJSONString()));
 		} else {
 			//inform device that they fcked up in regards to schema
 			System.out.println("Everything is ruined");

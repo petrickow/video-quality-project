@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-import org.jgroups.util.UUID;
+import java.util.UUID;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
