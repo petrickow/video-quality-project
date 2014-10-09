@@ -2,39 +2,22 @@ package server;
 
 import server.model.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.UUID;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.stax.StAXResult;
-import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Validator;
 import javax.xml.XMLConstants;
@@ -43,11 +26,6 @@ import javax.xml.validation.SchemaFactory;
 
 import org.springframework.web.socket.TextMessage;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import de.odysseus.staxon.json.JsonXMLConfig;
-import de.odysseus.staxon.json.JsonXMLConfigBuilder;
-import de.odysseus.staxon.json.JsonXMLOutputFactory;
 
 /***
  * Handles incoming meta data from devices recording by validating XML and
@@ -85,21 +63,21 @@ public class DeviceListener {
 
 		if (validateXMLSchema(schemaPath, xmlPath)) {
 			// parse xml to suitable format for update
-			GenericMetaDataModel message = new GenericMetaDataModel(); // TODO
+			ArrayList<GenericMetaDataModel> messages = new ArrayList<GenericMetaDataModel>(); // TODO
 																		// not
 																		// like
 																		// this
 			try {
-
-				message = convertXmlToModel(xmlPath);
+				messages = convertXmlToModel(xmlPath);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+			for (GenericMetaDataModel message : messages) {
 			System.out.println(message.convertToJSONString());
 			UpdaterService
 					.update(new TextMessage(message.convertToJSONString()));
+			}
 		} else {
 			// inform device that they fcked up in regards to schema
 			System.out.println("Everything is ruined");
@@ -107,21 +85,21 @@ public class DeviceListener {
 	}
 
 	/***
-	 * TODO This is more or less copy-pasted from
-	 * https://github.com/beckchr/staxon
+	 * Creates model based on xml received from devices TODO refactoring
 	 * 
-	 * @param xmlPath
-	 *            TODO, change to the file received from device
-	 * @return JSON-valid string for use in text message to clients
+	 * @return Model of data
 	 */
 	@SuppressWarnings("unchecked")
-	private GenericMetaDataModel convertXmlToModel(String xmlPath)
+	private ArrayList<GenericMetaDataModel> convertXmlToModel(String xmlPath)
 			throws Exception {
-
+		
+		ArrayList<GenericMetaDataModel> models = new ArrayList<GenericMetaDataModel>();
 		GenericMetaDataModel genericMetaDataModel = new GenericMetaDataModel();
 		LocationModel locationModel = new LocationModel();
 		RotationModel rotationModel = new RotationModel();
-		String nameModel = null;
+		AccelerationModel accelerationModel = new AccelerationModel();
+		String name = "";
+		
 		try {
 
 			// First, create a new XMLInputFactory
@@ -131,7 +109,7 @@ public class DeviceListener {
 			XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
 			// read the XML document
 			// genericMetaDataModel = new GenericMetaDataModel();
-			XMLEvent event = null;
+			XMLEvent event;
 			while (eventReader.hasNext()) {
 				event = eventReader.nextEvent();
 
@@ -148,19 +126,22 @@ public class DeviceListener {
 					}
 					if (startElement.getName().getLocalPart() == ("name")) {
 						event = eventReader.nextEvent();
-						String name = event.asCharacters().getData();
-						System.out.println();
+						name = event.asCharacters().getData();
+						System.out.println(name);
 						if ("Rotation".equals(name)) {
-							
 							rotationModel.setName(name);
 						}
 						if ("Location".equals(name)) {
 							locationModel.setName(name);
 						}
+						if ("Acceleration".equals(name)) {
+							accelerationModel.setName(name);
+						}
+						//TODO acceleration and fault handling 
 						continue;
 					}
 
-					if (startElement.getName().getLocalPart() == ("entry")) {
+					if (startElement.getName().getLocalPart().equals("entry")) {
 						
 						event = eventReader.nextEvent();
 						
@@ -171,11 +152,13 @@ public class DeviceListener {
 						if ("speed".equals(attribute.getValue()))
 							locationModel.setSpeed(Float.parseFloat(event
 									.toString()));
-
+						if ("force".equals(attribute.getValue()))
+							accelerationModel.setForce(Float.parseFloat(event
+								.toString()));
 						if ("altitude".equals(attribute.getValue()))
 							locationModel.setAltitude(Float.parseFloat(event
 									.toString()));
-						if ("Floatitude".equals(attribute.getValue()))
+						if ("longitude".equals(attribute.getValue()))
 							locationModel.setLongitude(Float.parseFloat(event
 									.toString()));
 						if ("latitude".equals(attribute.getValue()))
@@ -189,7 +172,6 @@ public class DeviceListener {
 						if ("azimuth".equals(attribute.getValue()))
 							rotationModel.setAzimuth(Float.parseFloat(event
 									.toString()));
-						System.out.println(attribute.getValue());
 						if ("pitch".equals(attribute.getValue()))
 							rotationModel.setPitch(Float.parseFloat(event
 									.toString()));
@@ -205,25 +187,26 @@ public class DeviceListener {
 				if (event.isEndElement()) {
 					EndElement endElement = event.asEndElement();
 					if (endElement.getName().getLocalPart() == ("logItem")) {
-						// items.add(item);
+						if ("Location".equals(name)) {
+							locationModel.setId(genericMetaDataModel.getId());
+							locationModel.setDate(genericMetaDataModel.getDate());
+							models.add(locationModel);
+						} else if ("Rotation".equals(name)) {
+							rotationModel.setId(genericMetaDataModel.getId());
+							rotationModel.setDate(genericMetaDataModel.getDate());
+							models.add(rotationModel);
+						} else if ("Acceleration".equals(name)) {
+							accelerationModel.setId(genericMetaDataModel.getId());
+							accelerationModel.setDate(genericMetaDataModel.getDate());
+							models.add(accelerationModel);
+						}
 					}
 				}
 			} 
 		} catch (Exception e) {
 			System.out.println(e.getStackTrace());
 		}
-		if ("Location".equals(nameModel)) {
-			locationModel.setId(genericMetaDataModel.getId());
-			locationModel.setDate(genericMetaDataModel.getDate());
-			
-
-			return locationModel;
-		} else {
-			rotationModel.setId(genericMetaDataModel.getId());
-			rotationModel.setDate(genericMetaDataModel.getDate());
-			return rotationModel;
-		}
-
+		return models;
 	}
 
 	private static boolean validateXMLSchema(String xsdPath, String xmlPath) {
