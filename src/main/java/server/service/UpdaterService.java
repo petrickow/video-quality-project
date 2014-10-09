@@ -1,4 +1,4 @@
-package server;
+package server.service;
 
 import java.io.IOException;
 import java.util.Map.Entry;
@@ -22,7 +22,7 @@ public class UpdaterService {
 	// better aproach? Easier to look up if the session is stored
 	static ConcurrentHashMap<String, WebSocketSession> clients = new ConcurrentHashMap<String, WebSocketSession>();
 
-	protected synchronized static void update(TextMessage message) {
+	public synchronized static void update(TextMessage message) {
 		log.info("Websocket map has " + clients.size() + " entries");
 
 		for (Entry<String, WebSocketSession> s : clients.entrySet())
@@ -36,13 +36,13 @@ public class UpdaterService {
 			}
 	}
 
-	protected static boolean add(WebSocketSession session) {
+	public static boolean add(WebSocketSession session) {
 		clients.putIfAbsent(session.getId(), session);
 		return true;
 
 	}
 
-	protected static boolean remove(String uniqueId) {
+	public static boolean remove(String uniqueId) {
 		if (clients.remove(uniqueId) != null)
 			return true;
 		else

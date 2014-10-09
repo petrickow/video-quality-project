@@ -1,4 +1,4 @@
-package server;
+package server.service;
 
 /*
  * This thread will do the analysis of the metadata

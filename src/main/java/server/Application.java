@@ -7,11 +7,14 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+
 import java.util.UUID;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.web.socket.TextMessage;
+
+import server.service.DeviceListener;
 
 @ComponentScan
 @EnableAutoConfiguration
@@ -26,7 +29,7 @@ public class Application {
 		log = Logger.getLogger(Logger.class);
 		log.info("Logger started");
 		new Thread(new ImJustRunning("valid1.xml")).start();
-		//new Thread(new ImJustRunning("test2.xml")).start();
+		new Thread(new ImJustRunning("valid1.xml")).start();
 
 		SpringApplication.run(Application.class, args);
 	}

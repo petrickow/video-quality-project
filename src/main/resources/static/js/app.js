@@ -12,11 +12,20 @@ app.factory('Socket', [ '$rootScope', function($rootScope) {
 	ws.onopen = function() {
 		// Web Socket is connected, send data using send()
 		ws.send("register me!");
-		console.log("connection established...");
+		console.log("connection request sent...");
 	};
 	ws.onmessage = function(event) {
-
-		$rootScope.$apply(function() {
+		
+		var recvJson = JSON.parse(event.data);
+		if (recvJson.response == "accepted") {
+			console.log("Historical data will be inserted in this json object");
+			// make call to appropriate function
+			return;
+		}
+		else {
+			console.log(recvJson);
+		}
+/*		$rootScope.$apply(function() {
 			try {
 				input = parser.parseFromString(event.data, "text/xml");
 				data = input.getElementsByTagName('rtept')[0];
@@ -51,7 +60,7 @@ app.factory('Socket', [ '$rootScope', function($rootScope) {
 				console.log("Waiting for data...");
 			}
 		});
-
+*/
 	};
 	ws.onclose = function() {
 		// websocket is closed.
