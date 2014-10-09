@@ -36,7 +36,6 @@ public class Application {
 
 /***
  * Im simulating a device
- * @author taco
  *
  */
 class ImJustRunning implements Runnable {
