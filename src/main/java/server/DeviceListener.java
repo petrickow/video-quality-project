@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -26,6 +27,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.springframework.web.socket.TextMessage;
 import org.xml.sax.SAXException;
+import org.apache.log4j.Logger;
 
 /***
  * Handles incoming meta data from devices recording by validating XML and
@@ -36,7 +38,8 @@ public class DeviceListener {
 	// Note to self: schemapath, device-list with id, logger
 	String schemaPath;
 	UUID id;
-
+	private static Logger log;
+	ConcurrentHashMap<UUID, String> deviceIdMapping;
 	/***
 	 * When receiving a xml from device, the xml is converted to apropriate
 	 * format and broadcasted to web clients using UpdaterService class
@@ -46,7 +49,7 @@ public class DeviceListener {
 	 */
 	public DeviceListener(String xmsPath, UUID id) {
 		this.schemaPath = xmsPath;
-		this.id = id;
+		this.id = id; //for testing
 	}
 
 	/***
@@ -74,13 +77,12 @@ public class DeviceListener {
 				e.printStackTrace();
 			}
 			for (GenericMetaDataModel message : messages) {
-			System.out.println(message.convertToJSONString());
 			UpdaterService
 					.update(new TextMessage(message.convertToJSONString()));
 			}
 		} else {
 			// inform device that they fcked up in regards to schema
-			System.out.println("Everything is ruined");
+			log.error("Everything is ruined, xml not valid");
 		}
 	}
 
@@ -127,7 +129,6 @@ public class DeviceListener {
 					if (startElement.getName().getLocalPart() == ("name")) {
 						event = eventReader.nextEvent();
 						name = event.asCharacters().getData();
-						System.out.println(name);
 						if ("Rotation".equals(name)) {
 							rotationModel.setName(name);
 						}
@@ -188,15 +189,15 @@ public class DeviceListener {
 					EndElement endElement = event.asEndElement();
 					if (endElement.getName().getLocalPart() == ("logItem")) {
 						if ("Location".equals(name)) {
-							locationModel.setId(genericMetaDataModel.getId());
+							locationModel.setId(this.id.toString());
 							locationModel.setDate(genericMetaDataModel.getDate());
 							models.add(locationModel);
 						} else if ("Rotation".equals(name)) {
-							rotationModel.setId(genericMetaDataModel.getId());
+							rotationModel.setId(this.id.toString());
 							rotationModel.setDate(genericMetaDataModel.getDate());
 							models.add(rotationModel);
 						} else if ("Acceleration".equals(name)) {
-							accelerationModel.setId(genericMetaDataModel.getId());
+							accelerationModel.setId(this.id.toString());
 							accelerationModel.setDate(genericMetaDataModel.getDate());
 							models.add(accelerationModel);
 						}

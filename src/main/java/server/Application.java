@@ -62,7 +62,6 @@ class ImJustRunning implements Runnable {
 		
 		// keep received xml every two seconds
 		while (true) {  
-			System.out.println("im here !!!!!!!!!!!!!!");
 			try {
 				deviceListener.test_receivedMetaData(this.file.getPath());
 			} catch (FileNotFoundException e) {
