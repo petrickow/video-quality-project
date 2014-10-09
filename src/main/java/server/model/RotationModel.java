@@ -2,33 +2,30 @@ package server.model;
 
 public class RotationModel extends GenericMetaDataModel  {
 
-	private long azimuth;
-	private long pitch;
-	private long roll;
-
-	public long getAzimtuh() {
+	private float azimuth;
+	private float pitch;
+	private float roll;
+	
+	public float getAzimuth() {
 		return azimuth;
 	}
-
-	public void setAzimuth(long azimuth) {
+	public void setAzimuth(float azimuth) {
 		this.azimuth = azimuth;
 	}
-
-	public long getPitch() {
+	public float getPitch() {
 		return pitch;
 	}
-
-	public void setPitch(long pitch) {
+	public void setPitch(float pitch) {
 		this.pitch = pitch;
 	}
-
-	public long getRoll() {
+	public float getRoll() {
 		return roll;
 	}
-
-	public void setRoll(long roll) {
+	public void setRoll(float roll) {
 		this.roll = roll;
 	}
+
+	
 
 	
 }

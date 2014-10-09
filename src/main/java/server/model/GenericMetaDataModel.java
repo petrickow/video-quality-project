@@ -8,14 +8,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GenericMetaDataModel {
-	private Date date;
+	private String date;
 	private String id;
 	private String name;
 	
 	ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
 
-	public Date getDate() {	return date; }
-	public void setDate(Date date) { this.date = date; }
+	public String getDate() {	return date; }
+	public void setDate(String date) { this.date = date; }
 
 	public String getId() {	return id; }
 	public void setId(String id) { this.id = id; }

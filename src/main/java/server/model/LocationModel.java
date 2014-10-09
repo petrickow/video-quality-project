@@ -2,43 +2,41 @@ package server.model;
 
 public class LocationModel extends GenericMetaDataModel {
 	
-	private long speed;
-	private long altitude;
-	private long latitude;
-	private long longitude;
-	private long accuracy;
+	private float speed;
+	private float altitude;
+	private float latitude;
+	private float longitude;
+	private float accuracy;
 	private String provider;
-
 	
-
-	public long getSpeed() {
+	public float getSpeed() {
 		return speed;
 	}
-	public void setSpeed(long speed) {
+	public void setSpeed(float speed) {
 		this.speed = speed;
 	}
-	public long getAltitude() {
+	public float getAltitude() {
 		return altitude;
 	}
-	public void setAltitude(long altitude) {
+	public void setAltitude(float altitude) {
 		this.altitude = altitude;
 	}
-	public long getLatitude() {
+	public float getLatitude() {
 		return latitude;
 	}
-	public void setLatitude(long latitude) {
+	public void setLatitude(float latitude) {
 		this.latitude = latitude;
 	}
-	public long getLongitude() {
+	public float getLongitude() {
 		return longitude;
 	}
-	public void setLongitude(long longitude) {
+	public void setLongitude(float longitude) {
 		this.longitude = longitude;
 	}
-	public long getAccuracy() {
+	public float getAccuracy() {
 		return accuracy;
 	}
-	public void setAccuracy(long accuracy) {
+	public void setAccuracy(float accuracy) {
 		this.accuracy = accuracy;
 	}
 	public String getProvider() {
@@ -47,5 +45,8 @@ public class LocationModel extends GenericMetaDataModel {
 	public void setProvider(String provider) {
 		this.provider = provider;
 	}
+
+	
+
 
 }
