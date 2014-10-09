@@ -12,26 +12,38 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
     ws.onopen = function () {
         // Web Socket is connected, send data using send()
         ws.send("register me!");
-        console.log("connection established...");
+        // console.log("connection established...");
     };
     ws.onmessage = function (event) {
-    	var jsonData = JSON.parse(event.data);
-    	console.log(jsonData);
-//        $rootScope.$apply(function () {
-//            if(typeof Service.stream["1"] == "undefined") {
-//                    Service.stream["1"] = {};
-//                    Service.stream["1"].data = [];
-//                    Service.stream["1"].index = 0;
-//                }
-//            var currentStream = Service.stream["1"];
-//            
-//            //prevents from running out of memory
-//            if(currentStream.index > maxCachedItems){
-//                currentStream.index = 0;
-//            }
-//            currentStream.data[currentStream.index++] = jsonData;
-//        });
-    	/*
+        var jsonData = JSON.parse(event.data);
+        //console.log(jsonData);
+        $rootScope.$apply(function () {
+            
+            var item = jsonData.logItem;
+            
+            if (typeof Service.stream[item.id] === "undefined") {
+                Service.stream[item.id] = {};
+            }
+            
+            if (typeof Service.stream[item.id][item.name] === "undefined") {
+                Service.stream[item.id][item.name] = {};
+                Service.stream[item.id][item.name].data = [];
+                Service.stream[item.id][item.name].index = 0;
+            }
+                                   
+            var currentStream;
+                                   
+            currentStream = Service.stream[item.id][item.name];
+            
+            //prevents from running out of memory
+            if (currentStream.index > maxCachedItems) {
+                currentStream.index = 0;
+            }
+            
+            currentStream.data[currentStream.index++] = item;
+            
+        });
+        /*
          $rootScope.$apply(function () { 
             try{
                 input = parser.parseFromString(event.data, "text/xml");

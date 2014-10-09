@@ -7,18 +7,19 @@ app.controller('StreamController', [
         this.longitude = "No data received!";
         this.speed = "No data received!";
         this.accuracy = "No data received!";
+        this.altitude = "No data received!";
         this.ids = [];
         
         this.getStreams = function () {
             this.ids = Object.keys(Socket.stream);
             return this.ids;
-        }
+        };
 
         this.getLatitude = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var currentValue = currentStream.data[currentStream.index - 1];
-                this.latitude = currentValue.lat;
+                var currentValue = currentStream.location.data[currentStream.index - 1];
+                this.latitude = currentValue.latitude;
             } catch (e) {
             }
             return this.latitude;
@@ -27,8 +28,8 @@ app.controller('StreamController', [
         this.getLongitude = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var currentValue = currentStream.data[currentStream.index - 1];
-                this.longitude = currentValue.lon;
+                var currentValue = currentStream.location.data[currentStream.index - 1];
+                this.longitude = currentValue.longitude;
             } catch (e) {
             }
             return this.longitude;
@@ -37,7 +38,7 @@ app.controller('StreamController', [
         this.getSpeed = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var currentValue = currentStream.data[currentStream.index - 1];
+                var currentValue = currentStream.location.data[currentStream.index - 1];
                 this.speed = currentValue.speed;
             } catch (e) {
             }
@@ -47,8 +48,18 @@ app.controller('StreamController', [
         this.getAccuracy = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var currentValue = currentStream.data[currentStream.index - 1];
-                this.accuracy = currentValue.acc;
+                var currentValue = currentStream.location.data[currentStream.index - 1];
+                this.accuracy = currentValue.accuracy;
+            } catch (e) {
+            }
+            return this.accuracy;
+        };
+        
+        this.getAltitude = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var currentValue = currentStream.location.data[currentStream.index - 1];
+                this.altitude = currentValue.altitude;
             } catch (e) {
             }
             return this.accuracy;
