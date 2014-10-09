@@ -11,9 +11,8 @@ public class GenericMetaDataModel {
 	private Date date;
 	private String id;
 	private String name;
+	
 	ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
-
-
 
 	public Date getDate() {	return date; }
 	public void setDate(Date date) { this.date = date; }
@@ -23,8 +22,6 @@ public class GenericMetaDataModel {
 
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }
-
-
 
 	public String convertToJSONString() {
 		String jsonString = "";

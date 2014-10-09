@@ -58,7 +58,7 @@ public class DeviceListener {
 		this.schemaPath = xmsPath;
 		this.id = id;
 	}
-	
+ 
 	
 	/*** 
 	 * This exicst for testing purposes
