@@ -1,19 +1,17 @@
 package server.service;
 
-import server.Application;
+import server.controller.RestController;
 import server.model.*;
 
 import org.w3c.dom.Document;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringBufferInputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.stream.XMLEventReader;
@@ -22,7 +20,6 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Validator;
@@ -36,8 +33,6 @@ import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /***
@@ -47,26 +42,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DeviceListener {
 
 	// Note to self: schemapath, device-list with id, logger
-	public static String schemaPath;
-	String id;
-	private static Logger log;
-	ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>> deviceMapping;
-
-	/***
-	 * When receiving a xml from device, the xml is converted to apropriate
-	 * format and broadcasted to web clients using UpdaterService class
-	 * 
-	 * @param xmsPath
-	 *            is t he path to schema used for validation
-	 */
-	public DeviceListener(String xmsPath, String id) {
-		log = Logger.getLogger(DeviceListener.class);
-
-		this.deviceMapping = new ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>>();
-		this.schemaPath = xmsPath;
-		Document xml;
-		this.id = id; // for testing
-	}
+	final public static String schemaPath = System.getProperty("user.dir")
+			+ "/src/main/resources/testXML/schema.xsd";
+	static ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>> deviceMapping = new ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>>();
+	private static Logger log = Logger.getLogger(DeviceListener.class);
 
 	/***
 	 * This exicst for testing purposes
@@ -77,7 +56,7 @@ public class DeviceListener {
 	 * @throws FileNotFoundException
 	 *             this will not be an issue when we read data from device
 	 */
-	public void restReceivedMetaData(Document xml) {
+	public static void restReceivedMetaData(Document xml) {
 
 		if (validateXMLSchema(schemaPath, xml)) {
 
@@ -112,51 +91,6 @@ public class DeviceListener {
 		}
 	}
 
-	/***
-	 * This exicst for testing purposes
-	 * 
-	 * @param xmlPath
-	 *            absolute path to xml you want to broadcast (as if it were sent
-	 *            from device)
-	 * @throws FileNotFoundException
-	 *             this will not be an issue when we read data from device
-	 */
-/*	public void test_receivedMetaData(String xmlPath)
-			throws FileNotFoundException {
-
-		if (validateXMLSchema(schemaPath, xmlPath)) {
-
-			ArrayList<GenericMetaDataModel> messages = new ArrayList<GenericMetaDataModel>(); // TODO
-
-			try {
-
-				messages = convertXmlToModel(xmlPath);
-			} catch (Exception e) {
-				log.error("Could not convert xml to model");
-				e.printStackTrace();
-			}
-
-			// temporary solution
-			for (GenericMetaDataModel message : messages) {
-
-				if (!isStopMessage(message)) {
-					storeMessage(message);
-				} else {
-					deviceMapping.remove(message.getId());
-					// inform frontend or just pass the message along, they'll
-					// knwo
-					// what to do?
-				}
-			}
-			// Collect all json object in a list
-			UpdaterService.update(new TextMessage(
-					generateJsonListString(messages)));
-
-		} else {
-			log.error("Everything is ruined, xml not valid");
-		}
-	}*/
-
 	/**
 	 * Stores messages received from devices for historical data. Is removed
 	 * when device disconnects
@@ -164,7 +98,7 @@ public class DeviceListener {
 	 * @param message
 	 *            - generic metadata model to be stored
 	 */
-	private void storeMessage(GenericMetaDataModel message) {
+	private static void storeMessage(GenericMetaDataModel message) {
 		if (deviceMapping.contains(message.getId())) {
 			deviceMapping.get(message.getId()).add(message);
 		} else {
@@ -182,7 +116,7 @@ public class DeviceListener {
 	 *            A list of meta data models
 	 * @return the models mapped as json values
 	 */
-	private String generateJsonListString(
+	private static String generateJsonListString(
 			ArrayList<GenericMetaDataModel> messages) {
 
 		ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
@@ -212,7 +146,7 @@ public class DeviceListener {
 	 *            - the message in question
 	 * @return false if not a stop message
 	 */
-	private boolean isStopMessage(GenericMetaDataModel message) {
+	private static boolean isStopMessage(GenericMetaDataModel message) {
 		// TODO
 		return false;
 	}
@@ -223,8 +157,8 @@ public class DeviceListener {
 	 * @return Model of data
 	 */
 	@SuppressWarnings("unchecked")
-	private ArrayList<GenericMetaDataModel> convertXmlToModel(Document xml)
-			throws Exception {
+	private static ArrayList<GenericMetaDataModel> convertXmlToModel(
+			Document xml) throws Exception {
 
 		ArrayList<GenericMetaDataModel> models = new ArrayList<GenericMetaDataModel>();
 		GenericMetaDataModel genericMetaDataModel = new GenericMetaDataModel();
@@ -239,7 +173,8 @@ public class DeviceListener {
 			XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 			// Setup a new eventReader
 			XMLEventReader eventReader = inputFactory
-					.createXMLEventReader(new DOMSource(xml));
+					.createXMLEventReader(new StringBufferInputStream(RestController
+							.getStringFromDocument(xml)));
 			// read the XML document
 			// genericMetaDataModel = new GenericMetaDataModel();
 			XMLEvent event;
@@ -256,31 +191,31 @@ public class DeviceListener {
 
 						genericMetaDataModel.setDate(attribute.getValue()
 								.toString());
-					}
-					if (startElement.getName().getLocalPart() == ("name")) {
+					} else if (startElement.getName().getLocalPart() == ("name")) {
 						event = eventReader.nextEvent();
 						name = event.asCharacters().getData();
 						if ("Rotation".equals(name)) {
 							rotationModel.setName(name);
-						}
-						if ("Location".equals(name)) {
+						} else if ("Location".equals(name)) {
 							locationModel.setName(name);
-						}
-						if ("Acceleration".equals(name)) {
+						} else if ("Acceleration".equals(name)) {
 							accelerationModel.setName(name);
 						}
 						// TODO acceleration and fault handling
 						continue;
 					}
 
-					if (startElement.getName().getLocalPart().equals("entry")) {
+					else if (startElement.getName().getLocalPart()
+							.equals("entry")) {
 
 						event = eventReader.nextEvent();
 
 						Iterator<Attribute> attributes = startElement
 								.getAttributes();
 						Attribute attribute = attributes.next();
-
+						if ("id".equals(attribute.getValue()))
+							genericMetaDataModel.setId(event
+									.toString());
 						if ("speed".equals(attribute.getValue()))
 							locationModel.setSpeed(Float.parseFloat(event
 									.toString()));
@@ -316,21 +251,22 @@ public class DeviceListener {
 				}
 
 				// If we reach the end of an item element, we add it to the list
-				if (event.isEndElement()) {
+				else if (event.isEndElement()) {
 					EndElement endElement = event.asEndElement();
 					if (endElement.getName().getLocalPart() == ("logItem")) {
 						if ("Location".equals(name)) {
-							locationModel.setId(this.id.toString());
+							locationModel.setId(genericMetaDataModel.getId());
 							locationModel.setDate(genericMetaDataModel
 									.getDate());
 							models.add(locationModel);
 						} else if ("Rotation".equals(name)) {
-							rotationModel.setId(this.id.toString());
+							rotationModel.setId(genericMetaDataModel.getId());
 							rotationModel.setDate(genericMetaDataModel
 									.getDate());
 							models.add(rotationModel);
 						} else if ("Acceleration".equals(name)) {
-							accelerationModel.setId(this.id.toString());
+							accelerationModel.setId(genericMetaDataModel
+									.getId());
 							accelerationModel.setDate(genericMetaDataModel
 									.getDate());
 							models.add(accelerationModel);
@@ -339,27 +275,27 @@ public class DeviceListener {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println(e.getStackTrace());
+			log.error(e.getMessage() + " " + e.getStackTrace() + "Great gooogelymooogley");
 		}
 		return models;
 	}
 
 	private static boolean validateXMLSchema(String xsdPath, Document xml) {
-
 		try {
 			SchemaFactory factory = SchemaFactory
 					.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			Schema schema = factory.newSchema(new File(xsdPath));
 			Validator validator = schema.newValidator();
-			validator.validate(new StreamSource(xml.toString()));
+			validator.validate(new StreamSource(new StringBufferInputStream(RestController
+					.getStringFromDocument(xml))));
 		} catch (IOException e) {
-			System.out.println("Exception: " + e.getMessage()); // TODO, Log
-																// errors
+			log.error("Exception: " + e.getMessage()); // TODO, Log
 			return false;
 		} catch (SAXException e) {
-			System.out.println("Exception: " + e.getMessage());
+			log.error("\n\nB_UhU:\nException: " + e.getMessage());
 			return false;
 		}
 		return true;
 	}
+
 }

@@ -37,9 +37,6 @@ public class Application {
 		log.info("Logger started");
 		new Thread(new ImJustRunning("valid1.xml")).start();
 		new Thread(new ImJustRunning("valid1.xml")).start();
-		// hardcoded schema path
-		DeviceListener.schemaPath = System.getProperty("user.dir")
-				+ "/src/main/resources/testXML/schema.xsd";
 
 		SpringApplication.run(Application.class, args);
 	}

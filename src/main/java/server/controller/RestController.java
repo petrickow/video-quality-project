@@ -9,6 +9,8 @@ import javassist.convert.Transformer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -25,24 +27,17 @@ import server.service.DeviceListener;
 // not sure why I can't import
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
-	DeviceListener dl;
+
 	@RequestMapping(value = "/xml", method = RequestMethod.POST)
 	public String postXml(@RequestBody String xml) {
-
-		System.out.println(xml); // TODO remove
-		// pass the xml to the deviceListener
-		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
-		String receivedBackXML = "";
 		try {
 			builder = factory.newDocumentBuilder();
 			InputSource insrc = new InputSource(new StringReader(xml));
 			Document document = builder.parse(insrc);
-			//String xmlString = document.toString();
-			System.out.println(getStringFromDocument(document));
-			//receivedBackXML = dl.generateJsonListString(dl.convertXmlToModel(xmlString));
 			
+			DeviceListener.restReceivedMetaData(document);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -51,19 +46,30 @@ public class RestController {
 			e.printStackTrace();
 		}
 		
-		return receivedBackXML; // return an xml,
+		return xml; // return an xml,
 														// indicating the xml
 														// has been accepted
 		// and the id if not already registered
 	}
 	
-	public static String getStringFromDocument(Document doc) throws TransformerException {
+	public static String getStringFromDocument(Document doc) {
 	    DOMSource domSource = new DOMSource(doc);
 	    StringWriter writer = new StringWriter();
 	    StreamResult result = new StreamResult(writer);
 	    TransformerFactory tf = TransformerFactory.newInstance();
-	    javax.xml.transform.Transformer transformer = tf.newTransformer();
-	    transformer.transform(domSource, result);
+
+		try {
+		    javax.xml.transform.Transformer transformer;
+			transformer = tf.newTransformer();
+			transformer.transform(domSource, result);
+
+		} catch (TransformerConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    return writer.toString();
 	}
 }
