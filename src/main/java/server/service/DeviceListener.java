@@ -3,6 +3,8 @@ package server.service;
 import server.Application;
 import server.model.*;
 
+import org.w3c.dom.Document;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,6 +22,8 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Validator;
 import javax.xml.XMLConstants;
@@ -43,7 +47,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class DeviceListener {
 
 	// Note to self: schemapath, device-list with id, logger
-	String schemaPath;
+	public static String schemaPath;
 	String id;
 	private static Logger log;
 	ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>> deviceMapping;
@@ -60,6 +64,7 @@ public class DeviceListener {
 
 		this.deviceMapping = new ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>>();
 		this.schemaPath = xmsPath;
+		Document xml;
 		this.id = id; // for testing
 	}
 
@@ -72,7 +77,51 @@ public class DeviceListener {
 	 * @throws FileNotFoundException
 	 *             this will not be an issue when we read data from device
 	 */
-	public void test_receivedMetaData(String xmlPath)
+	public void restReceivedMetaData(Document xml) {
+
+		if (validateXMLSchema(schemaPath, xml)) {
+
+			ArrayList<GenericMetaDataModel> messages = new ArrayList<GenericMetaDataModel>(); // TODO
+
+			try {
+
+				messages = convertXmlToModel(xml);
+			} catch (Exception e) {
+				log.error("Could not convert xml to model");
+				e.printStackTrace();
+			}
+
+			// temporary solution
+			for (GenericMetaDataModel message : messages) {
+
+				if (!isStopMessage(message)) {
+					storeMessage(message);
+				} else {
+					deviceMapping.remove(message.getId());
+					// inform frontend or just pass the message along, they'll
+					// knwo
+					// what to do?
+				}
+			}
+			// Collect all json object in a list
+			UpdaterService.update(new TextMessage(
+					generateJsonListString(messages)));
+
+		} else {
+			log.error("Everything is ruined, xml not valid");
+		}
+	}
+
+	/***
+	 * This exicst for testing purposes
+	 * 
+	 * @param xmlPath
+	 *            absolute path to xml you want to broadcast (as if it were sent
+	 *            from device)
+	 * @throws FileNotFoundException
+	 *             this will not be an issue when we read data from device
+	 */
+/*	public void test_receivedMetaData(String xmlPath)
 			throws FileNotFoundException {
 
 		if (validateXMLSchema(schemaPath, xmlPath)) {
@@ -93,17 +142,20 @@ public class DeviceListener {
 				if (!isStopMessage(message)) {
 					storeMessage(message);
 				} else {
-					// TODO remove device from map and inform frontend of
-					// removed device id
+					deviceMapping.remove(message.getId());
+					// inform frontend or just pass the message along, they'll
+					// knwo
+					// what to do?
 				}
 			}
-			// Collect all json object in a list 
-			UpdaterService.update(new TextMessage(generateJsonListString(messages)));
-			
+			// Collect all json object in a list
+			UpdaterService.update(new TextMessage(
+					generateJsonListString(messages)));
+
 		} else {
 			log.error("Everything is ruined, xml not valid");
 		}
-	}
+	}*/
 
 	/**
 	 * Stores messages received from devices for historical data. Is removed
@@ -123,12 +175,15 @@ public class DeviceListener {
 	}
 
 	/**
-	 * Collect all json objects from one logfile into a list of json objects
-	 * as a string in order to send to webclients
-	 * @param messages A list of meta data models
+	 * Collect all json objects from one logfile into a list of json objects as
+	 * a string in order to send to webclients
+	 * 
+	 * @param messages
+	 *            A list of meta data models
 	 * @return the models mapped as json values
 	 */
-	private String generateJsonListString(ArrayList<GenericMetaDataModel> messages) {
+	private String generateJsonListString(
+			ArrayList<GenericMetaDataModel> messages) {
 
 		ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
 		String jsonString = "";
@@ -168,7 +223,7 @@ public class DeviceListener {
 	 * @return Model of data
 	 */
 	@SuppressWarnings("unchecked")
-	private ArrayList<GenericMetaDataModel> convertXmlToModel(String xmlPath)
+	private ArrayList<GenericMetaDataModel> convertXmlToModel(Document xml)
 			throws Exception {
 
 		ArrayList<GenericMetaDataModel> models = new ArrayList<GenericMetaDataModel>();
@@ -183,8 +238,8 @@ public class DeviceListener {
 			// First, create a new XMLInputFactory
 			XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 			// Setup a new eventReader
-			InputStream in = new FileInputStream(xmlPath);
-			XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
+			XMLEventReader eventReader = inputFactory
+					.createXMLEventReader(new DOMSource(xml));
 			// read the XML document
 			// genericMetaDataModel = new GenericMetaDataModel();
 			XMLEvent event;
@@ -289,14 +344,14 @@ public class DeviceListener {
 		return models;
 	}
 
-	private static boolean validateXMLSchema(String xsdPath, String xmlPath) {
+	private static boolean validateXMLSchema(String xsdPath, Document xml) {
 
 		try {
 			SchemaFactory factory = SchemaFactory
 					.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			Schema schema = factory.newSchema(new File(xsdPath));
 			Validator validator = schema.newValidator();
-			validator.validate(new StreamSource(new File(xmlPath)));
+			validator.validate(new StreamSource(xml.toString()));
 		} catch (IOException e) {
 			System.out.println("Exception: " + e.getMessage()); // TODO, Log
 																// errors
