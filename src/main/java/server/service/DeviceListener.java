@@ -1,5 +1,6 @@
 package server.service;
 
+import server.Application;
 import server.model.*;
 
 import java.io.File;
@@ -29,6 +30,12 @@ import org.springframework.web.socket.TextMessage;
 import org.xml.sax.SAXException;
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /***
  * Handles incoming meta data from devices recording by validating XML and
  * passes the information to the UpdaterService
@@ -39,7 +46,7 @@ public class DeviceListener {
 	String schemaPath;
 	String id;
 	private static Logger log;
-	ConcurrentHashMap<String, GenericMetaDataModel> deviceIdMapping;
+	ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>> deviceMapping;
 
 	/***
 	 * When receiving a xml from device, the xml is converted to apropriate
@@ -49,6 +56,9 @@ public class DeviceListener {
 	 *            is t he path to schema used for validation
 	 */
 	public DeviceListener(String xmsPath, String id) {
+		log = Logger.getLogger(DeviceListener.class);
+
+		this.deviceMapping = new ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>>();
 		this.schemaPath = xmsPath;
 		this.id = id; // for testing
 	}
@@ -66,24 +76,90 @@ public class DeviceListener {
 			throws FileNotFoundException {
 
 		if (validateXMLSchema(schemaPath, xmlPath)) {
-			// parse xml to suitable format for update
+
 			ArrayList<GenericMetaDataModel> messages = new ArrayList<GenericMetaDataModel>(); // TODO
-			
+
 			try {
+
 				messages = convertXmlToModel(xmlPath);
 			} catch (Exception e) {
+				log.error("Could not convert xml to model");
+				e.printStackTrace();
+			}
+
+			// temporary solution
+			for (GenericMetaDataModel message : messages) {
+
+				if (!isStopMessage(message)) {
+					storeMessage(message);
+				} else {
+					// TODO remove device from map and inform frontend of
+					// removed device id
+				}
+			}
+			// Collect all json object in a list 
+			UpdaterService.update(new TextMessage(generateJsonListString(messages)));
+			
+		} else {
+			log.error("Everything is ruined, xml not valid");
+		}
+	}
+
+	/**
+	 * Stores messages received from devices for historical data. Is removed
+	 * when device disconnects
+	 * 
+	 * @param message
+	 *            - generic metadata model to be stored
+	 */
+	private void storeMessage(GenericMetaDataModel message) {
+		if (deviceMapping.contains(message.getId())) {
+			deviceMapping.get(message.getId()).add(message);
+		} else {
+			ArrayList<GenericMetaDataModel> deviceMessages = new ArrayList<GenericMetaDataModel>();
+			deviceMessages.add(message);
+			deviceMapping.put(message.getId(), deviceMessages);
+		}
+	}
+
+	/**
+	 * Collect all json objects from one logfile into a list of json objects
+	 * as a string in order to send to webclients
+	 * @param messages A list of meta data models
+	 * @return the models mapped as json values
+	 */
+	private String generateJsonListString(ArrayList<GenericMetaDataModel> messages) {
+
+		ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
+		String jsonString = "";
+		if (messages.size() > 0) {
+			try {
+				jsonString = mapper.writeValueAsString(messages);
+			} catch (JsonGenerationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			for (GenericMetaDataModel message : messages) {
-				// Encapsulate in on json-string instead of sending separately
-				UpdaterService.update(new TextMessage(message
-						.convertToJSONString()));
-			}
-		} else {
-			// inform device that they fcked up in regards to schema
-			log.error("Everything is ruined, xml not valid");
 		}
+
+		return jsonString;
+	}
+
+	/**
+	 * Checks if received message is a stop message from device
+	 * 
+	 * @param message
+	 *            - the message in question
+	 * @return false if not a stop message
+	 */
+	private boolean isStopMessage(GenericMetaDataModel message) {
+		// TODO
+		return false;
 	}
 
 	/***

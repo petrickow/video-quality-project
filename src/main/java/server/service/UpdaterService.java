@@ -18,7 +18,6 @@ import org.springframework.web.socket.WebSocketSession;
 public class UpdaterService {
 	private static Logger log = Logger.getLogger(UpdaterService.class.getName());
 
-
 	// better aproach? Easier to look up if the session is stored
 	static ConcurrentHashMap<String, WebSocketSession> clients = new ConcurrentHashMap<String, WebSocketSession>();
 
