@@ -37,9 +37,10 @@ public class DeviceListener {
 
 	// Note to self: schemapath, device-list with id, logger
 	String schemaPath;
-	UUID id;
+	String id;
 	private static Logger log;
-	ConcurrentHashMap<UUID, String> deviceIdMapping;
+	ConcurrentHashMap<String, GenericMetaDataModel> deviceIdMapping;
+
 	/***
 	 * When receiving a xml from device, the xml is converted to apropriate
 	 * format and broadcasted to web clients using UpdaterService class
@@ -47,9 +48,9 @@ public class DeviceListener {
 	 * @param xmsPath
 	 *            is t he path to schema used for validation
 	 */
-	public DeviceListener(String xmsPath, UUID id) {
+	public DeviceListener(String xmsPath, String id) {
 		this.schemaPath = xmsPath;
-		this.id = id; //for testing
+		this.id = id; // for testing
 	}
 
 	/***
@@ -67,9 +68,7 @@ public class DeviceListener {
 		if (validateXMLSchema(schemaPath, xmlPath)) {
 			// parse xml to suitable format for update
 			ArrayList<GenericMetaDataModel> messages = new ArrayList<GenericMetaDataModel>(); // TODO
-																		// not
-																		// like
-																		// this
+			
 			try {
 				messages = convertXmlToModel(xmlPath);
 			} catch (Exception e) {
@@ -77,8 +76,9 @@ public class DeviceListener {
 				e.printStackTrace();
 			}
 			for (GenericMetaDataModel message : messages) {
-			UpdaterService
-					.update(new TextMessage(message.convertToJSONString()));
+				// Encapsulate in on json-string instead of sending separately
+				UpdaterService.update(new TextMessage(message
+						.convertToJSONString()));
 			}
 		} else {
 			// inform device that they fcked up in regards to schema
@@ -94,14 +94,14 @@ public class DeviceListener {
 	@SuppressWarnings("unchecked")
 	private ArrayList<GenericMetaDataModel> convertXmlToModel(String xmlPath)
 			throws Exception {
-		
+
 		ArrayList<GenericMetaDataModel> models = new ArrayList<GenericMetaDataModel>();
 		GenericMetaDataModel genericMetaDataModel = new GenericMetaDataModel();
 		LocationModel locationModel = new LocationModel();
 		RotationModel rotationModel = new RotationModel();
 		AccelerationModel accelerationModel = new AccelerationModel();
 		String name = "";
-		
+
 		try {
 
 			// First, create a new XMLInputFactory
@@ -138,24 +138,24 @@ public class DeviceListener {
 						if ("Acceleration".equals(name)) {
 							accelerationModel.setName(name);
 						}
-						//TODO acceleration and fault handling 
+						// TODO acceleration and fault handling
 						continue;
 					}
 
 					if (startElement.getName().getLocalPart().equals("entry")) {
-						
+
 						event = eventReader.nextEvent();
-						
+
 						Iterator<Attribute> attributes = startElement
 								.getAttributes();
 						Attribute attribute = attributes.next();
-						
+
 						if ("speed".equals(attribute.getValue()))
 							locationModel.setSpeed(Float.parseFloat(event
 									.toString()));
 						if ("force".equals(attribute.getValue()))
 							accelerationModel.setForce(Float.parseFloat(event
-								.toString()));
+									.toString()));
 						if ("altitude".equals(attribute.getValue()))
 							locationModel.setAltitude(Float.parseFloat(event
 									.toString()));
@@ -179,7 +179,7 @@ public class DeviceListener {
 						if ("roll".equals(attribute.getValue()))
 							rotationModel.setRoll(Float.parseFloat(event
 									.toString()));
-						
+
 						continue;
 					}
 				}
@@ -190,20 +190,23 @@ public class DeviceListener {
 					if (endElement.getName().getLocalPart() == ("logItem")) {
 						if ("Location".equals(name)) {
 							locationModel.setId(this.id.toString());
-							locationModel.setDate(genericMetaDataModel.getDate());
+							locationModel.setDate(genericMetaDataModel
+									.getDate());
 							models.add(locationModel);
 						} else if ("Rotation".equals(name)) {
 							rotationModel.setId(this.id.toString());
-							rotationModel.setDate(genericMetaDataModel.getDate());
+							rotationModel.setDate(genericMetaDataModel
+									.getDate());
 							models.add(rotationModel);
 						} else if ("Acceleration".equals(name)) {
 							accelerationModel.setId(this.id.toString());
-							accelerationModel.setDate(genericMetaDataModel.getDate());
+							accelerationModel.setDate(genericMetaDataModel
+									.getDate());
 							models.add(accelerationModel);
 						}
 					}
 				}
-			} 
+			}
 		} catch (Exception e) {
 			System.out.println(e.getStackTrace());
 		}

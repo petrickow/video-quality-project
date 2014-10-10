@@ -61,7 +61,7 @@ class ImJustRunning implements Runnable {
 		
 		holdFor(5);
 											// 	ugly-bugly but only for testing
-		DeviceListener deviceListener = new DeviceListener(System.getProperty("user.dir") + "/src/main/resources/testXML/schema.xsd", UUID.randomUUID());
+		DeviceListener deviceListener = new DeviceListener(System.getProperty("user.dir") + "/src/main/resources/testXML/schema.xsd", UUID.randomUUID().toString());
 		
 		// keep received xml every two seconds
 		while (true) {  
