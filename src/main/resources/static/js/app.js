@@ -1,67 +1,57 @@
 var app = angular.module('video-quality-manager', [ 'ngMap' ]);
 
-app.factory('Socket', [ '$rootScope', function($rootScope) {
+app.factory('Socket', [ '$rootScope', function ($rootScope) {
 	"use strict";
 	var maxCachedItems = 1000;
 	var Service = {};
 	Service.stream = {};
 	var ws_url = "ws://localhost:8080/subscribeToMetadata";
 	var ws = new WebSocket(ws_url);
-	var parser = new DOMParser();
 	var data, input = "";
-	ws.onopen = function() {
+	ws.onopen = function () {
 		// Web Socket is connected, send data using send()
 		ws.send("register me!");
 		console.log("connection request sent...");
 	};
-	ws.onmessage = function(event) {
+	ws.onmessage = function (event) {
 		
-		var recvJson = JSON.parse(event.data);
-		if (recvJson.response == "accepted") {
+		var recvJson = angular.fromJson(event.data);
+		if (recvJson.response === "accepted") {
 			console.log("Historical data will be inserted in this json object");
 			// make call to appropriate function
-			return;
-		}
-		else {
-			console.log(recvJson);
-		}
-/*		$rootScope.$apply(function() {
-			try {
-				input = parser.parseFromString(event.data, "text/xml");
-				data = input.getElementsByTagName('rtept')[0];
+		} else {
+            $rootScope.$apply(function () {
+                
+                if (typeof Service.stream[recvJson[0].id] === "undefined") {
+                    Service.stream[recvJson[0].id] = {};
+                }
 
-				var message = {};
-				message.id = data.getAttribute('id');
-				console.log(message.id);
-				message.lat = data.getAttribute('lat');
-				message.lon = data.getAttribute('lon');
-				message.speed = data.getAttribute('speed');
-				message.acc = data.getAttribute('acc');
+                for (var i in recvJson){
+                    var item = recvJson[i];
+                    console.log(item);
+                    if (typeof Service.stream[item.id][item["name"]] === "undefined") {
+                        Service.stream[item.id][item.name] = {};
+                        Service.stream[item.id][item.name].data = [];
+                        Service.stream[item.id][item.name].index = 0;
+                    }
+                
 
-				if (typeof Service.stream[message.id] == "undefined") {
-					Service.stream[message.id] = {};
-					Service.stream[message.id].data = [];
-					Service.stream[message.id].index = 0;
-				}
+                    var currentStream;
 
-				var currentStream = Service.stream[message.id];
+                    currentStream = Service.stream[item.id][item.name];
 
-				// prevents from running out of memory
-				if (currentStream.index > maxCachedItems) {
-					currentStream.index = 0;
-				}
-				currentStream.data[currentStream.index++] = message;
-				console.log(event);
-				console.log(currentStream.data[0]);
-				console.log(currentStream.index);
-				// TODO enable TypeCheck
-			} catch (e) {
-				// } catch (e if e instanceof TypeError){
-				console.log("Waiting for data...");
-			}
-		});
-*/
-	};
+                    //prevents from running out of memory
+                    if (currentStream.index > maxCachedItems) {
+                        currentStream.index = 0;
+                    }
+
+                    currentStream.data[currentStream.index++] = item;
+
+                    }
+            });       
+        }
+
+    };
 	ws.onclose = function() {
 		// websocket is closed.
 		console.log("Connection is closed...");

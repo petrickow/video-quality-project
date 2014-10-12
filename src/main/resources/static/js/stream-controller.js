@@ -18,7 +18,8 @@ app.controller('StreamController', [
         this.getLatitude = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var currentValue = currentStream.location.data[currentStream.index - 1];
+                var parameter = currentStream.Location;
+                var currentValue = parameter.data[parameter.index - 1];
                 this.latitude = currentValue.latitude;
             } catch (e) {
             }
@@ -28,7 +29,8 @@ app.controller('StreamController', [
         this.getLongitude = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var currentValue = currentStream.location.data[currentStream.index - 1];
+                var parameter = currentStream.Location;
+                var currentValue = parameter.data[parameter.index - 1];
                 this.longitude = currentValue.longitude;
             } catch (e) {
             }
@@ -38,7 +40,8 @@ app.controller('StreamController', [
         this.getSpeed = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var currentValue = currentStream.location.data[currentStream.index - 1];
+                var parameter = currentStream.Location;
+                var currentValue = parameter.data[parameter.index - 1];
                 this.speed = currentValue.speed;
             } catch (e) {
             }
@@ -48,7 +51,8 @@ app.controller('StreamController', [
         this.getAccuracy = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var currentValue = currentStream.location.data[currentStream.index - 1];
+                var parameter = currentStream.Location;
+                var currentValue = parameter.data[parameter.index - 1];
                 this.accuracy = currentValue.accuracy;
             } catch (e) {
             }
@@ -58,7 +62,8 @@ app.controller('StreamController', [
         this.getAltitude = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var currentValue = currentStream.location.data[currentStream.index - 1];
+                var parameter = currentStream.Location;
+                var currentValue = parameter.data[parameter.index - 1];
                 this.altitude = currentValue.altitude;
             } catch (e) {
             }
