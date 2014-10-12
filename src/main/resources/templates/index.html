@@ -46,7 +46,6 @@
                             <td>Quality</td>
                             <td>Video</td>
                             <td>Video Data</td>
-                            <td>Audio Data</td>
                             <td>Graph</td>
                         </tr>
                     </thead>
@@ -60,8 +59,11 @@
                                 Speed: {{ stream.getSpeed(id) }} <br />
                                 Accuracy: {{ stream.getAccuracy(id) }} <br />
                                 Altitude: {{ stream.getAltitude(id) }} <br />
+                                Acceleration Force: {{ stream.getForce(id) }} <br />
+                                Azimuth: {{ stream.getAzimuth(id) }} <br />
+                                Pitch: {{ stream.getPitch(id) }} <br />
+                                Roll: {{ stream.getRoll(id) }} <br />
                             </td>
-                            <td>Volume: 666%</td>
                             <td>___/^\_/\/\_</td>
                         </tr>
                     </tbody>

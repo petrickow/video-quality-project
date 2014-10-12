@@ -69,4 +69,48 @@ app.controller('StreamController', [
             }
             return this.accuracy;
         };
+        
+        this.getForce = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Acceleration;
+                var currentValue = parameter.data[parameter.index - 1];
+                this.force = currentValue.force;
+            } catch (e) {
+            }
+            return this.force;
+        };
+        
+        this.getAzimuth = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Rotation;
+                var currentValue = parameter.data[parameter.index - 1];
+                this.azimuth = currentValue.azimuth;
+            } catch (e) {
+            }
+            return this.azimuth;
+        };
+        
+        this.getPitch = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Rotation;
+                var currentValue = parameter.data[parameter.index - 1];
+                this.pitch = currentValue.pitch;
+            } catch (e) {
+            }
+            return this.pitch;
+        };
+        
+        this.getRoll = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Rotation;
+                var currentValue = parameter.data[parameter.index - 1];
+                this.roll = currentValue.roll;
+            } catch (e) {
+            }
+            return this.roll;
+        };
     }]);
