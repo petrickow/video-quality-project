@@ -1,9 +1,5 @@
 package server;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,14 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.log4j.Logger;
-
-import java.util.UUID;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
-
-import server.service.DeviceListener;
 
 @ComponentScan
 @EnableAutoConfiguration
@@ -36,7 +27,7 @@ public class Application {
 		log = Logger.getLogger(Logger.class);
 		log.info("Logger started");
 		new Thread(new ImJustRunning("valid1.xml")).start();
-		new Thread(new ImJustRunning("valid1.xml")).start();
+		new Thread(new ImJustRunning("valid2.xml")).start();
 
 		SpringApplication.run(Application.class, args);
 	}
@@ -51,14 +42,13 @@ class ImJustRunning implements Runnable {
 	private static Logger log;
 	byte[] data;
 
-	
 	public ImJustRunning(String xml) {
 		log = Logger.getLogger(Logger.class);
-		
+
 		Path path = Paths.get(System.getProperty("user.dir")
 				+ "/src/main/resources/testXML/" + xml);
 		try {
-			data = Files.readAllBytes(path);
+			this.data = Files.readAllBytes(path);
 		} catch (IOException e) {
 			log.error("Could not find xml file " + path);
 		}
@@ -89,7 +79,7 @@ class ImJustRunning implements Runnable {
 				urlConnection.connect();
 				final OutputStream outputStream = urlConnection
 						.getOutputStream();
-				outputStream.write(data);
+				outputStream.write(this.data);
 				outputStream.flush();
 				final InputStream inputStream = urlConnection.getInputStream();
 			} catch (Exception e) {

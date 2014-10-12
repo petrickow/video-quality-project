@@ -8,6 +8,13 @@ app.controller('StreamController', [
         this.speed = "No data received!";
         this.accuracy = "No data received!";
         this.altitude = "No data received!";
+        this.force = "No data received!";
+        this.azimuth = "No data received!";
+        this.pitch = "No data received!";
+        this.roll = "No data received!";
+        this.averageAzimuth = "No data received!";
+        this.averagePitch = "No data received!";
+        this.averageRoll = "No data received!";
         this.ids = [];
         
         this.getStreams = function () {
@@ -19,7 +26,10 @@ app.controller('StreamController', [
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
-                var currentValue = parameter.data[parameter.index - 1];
+                if (parameter.index != 0)
+                    var currentValue = parameter.data[parameter.index - 1];
+                else
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
                 this.latitude = currentValue.latitude;
             } catch (e) {
             }
@@ -30,7 +40,10 @@ app.controller('StreamController', [
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
-                var currentValue = parameter.data[parameter.index - 1];
+                if (parameter.index != 0)
+                    var currentValue = parameter.data[parameter.index - 1];
+                else
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
                 this.longitude = currentValue.longitude;
             } catch (e) {
             }
@@ -41,7 +54,10 @@ app.controller('StreamController', [
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
-                var currentValue = parameter.data[parameter.index - 1];
+                if (parameter.index != 0)
+                    var currentValue = parameter.data[parameter.index - 1];
+                else
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
                 this.speed = currentValue.speed;
             } catch (e) {
             }
@@ -52,7 +68,10 @@ app.controller('StreamController', [
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
-                var currentValue = parameter.data[parameter.index - 1];
+                if (parameter.index != 0)
+                    var currentValue = parameter.data[parameter.index - 1];
+                else
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
                 this.accuracy = currentValue.accuracy;
             } catch (e) {
             }
@@ -63,7 +82,10 @@ app.controller('StreamController', [
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
-                var currentValue = parameter.data[parameter.index - 1];
+                if (parameter.index != 0)
+                    var currentValue = parameter.data[parameter.index - 1];
+                else
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
                 this.altitude = currentValue.altitude;
             } catch (e) {
             }
@@ -74,7 +96,10 @@ app.controller('StreamController', [
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Acceleration;
-                var currentValue = parameter.data[parameter.index - 1];
+                if (parameter.index != 0)
+                    var currentValue = parameter.data[parameter.index - 1];
+                else
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
                 this.force = currentValue.force;
             } catch (e) {
             }
@@ -85,7 +110,10 @@ app.controller('StreamController', [
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
-                var currentValue = parameter.data[parameter.index - 1];
+                if (parameter.index != 0)
+                    var currentValue = parameter.data[parameter.index - 1];
+                else
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
                 this.azimuth = currentValue.azimuth;
             } catch (e) {
             }
@@ -96,7 +124,10 @@ app.controller('StreamController', [
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
-                var currentValue = parameter.data[parameter.index - 1];
+                if (parameter.index != 0)
+                    var currentValue = parameter.data[parameter.index - 1];
+                else
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
                 this.pitch = currentValue.pitch;
             } catch (e) {
             }
@@ -107,10 +138,56 @@ app.controller('StreamController', [
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
-                var currentValue = parameter.data[parameter.index - 1];
+                if (parameter.index != 0)
+                    var currentValue = parameter.data[parameter.index - 1];
+                else
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
                 this.roll = currentValue.roll;
             } catch (e) {
             }
             return this.roll;
+        };
+        
+        // TODO Calculate all Values at once to improve performance
+        this.getAverageAzimuth = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Rotation;
+                var sum = 0.0;
+                for (var i = 0; i < parameter.data.length - 1; i++){
+                    sum += parseFloat(parameter.data[i].azimuth);
+                }
+                this.averageAzimuth = sum / parameter.data.length;
+            } catch (e) {
+            }
+            return this.averageAzimuth;
+        };
+        
+        this.getAveragePitch = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Rotation;
+                var sum = 0.0;
+                for (var i = 0; i < parameter.data.length - 1; i++){
+                    sum += parseFloat(parameter.data[i].pitch);
+                }
+                this.averagePitch = sum / parameter.data.length;
+            } catch (e) {
+            }
+            return this.averagePitch;
+        };
+        
+        this.getAverageRoll = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Rotation;
+                var sum = 0.0;
+                for(var i = 0; i < parameter.data.length - 1; i++){
+                    sum += parseFloat(parameter.data[i].roll);
+                }
+                this.averageRoll = sum / parameter.data.length;
+            } catch (e) {
+            }
+            return this.averageRoll;
         };
     }]);

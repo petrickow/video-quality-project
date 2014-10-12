@@ -36,6 +36,7 @@
           <div id="video-section" class="jumbotron pull-left">           
             <section class="video-streams-pane" data-ng-controller="StreamController as stream">
                 <section class="sort-selections">
+                    
                 </section>
                 <section class="filter-selections">
                 </section>
@@ -54,15 +55,19 @@
                             <td>50%</td>
                             <td>Video {{ id }}</td>
                             <td>
+                                <b>Rotation: (Average)</b><br />
+                                Azimuth: {{ stream.getAzimuth(id) }} ({{ stream.getAverageAzimuth(id) }}) <br />
+                                Pitch: {{ stream.getPitch(id) }} ({{ stream.getAveragePitch(id) }}) <br />
+                                Roll: {{ stream.getRoll(id) }} ({{ stream.getAverageRoll(id) }}) <br />
+                                <b>Location:</b><br />
                                 Latitude: {{ stream.getLatitude(id) }} <br />
                                 Longitude: {{ stream.getLongitude(id) }} <br />
+                                Altitude: {{ stream.getAltitude(id) }} <br />
                                 Speed: {{ stream.getSpeed(id) }} <br />
                                 Accuracy: {{ stream.getAccuracy(id) }} <br />
-                                Altitude: {{ stream.getAltitude(id) }} <br />
-                                Acceleration Force: {{ stream.getForce(id) }} <br />
-                                Azimuth: {{ stream.getAzimuth(id) }} <br />
-                                Pitch: {{ stream.getPitch(id) }} <br />
-                                Roll: {{ stream.getRoll(id) }} <br />
+                                <b>Acceleration:</b><br />
+                                Force: {{ stream.getForce(id) }} <br />
+                                
                             </td>
                             <td>___/^\_/\/\_</td>
                         </tr>

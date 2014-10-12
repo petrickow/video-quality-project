@@ -2,9 +2,9 @@ var app = angular.module('video-quality-manager', [ 'ngMap' ]);
 
 app.factory('Socket', [ '$rootScope', function ($rootScope) {
 	"use strict";
-	var maxCachedItems = 1000;
 	var Service = {};
 	Service.stream = {};
+    Service.maxCachedItems = 1000;
 	var ws_url = "ws://localhost:8080/subscribeToMetadata";
 	var ws = new WebSocket(ws_url);
 	var data, input = "";
@@ -28,7 +28,7 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
 
                 for (var i in recvJson){
                     var item = recvJson[i];
-                    console.log(item);
+                    // console.log(item);
                     if (typeof Service.stream[item.id][item["name"]] === "undefined") {
                         Service.stream[item.id][item.name] = {};
                         Service.stream[item.id][item.name].data = [];
@@ -41,7 +41,7 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
                     currentStream = Service.stream[item.id][item.name];
 
                     //prevents from running out of memory
-                    if (currentStream.index > maxCachedItems) {
+                    if (currentStream.index > Service.maxCachedItems) {
                         currentStream.index = 0;
                     }
 
