@@ -29,7 +29,7 @@ app.controller('StreamController', [
                 if (parameter.index != 0)
                     var currentValue = parameter.data[parameter.index - 1];
                 else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
                 this.latitude = currentValue.latitude;
             } catch (e) {
             }
@@ -43,7 +43,7 @@ app.controller('StreamController', [
                 if (parameter.index != 0)
                     var currentValue = parameter.data[parameter.index - 1];
                 else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
                 this.longitude = currentValue.longitude;
             } catch (e) {
             }
@@ -57,7 +57,7 @@ app.controller('StreamController', [
                 if (parameter.index != 0)
                     var currentValue = parameter.data[parameter.index - 1];
                 else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
                 this.speed = currentValue.speed;
             } catch (e) {
             }
@@ -71,7 +71,7 @@ app.controller('StreamController', [
                 if (parameter.index != 0)
                     var currentValue = parameter.data[parameter.index - 1];
                 else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
                 this.accuracy = currentValue.accuracy;
             } catch (e) {
             }
@@ -85,7 +85,7 @@ app.controller('StreamController', [
                 if (parameter.index != 0)
                     var currentValue = parameter.data[parameter.index - 1];
                 else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
                 this.altitude = currentValue.altitude;
             } catch (e) {
             }
@@ -99,7 +99,7 @@ app.controller('StreamController', [
                 if (parameter.index != 0)
                     var currentValue = parameter.data[parameter.index - 1];
                 else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
                 this.force = currentValue.force;
             } catch (e) {
             }
@@ -113,7 +113,7 @@ app.controller('StreamController', [
                 if (parameter.index != 0)
                     var currentValue = parameter.data[parameter.index - 1];
                 else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
                 this.azimuth = currentValue.azimuth;
             } catch (e) {
             }
@@ -127,7 +127,7 @@ app.controller('StreamController', [
                 if (parameter.index != 0)
                     var currentValue = parameter.data[parameter.index - 1];
                 else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
                 this.pitch = currentValue.pitch;
             } catch (e) {
             }
@@ -141,7 +141,7 @@ app.controller('StreamController', [
                 if (parameter.index != 0)
                     var currentValue = parameter.data[parameter.index - 1];
                 else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1]
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
                 this.roll = currentValue.roll;
             } catch (e) {
             }
