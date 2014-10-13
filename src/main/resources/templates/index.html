@@ -33,57 +33,60 @@
             </ul>
           </section>
 
-          <div id="video-section" class="jumbotron pull-left">           
-            <section class="video-streams-pane" data-ng-controller="StreamController as stream">
-                <section class="sort-selections">
-                    
-                </section>
-                <section class="filter-selections">
-                </section>
-                
-                <table class="video-streams-table table">
-                    <thead>
-                        <tr>
-                            <td>Quality</td>
-                            <td>Video</td>
-                            <td>Video Data</td>
-                            <td>Graph</td>
-                        </tr>
-                    </thead>
-                    <tbody data-ng-repeat="id in stream.getStreams()">
-                        <tr>
-                            <td>50%</td>
-                            <td>Video {{ id }}</td>
-                            <td>
-                                <b>Rotation: (Average)</b><br />
-                                Azimuth: {{ stream.getAzimuth(id) }} ({{ stream.getAverageAzimuth(id) }}) <br />
-                                Pitch: {{ stream.getPitch(id) }} ({{ stream.getAveragePitch(id) }}) <br />
-                                Roll: {{ stream.getRoll(id) }} ({{ stream.getAverageRoll(id) }}) <br />
-                                <b>Location:</b><br />
-                                Latitude: {{ stream.getLatitude(id) }} <br />
-                                Longitude: {{ stream.getLongitude(id) }} <br />
-                                Altitude: {{ stream.getAltitude(id) }} <br />
-                                Speed: {{ stream.getSpeed(id) }} <br />
-                                Accuracy: {{ stream.getAccuracy(id) }} <br />
-                                <b>Acceleration:</b><br />
-                                Force: {{ stream.getForce(id) }} <br />
-                                
-                            </td>
-                            <td>___/^\_/\/\_</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div id="video-section" class="jumbotron pull-left">           
+        <section class="video-streams-pane" data-ng-controller="StreamController as stream">
+            <section class="sort-selections">
+
             </section>
-            <section class="history">
+            <section class="filter-selections">
             </section>
-          </div>
-      </section>
-    <section class="map" data-ng-controller="mapController">
-        <ui-gmap-google-map center="getCenter('1')" zoom="map.zoom"></ui-gmap-google-map>
+
+            <table class="video-streams-table table">
+                <thead>
+                    <tr>
+                        <td>Quality</td>
+                        <td>Video</td>
+                        <td>Video Data</td>
+                        <td>Graph</td>
+                    </tr>
+                </thead>
+                <tbody data-ng-repeat="id in stream.getStreams()">
+                    <tr>
+                        <td>50%</td>
+                        <td>Video {{ id }}</td>
+                        <td>
+                            <b>Rotation: (Average)</b><br />
+                            Azimuth: {{ stream.getAzimuth(id) }} ({{ stream.getAverageAzimuth(id) }}) <br />
+                            Pitch: {{ stream.getPitch(id) }} ({{ stream.getAveragePitch(id) }}) <br />
+                            Roll: {{ stream.getRoll(id) }} ({{ stream.getAverageRoll(id) }}) <br />
+                            <b>Location:</b><br />
+                            Latitude: {{ stream.getLatitude(id) }} <br />
+                            Longitude: {{ stream.getLongitude(id) }} <br />
+                            Altitude: {{ stream.getAltitude(id) }} <br />
+                            Speed: {{ stream.getSpeed(id) }} <br />
+                            Accuracy: {{ stream.getAccuracy(id) }} <br />
+                            <b>Acceleration:</b><br />
+                            Force: {{ stream.getForce(id) }} <br />
+
+                        </td>
+                        <td>___/^\_/\/\_</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="history">
+        </section>
+        </div>
+        <!--<div id="video-section" class="jumbotron pull-right">--> 
+            <section class="map" data-ng-controller="mapController">
+                <ui-gmap-google-map center="getCenter()" zoom="map.zoom" data-ng-repeat="id in getStreams()">
+                    <ui-gmap-marker idKey="getMarker(id).idKey" coords="getMarker(id).coords"></ui-gmap-marker>
+                </ui-gmap-google-map>
+            </section>
+        <!--</div>-->
+
+   <div class="stream-history"></div>
     </section>
-
-  <!--<div class="stream-history"></div>-->
-
 	<!--<settings></settings>-->
 	<footer class="footer">
 		Cato Danielsen, Artur Gareis, Maria Oltean, Michael Timpelan

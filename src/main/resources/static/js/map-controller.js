@@ -1,6 +1,7 @@
 app.controller('mapController', function($scope, Socket) {
     
-    $scope.ids = ["1"];
+    $scope.ids = [];
+    $scope.markers = [];
     
     $scope.getStreams = function () {
         $scope.ids = Object.keys(Socket.stream);
@@ -15,8 +16,7 @@ app.controller('mapController', function($scope, Socket) {
         zoom: 15
     };
     
-    $scope.getCenter = function (id) {
-        console.log("now");
+    $scope.getCenter = function () {
         var parameter;
         var currentValue;
         var sumLongitude = 0;
@@ -38,8 +38,28 @@ app.controller('mapController', function($scope, Socket) {
             if(centralLongitude < $scope.map.center.longitude + 1 || centralLongitude > $scope.map.center.longitude + 1)
                 $scope.map.center.longitude = currentValue.longitude;
         } catch (e) {
-            console.log("error" + e);
         }
         return $scope.map.center;
     };
+    
+    $scope.getMarker = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Location;
+                if (parameter.index != 0)
+                    var currentValue = parameter.data[parameter.index - 1];
+                else
+                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
+                if($scope.markers[id] === undefined){
+                    $scope.markers[id] = {};
+                    $scope.markers[id].coords = {};
+                }
+                $scope.markers[id].idKey = id;
+                $scope.markers[id].coords.latitude = currentValue.latitude;
+                $scope.markers[id].coords.longitude = currentValue.longitude;
+            } catch (e) {
+                console.log("error: " +e);
+            }
+            return $scope.markers[id];
+        };
 });

@@ -27,7 +27,7 @@ public class Application {
 		log = Logger.getLogger(Logger.class);
 		log.info("Logger started");
 		new Thread(new ImJustRunning("valid1.xml")).start();
-		new Thread(new ImJustRunning("valid2.xml")).start();
+		// new Thread(new ImJustRunning("valid2.xml")).start();
 
 		SpringApplication.run(Application.class, args);
 	}
