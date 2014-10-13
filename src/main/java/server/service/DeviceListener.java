@@ -60,32 +60,28 @@ public class DeviceListener {
 
 		if (validateXMLSchema(schemaPath, xml)) {
 
-			ArrayList<GenericMetaDataModel> messages = new ArrayList<GenericMetaDataModel>(); // TODO
+			ArrayList<GenericMetaDataModel> messages = new ArrayList<GenericMetaDataModel>();
 
 			try {
-
 				messages = convertXmlToModel(xml);
 			} catch (Exception e) {
 				log.error("Could not convert xml to model");
 				e.printStackTrace();
+				return;
 			}
 
-			// temporary solution
 			for (GenericMetaDataModel message : messages) {
 
-				if (!isStopMessage(message)) {
+				if (message.getLast()) {
 					storeMessage(message);
 				} else {
 					deviceMapping.remove(message.getId());
-					// inform frontend or just pass the message along, they'll
-					// knwo
-					// what to do?
 				}
 			}
-			// Collect all json object in a list
+
+			// Send all json object as a list
 			UpdaterService.update(new TextMessage(
 					generateJsonListString(messages)));
-
 		} else {
 			log.error("Everything is ruined, xml not valid");
 		}
@@ -125,13 +121,11 @@ public class DeviceListener {
 			try {
 				jsonString = mapper.writeValueAsString(messages);
 			} catch (JsonGenerationException e) {
-				// TODO Auto-generated catch block
+				// Handle errors
 				e.printStackTrace();
 			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -139,20 +133,8 @@ public class DeviceListener {
 		return jsonString;
 	}
 
-	/**
-	 * Checks if received message is a stop message from device
-	 * 
-	 * @param message
-	 *            - the message in question
-	 * @return false if not a stop message
-	 */
-	private static boolean isStopMessage(GenericMetaDataModel message) {
-		// TODO
-		return false;
-	}
-
 	/***
-	 * Creates model based on xml received from devices TODO refactoring
+	 * Creates model based on xml received from devices
 	 * 
 	 * @return Model of data
 	 */
@@ -161,11 +143,19 @@ public class DeviceListener {
 			Document xml) throws Exception {
 
 		ArrayList<GenericMetaDataModel> models = new ArrayList<GenericMetaDataModel>();
+
+		// We will have to try to find a more elegant solution
 		GenericMetaDataModel genericMetaDataModel = new GenericMetaDataModel();
 		LocationModel locationModel = new LocationModel();
 		RotationModel rotationModel = new RotationModel();
 		AccelerationModel accelerationModel = new AccelerationModel();
+		CameraModel cameraModel = new CameraModel();
+		SnapshotModel snapshotModel = new SnapshotModel();
+		BrightnessModel brightnessModel = new BrightnessModel();
+
 		String name = "";
+		Iterator<Attribute> attributes;
+		Attribute attribute;
 
 		try {
 
@@ -173,8 +163,8 @@ public class DeviceListener {
 			XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 			// Setup a new eventReader
 			XMLEventReader eventReader = inputFactory
-					.createXMLEventReader(new StringBufferInputStream(RestController
-							.getStringFromDocument(xml)));
+					.createXMLEventReader(new StringBufferInputStream(
+							RestController.getStringFromDocument(xml)));
 			// read the XML document
 			// genericMetaDataModel = new GenericMetaDataModel();
 			XMLEvent event;
@@ -184,14 +174,46 @@ public class DeviceListener {
 				if (event.isStartElement()) {
 					StartElement startElement = event.asStartElement();
 					// If we have an item element, we create a new item
-					if (startElement.getName().getLocalPart() == ("logItem")) {
-						Iterator<Attribute> attributes = startElement
-								.getAttributes();
-						Attribute attribute = attributes.next();
+					switch (startElement.getName().getLocalPart()) {
 
+					// appname and logfile skipped
+					case "appName":
+						break;
+
+					case "logFile":
+						break;
+
+					case "camera":
+						event = eventReader.nextEvent();
+						String res; // temporary storage for textual
+									// representation of the resolution
+
+						// I think this will work TODO test it
+						if (event.isStartElement()
+								&& event.asStartElement().getName()
+										.getLocalPart().equals("resolution")) {
+							res = eventReader.nextEvent().asCharacters()
+									.getData();
+							// TODO TODO TODO TODO !!!
+							// int[] xy = extractResolution(res);
+
+							cameraModel.setX(0);
+							cameraModel.setY(0);
+						} else {
+							log.warn("Something fishy about the xml, could not find resolution after camera element");
+						}
+
+						break;
+
+					case "logItem":
+						attributes = startElement.getAttributes();
+						attribute = attributes.next();
 						genericMetaDataModel.setDate(attribute.getValue()
 								.toString());
-					} else if (startElement.getName().getLocalPart() == ("name")) {
+						break;
+
+					// ***** these are all within log items ****//
+					case "name":
 						event = eventReader.nextEvent();
 						name = event.asCharacters().getData();
 						if ("Rotation".equals(name)) {
@@ -201,82 +223,149 @@ public class DeviceListener {
 						} else if ("Acceleration".equals(name)) {
 							accelerationModel.setName(name);
 						}
-						// TODO acceleration and fault handling
-						continue;
-					}
+						break;
 
-					else if (startElement.getName().getLocalPart()
-							.equals("entry")) {
-
+					case "entry":
 						event = eventReader.nextEvent();
 
-						Iterator<Attribute> attributes = startElement
-								.getAttributes();
-						Attribute attribute = attributes.next();
-						if ("id".equals(attribute.getValue()))
-							genericMetaDataModel.setId(event
-									.toString());
-						if ("speed".equals(attribute.getValue()))
+						attributes = startElement.getAttributes();
+						attribute = attributes.next();
+
+						switch (attribute.getValue()) {
+						case "id":
+							genericMetaDataModel.setId(event.toString());
+							break;
+
+						case "speed":
 							locationModel.setSpeed(Float.parseFloat(event
 									.toString()));
-						if ("force".equals(attribute.getValue()))
+							break;
+
+						case "force":
 							accelerationModel.setForce(Float.parseFloat(event
 									.toString()));
-						if ("altitude".equals(attribute.getValue()))
+							break;
+
+						case "altitude":
 							locationModel.setAltitude(Float.parseFloat(event
 									.toString()));
-						if ("longitude".equals(attribute.getValue()))
+							break;
+
+						case "longitude":
 							locationModel.setLongitude(Float.parseFloat(event
 									.toString()));
-						if ("latitude".equals(attribute.getValue()))
+							break;
+
+						case "latitude":
 							locationModel.setLatitude(Float.parseFloat(event
 									.toString()));
-						if ("accuracy".equals(attribute.getValue()))
+							break;
+
+						case "accuracy":
 							locationModel.setAccuracy(Float.parseFloat(event
 									.toString()));
-						if ("provider".equals(attribute.getValue()))
+							break;
+
+						case "provider":
 							locationModel.setProvider(event.toString());
-						if ("azimuth".equals(attribute.getValue()))
+							break;
+
+						case "azimuth":
 							rotationModel.setAzimuth(Float.parseFloat(event
 									.toString()));
-						if ("pitch".equals(attribute.getValue()))
+							break;
+
+						case "pitch":
 							rotationModel.setPitch(Float.parseFloat(event
 									.toString()));
-						if ("roll".equals(attribute.getValue()))
+							break;
+
+						case "roll":
 							rotationModel.setRoll(Float.parseFloat(event
 									.toString()));
+							break;
 
-						continue;
+						default:
+							log.warn("unidentified entry in xml");
+							break;
+						}
+						break;
+
+					default:
+						log.warn("Unknown start element");
+						break;
 					}
 				}
 
-				// If we reach the end of an item element, we add it to the list
+				// If we reach the end of an item element, we extract generic
+				// information from the generic meta data model and add it to
+				// the list of models
 				else if (event.isEndElement()) {
 					EndElement endElement = event.asEndElement();
-					if (endElement.getName().getLocalPart() == ("logItem")) {
-						if ("Location".equals(name)) {
+
+					// finishing up log items and camera
+					switch (endElement.getName().getLocalPart()) {
+					case "logItem":
+						switch (name) {
+						case "Location":
 							locationModel.setId(genericMetaDataModel.getId());
 							locationModel.setDate(genericMetaDataModel
 									.getDate());
 							models.add(locationModel);
-						} else if ("Rotation".equals(name)) {
+							break;
+
+						case "Rotation":
 							rotationModel.setId(genericMetaDataModel.getId());
 							rotationModel.setDate(genericMetaDataModel
 									.getDate());
 							models.add(rotationModel);
-						} else if ("Acceleration".equals(name)) {
+							break;
+
+						case "Acceleration":
 							accelerationModel.setId(genericMetaDataModel
 									.getId());
 							accelerationModel.setDate(genericMetaDataModel
 									.getDate());
 							models.add(accelerationModel);
+							break;
+
+						// TODO fill in the rest (brightness and snapshot
+						case "Brightness":
+							brightnessModel.setId(genericMetaDataModel.getId());
+							brightnessModel.setDate(genericMetaDataModel
+									.getDate());
+							models.add(brightnessModel);
+							break;
+
+						case "Snapshot":
+							snapshotModel.setId(genericMetaDataModel.getId());
+							snapshotModel.setDate(genericMetaDataModel
+									.getDate());
+							models.add(snapshotModel);
+							break;
+
+						default:
+							log.warn("\"" + endElement.getName()
+									+ "\" has not been modeled yet");
 						}
+						break;
+
+					case "camera":
+						log.warn("\"" + endElement.getName()
+								+ "\" has not been implemented yet");
+						break;
+					default:
+						// just keep on truckin' for now, handle as error TODO
 					}
 				}
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage() + " " + e.getStackTrace() + "Great gooogelymooogley");
+			log.error(e.getMessage()
+					+ " "
+					+ e.getStackTrace()
+					+ "Great gooogelymooogley in the convert Xml to Model method");
 		}
+
 		return models;
 	}
 
@@ -286,10 +375,10 @@ public class DeviceListener {
 					.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			Schema schema = factory.newSchema(new File(xsdPath));
 			Validator validator = schema.newValidator();
-			validator.validate(new StreamSource(new StringBufferInputStream(RestController
-					.getStringFromDocument(xml))));
+			validator.validate(new StreamSource(new StringBufferInputStream(
+					RestController.getStringFromDocument(xml))));
 		} catch (IOException e) {
-			log.error("Exception: " + e.getMessage()); // TODO, Log
+			log.error("Exception: " + e.getMessage());
 			return false;
 		} catch (SAXException e) {
 			log.error("\n\nB_UhU:\nException: " + e.getMessage());
@@ -297,5 +386,4 @@ public class DeviceListener {
 		}
 		return true;
 	}
-
 }
