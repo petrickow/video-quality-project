@@ -157,7 +157,7 @@ app.controller('StreamController', [
                 for (var i = 0; i < parameter.data.length - 1; i++){
                     sum += parseFloat(parameter.data[i].azimuth);
                 }
-                this.averageAzimuth = sum / parameter.data.length;
+                this.averageAzimuth = sum / (parameter.data.length -1);
             } catch (e) {
             }
             return this.averageAzimuth;
@@ -171,7 +171,7 @@ app.controller('StreamController', [
                 for (var i = 0; i < parameter.data.length - 1; i++){
                     sum += parseFloat(parameter.data[i].pitch);
                 }
-                this.averagePitch = sum / parameter.data.length;
+                this.averagePitch = sum / (parameter.data.length -1);
             } catch (e) {
             }
             return this.averagePitch;
@@ -185,7 +185,7 @@ app.controller('StreamController', [
                 for(var i = 0; i < parameter.data.length - 1; i++){
                     sum += parseFloat(parameter.data[i].roll);
                 }
-                this.averageRoll = sum / parameter.data.length;
+                this.averageRoll = sum / (parameter.data.length -1);
             } catch (e) {
             }
             return this.averageRoll;
