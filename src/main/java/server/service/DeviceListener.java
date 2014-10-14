@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.events.Attribute;
@@ -181,6 +182,8 @@ public class DeviceListener {
 						break;
 
 					case "logFile":
+						Attribute atr = startElement.getAttributeByName(new QName("id"));
+						genericMetaDataModel.setId(atr.getValue());
 						break;
 
 					case "camera":
@@ -255,9 +258,7 @@ public class DeviceListener {
 						attribute = attributes.next();
 
 						switch (attribute.getValue()) {
-						case "id":
-							genericMetaDataModel.setId(event.toString());
-							break;
+						
 
 						case "speed":
 							locationModel.setSpeed(Float.parseFloat(event
