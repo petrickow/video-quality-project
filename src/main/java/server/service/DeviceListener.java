@@ -177,7 +177,7 @@ public class DeviceListener {
 					// If we have an item element, we create a new item
 					switch (startElement.getName().getLocalPart()) {
 
-					// appname and logfile skipped
+					// appname skipped
 					case "appName":
 						break;
 
@@ -225,6 +225,10 @@ public class DeviceListener {
 							locationModel.setName(name);
 						} else if ("Acceleration".equals(name)) {
 							accelerationModel.setName(name);
+						} else if ("Brightness".equals(name)) {
+							brightnessModel.setName(name);
+						} else if ("Snapshot".equals(name)) {
+							snapshotModel.setName(name);
 						}
 						break;
 
