@@ -16,24 +16,26 @@
 
     	<section class="main-contend">
 
-          <section class="profiles">
-            <ul class="nav nav-pills nav-stacked pull-left">
-              <li class="active">
-                <a href="#">
-                  <span class="badge pull-right">42</span>
-                  Lowest shakiness
-                </a>
-              </li>
-              <li class="">
-                <a href="#">
-                  <span class="badge pull-right">42</span>
-                  Highest sound quality
-                </a>
-              </li>        
-            </ul>
-          </section>
+          <div class="col-lg-2">
+              <section class="profiles">
+                <ul class="nav nav-pills nav-stacked">
+                  <li class="active">
+                    <a href="#">
+                      <span class="badge pull-right">2</span>
+                      Lowest shakiness
+                    </a>
+                  </li>
+                  <li class="">
+                    <a href="#">                      
+                      Highest sound quality
+                    </a>
+                  </li>        
+                </ul>
+              </section>
+          </div>
 
-        <div id="video-section" class="jumbotron pull-left">           
+        <!-- <div id="video-section" class="jumbotron pull-left">            -->
+        <div id="video-section" class="col-lg-7" style="width: 650px;">
         <section class="video-streams-pane" data-ng-controller="StreamController as stream">
             <section class="sort-selections">
 
@@ -69,7 +71,7 @@
                             Force: {{ stream.getForce(id) }} <br />
 
                         </td>
-                        <td>___/^\_/\/\_</td>
+                        <td><linear-chart chart-data="salesData"></linear-chart></td>
                     </tr>
                 </tbody>
             </table>
@@ -77,8 +79,8 @@
         <section class="history">
         </section>
         </div>
-        <!--<div id="video-section" class="jumbotron pull-right">--> 
-            <section class="map" data-ng-controller="mapController">
+        <div class="col-lg-3">
+            <section data-ng-controller="mapController">
                 <ui-gmap-google-map center="getCenter()" zoom="map.zoom" events="mapEvents">
                     <div data-ng-repeat="id in getStreams()">
                         <ui-gmap-marker idKey="getMarker(id).idKey" coords="getMarker(id).coords" options="getMarker(id).options"></ui-gmap-marker>
@@ -94,14 +96,14 @@
                     </ui-gmap-rectangle>
                 </ui-gmap-google-map>
             </section>
-        <!--</div>-->
+        </div>
 
-   <div class="stream-history"></div>
+   <!-- <div class="stream-history"></div> -->
     </section>
 	<!--<settings></settings>-->
-	<footer class="footer">
+<!-- 	<footer class="footer">
 		Cato Danielsen, Artur Gareis, Maria Oltean, Michael Timpelan
-	</footer>
+	</footer> -->
   
     <script type="text/plain" src="../static/testDataD3.tsv" th:src="@{/testDataD3.tsv}"></script>
     <script type="text/javascript" src="../static/js/d3.v3.js" th:src="@{/js/d3.v3.js}"></script>
