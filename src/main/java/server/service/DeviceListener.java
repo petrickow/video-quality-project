@@ -187,24 +187,7 @@ public class DeviceListener {
 						break;
 
 					case "camera":
-						/*
-						 * String res; // temporary storage for textual //
-						 * representation of the resolution
-						 * 
-						 * // I think this will work TODO test it if
-						 * (event.isStartElement() &&
-						 * event.asStartElement().getName()
-						 * .getLocalPart().equals("resolution")) { res =
-						 * eventReader.nextEvent().asCharacters() .getData(); //
-						 * TODO TODO TODO TODO !!! // int[] xy =
-						 * extractResolution(res);
-						 * 
-						 * cameraModel.setX(0); cameraModel.setY(0); } else {
-						 * log.warn(
-						 * "Something fishy about the xml, could not find resolution after camera element"
-						 * ); }
-						 */
-
+					
 						break;
 					case "resolution":
 						event = eventReader.nextEvent();
@@ -215,18 +198,11 @@ public class DeviceListener {
 						break;
 					case "verticalViewAngle":
 						event = eventReader.nextEvent();
-
-						attributes = startElement.getAttributes();
-						attribute = attributes.next();
-						if (attribute.getValue().equals("degrees"))
 							cameraModel.setVerticalViewAngle(Float
 									.parseFloat(event.toString()));
 						break;
 					case "horizontalViewAngle":
 						event = eventReader.nextEvent();
-						attributes = startElement.getAttributes();
-						attribute = attributes.next();
-						if (attribute.getValue().equals("degrees"))
 							cameraModel.setHorizontalViewAngle(Float
 									.parseFloat(event.toString()));
 
