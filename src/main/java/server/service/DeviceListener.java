@@ -187,27 +187,50 @@ public class DeviceListener {
 						break;
 
 					case "camera":
-						event = eventReader.nextEvent();
-						String res; // temporary storage for textual
-									// representation of the resolution
-
-						// I think this will work TODO test it
-						if (event.isStartElement()
-								&& event.asStartElement().getName()
-										.getLocalPart().equals("resolution")) {
-							res = eventReader.nextEvent().asCharacters()
-									.getData();
-							// TODO TODO TODO TODO !!!
-							// int[] xy = extractResolution(res);
-
-							cameraModel.setX(0);
-							cameraModel.setY(0);
-						} else {
-							log.warn("Something fishy about the xml, could not find resolution after camera element");
-						}
+						/*
+						 * String res; // temporary storage for textual //
+						 * representation of the resolution
+						 * 
+						 * // I think this will work TODO test it if
+						 * (event.isStartElement() &&
+						 * event.asStartElement().getName()
+						 * .getLocalPart().equals("resolution")) { res =
+						 * eventReader.nextEvent().asCharacters() .getData(); //
+						 * TODO TODO TODO TODO !!! // int[] xy =
+						 * extractResolution(res);
+						 * 
+						 * cameraModel.setX(0); cameraModel.setY(0); } else {
+						 * log.warn(
+						 * "Something fishy about the xml, could not find resolution after camera element"
+						 * ); }
+						 */
 
 						break;
+					case "resolution":
+						event = eventReader.nextEvent();
+						String resolution = event.asCharacters().getData();
+						int[] xy = extractResolution(resolution);
+						cameraModel.setX(xy[0]);
+						cameraModel.setY(xy[1]);
+						break;
+					case "verticalViewAngle":
+						event = eventReader.nextEvent();
 
+						attributes = startElement.getAttributes();
+						attribute = attributes.next();
+						if (attribute.getValue().equals("degrees"))
+							cameraModel.setVerticalViewAngle(Float
+									.parseFloat(event.toString()));
+						break;
+					case "horizontalViewAngle":
+						event = eventReader.nextEvent();
+						attributes = startElement.getAttributes();
+						attribute = attributes.next();
+						if (attribute.getValue().equals("degrees"))
+							cameraModel.setHorizontalViewAngle(Float
+									.parseFloat(event.toString()));
+
+						break;
 					case "logItem":
 						attributes = startElement.getAttributes();
 						attribute = attributes.next();
@@ -356,8 +379,9 @@ public class DeviceListener {
 						break;
 
 					case "camera":
-						log.warn("\"" + endElement.getName()
-								+ "\" has not been implemented yet");
+						cameraModel.setId(genericMetaDataModel.getId());
+						cameraModel.setDate(genericMetaDataModel.getDate());
+						models.add(cameraModel);
 						break;
 					default:
 						// just keep on truckin' for now, handle as error TODO
@@ -372,6 +396,19 @@ public class DeviceListener {
 		}
 
 		return models;
+	}
+
+	private static int[] extractResolution(String resolution) {
+		// parsing resolution
+		String stringArray[] = new String[2];
+		stringArray = resolution.split("x");
+		stringArray[1].replace("x", "");
+
+		// returing resolution as int
+		int res[] = new int[2];
+		res[0] = Integer.parseInt(stringArray[0]);
+		res[1] = Integer.parseInt(stringArray[1]);
+		return res;
 	}
 
 	private static boolean validateXMLSchema(String xsdPath, Document xml) {
