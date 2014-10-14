@@ -1,5 +1,4 @@
-app.controller('StreamController', [
-    'Socket',
+app.controller('StreamController', 
     function (Socket) {
         "use strict";
         this.message = "No data received!";
@@ -190,4 +189,4 @@ app.controller('StreamController', [
             }
             return this.averageRoll;
         };
-    }]);
+    });

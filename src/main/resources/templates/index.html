@@ -53,7 +53,7 @@
                 <tbody data-ng-repeat="id in stream.getStreams()">
                     <tr>
                         <td>50%</td>
-                        <td>Video {{ id }}</td>
+                        <td>Stream {{ id }}</td>
                         <td>
                             <b>Rotation: (Average)</b><br />
                             Azimuth: {{ stream.getAzimuth(id) }} ({{ stream.getAverageAzimuth(id) }}) <br />
@@ -81,7 +81,7 @@
             <section class="map" data-ng-controller="mapController">
                 <ui-gmap-google-map center="getCenter()" zoom="map.zoom" events="mapEvents">
                     <div data-ng-repeat="id in getStreams()">
-                        <ui-gmap-marker idKey="getMarker(id).idKey" coords="getMarker(id).coords"></ui-gmap-marker>
+                        <ui-gmap-marker idKey="getMarker(id).idKey" coords="getMarker(id).coords" options="getMarker(id).options"></ui-gmap-marker>
                     </div>
                     <ui-gmap-rectangle bounds="areaFilterPath"
                         fill="{'color' : '#4444BB', 'opacity' : 0.2}"
