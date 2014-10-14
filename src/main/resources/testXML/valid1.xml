@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<logFile dateTime="2014-10-07T13:56:24.129+0320" id="randomStringSample" phoneModel="GT-I9100">
+<logFile dateTime="2014-10-07T13:56:24.129+0320" id="fromDevice1" phoneModel="GT-I9100">
   <appName>Visualizing Sensor Information</appName>
 
   <camera>
