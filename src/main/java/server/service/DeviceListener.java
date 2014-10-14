@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -45,7 +46,7 @@ public class DeviceListener {
 	// Note to self: schemapath, device-list with id, logger
 	final public static String schemaPath = System.getProperty("user.dir")
 			+ "/src/main/resources/testXML/schema.xsd";
-	static ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>> deviceMapping = new ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>>();
+	private static ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>> deviceMapping = new ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>>();
 	private static Logger log = Logger.getLogger(DeviceListener.class);
 
 	/***
@@ -73,7 +74,7 @@ public class DeviceListener {
 
 			for (GenericMetaDataModel message : messages) {
 
-				if (message.getLast()) {
+				if (!message.getLast() || !message.getName().equals("Snapshot")) {
 					storeMessage(message);
 				} else {
 					deviceMapping.remove(message.getId());
@@ -96,7 +97,7 @@ public class DeviceListener {
 	 *            - generic metadata model to be stored
 	 */
 	private static void storeMessage(GenericMetaDataModel message) {
-		if (deviceMapping.contains(message.getId())) {
+		if (deviceMapping.containsKey(message.getId())) {
 			deviceMapping.get(message.getId()).add(message);
 		} else {
 			ArrayList<GenericMetaDataModel> deviceMessages = new ArrayList<GenericMetaDataModel>();
@@ -182,12 +183,13 @@ public class DeviceListener {
 						break;
 
 					case "logFile":
-						Attribute atr = startElement.getAttributeByName(new QName("id"));
+						Attribute atr = startElement
+								.getAttributeByName(new QName("id"));
 						genericMetaDataModel.setId(atr.getValue());
 						break;
 
 					case "camera":
-					
+						cameraModel.setName("Camera");
 						break;
 					case "resolution":
 						event = eventReader.nextEvent();
@@ -198,13 +200,13 @@ public class DeviceListener {
 						break;
 					case "verticalViewAngle":
 						event = eventReader.nextEvent();
-							cameraModel.setVerticalViewAngle(Float
-									.parseFloat(event.toString()));
+						cameraModel.setVerticalViewAngle(Float.parseFloat(event
+								.toString()));
 						break;
 					case "horizontalViewAngle":
 						event = eventReader.nextEvent();
-							cameraModel.setHorizontalViewAngle(Float
-									.parseFloat(event.toString()));
+						cameraModel.setHorizontalViewAngle(Float
+								.parseFloat(event.toString()));
 
 						break;
 					case "logItem":
@@ -232,13 +234,21 @@ public class DeviceListener {
 						break;
 
 					case "entry":
-						event = eventReader.nextEvent();
-
 						attributes = startElement.getAttributes();
 						attribute = attributes.next();
+						event = eventReader.nextEvent();
 
 						switch (attribute.getValue()) {
-						
+						case "base64jpeg":
+							String encodedImage = "";
+							while (!event.isEndElement()) {
+								encodedImage += event.toString().trim()
+										.replaceAll("\\t", "")
+										.replaceAll("\\n", "");
+								event = eventReader.nextEvent();
+							}
+							snapshotModel.setSnapshot(encodedImage);
+							break;
 
 						case "speed":
 							locationModel.setSpeed(Float.parseFloat(event
@@ -333,7 +343,6 @@ public class DeviceListener {
 							models.add(accelerationModel);
 							break;
 
-						// TODO fill in the rest (brightness and snapshot
 						case "Brightness":
 							brightnessModel.setId(genericMetaDataModel.getId());
 							brightnessModel.setDate(genericMetaDataModel
@@ -367,7 +376,11 @@ public class DeviceListener {
 		} catch (Exception e) {
 			log.error(e.getMessage()
 					+ " "
-					+ e.getStackTrace() + " "+e.getCause() + " " + e.toString() 
+					+ e.getStackTrace()
+					+ " "
+					+ e.getCause()
+					+ " "
+					+ e.toString()
 					+ "Great gooogelymooogley in the convert Xml to Model method");
 		}
 
@@ -403,5 +416,21 @@ public class DeviceListener {
 			return false;
 		}
 		return true;
+	}
+
+	public static String createJsonFromHistory() throws JsonProcessingException {
+		String jsonString = "";
+		ObjectMapper mapper = new ObjectMapper();
+		int logitem = 0;
+		for (String key : deviceMapping.keySet()) { // TODO change this to
+													// datetime or some other
+													// descriptive entry?
+			jsonString += ", \"logitem" + logitem++ + "\":";
+			ArrayList<GenericMetaDataModel> list = deviceMapping.get(key);
+			jsonString += mapper.writeValueAsString(list);
+		}
+		
+
+		return jsonString +  "}";
 	}
 }

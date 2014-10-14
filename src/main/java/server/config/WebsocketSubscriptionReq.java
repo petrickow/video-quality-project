@@ -1,12 +1,18 @@
 package server.config;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.json.stream.JsonParsingException;
 
 import org.apache.log4j.Logger;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import server.model.GenericMetaDataModel;
+import server.service.DeviceListener;
 import server.service.UpdaterService;
 
 public class WebsocketSubscriptionReq extends TextWebSocketHandler {
@@ -16,9 +22,19 @@ public class WebsocketSubscriptionReq extends TextWebSocketHandler {
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         log.debug("We just got: " + message.getPayload());
-        log.debug(session.getLocalAddress()); //this might be used for id?
-        System.out.println(session.getHandshakeHeaders());
-        session.sendMessage(new TextMessage("{\"response\": \"accepted\"}"));
+        
+        String response = "{\"response\": \"accepted\"";
+        try {
+        	response += DeviceListener.createJsonFromHistory();
+        } catch (JsonParsingException e) {
+        	log.error(e.getLocalizedMessage()+" Could not get history");
+        }
+        
+        
+        session.sendMessage(new TextMessage(response));
+        
+        
+        
         //session.getAcceptedProtocol();
         UpdaterService.add(session);
     }
