@@ -35,7 +35,6 @@
 		<entry type="latitude">59.94112557</entry>
 		<entry type="accuracy">58.0</entry>
 		<entry type="provider">gps</entry>
-		<entry type="id">1</entry>
 	</logItem>
 
 	<logItem dateTime="2014-10-07T13:59:23.759+0020">

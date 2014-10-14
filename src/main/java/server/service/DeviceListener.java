@@ -290,7 +290,7 @@ public class DeviceListener {
 							break;
 
 						default:
-							log.warn("unidentified entry in xml");
+							log.warn("Unknown attribute in entry");
 							break;
 						}
 						break;

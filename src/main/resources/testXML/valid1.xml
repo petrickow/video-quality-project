@@ -19,12 +19,11 @@
 	<logItem dateTime="2014-10-07T15:58:23.794+0230">
 		<name>Location</name>
 		<entry type="speed">0.0</entry>
-		<entry type="altitude">157.0</entry>
-		<entry type="longitude">10.71814526</entry>
-		<entry type="latitude">59.94112553</entry>
+		<entry type="altitude">23.0</entry>
+		<entry type="longitude">10.71814512</entry>
+		<entry type="latitude">59.94112557</entry>
 		<entry type="accuracy">58.0</entry>
 		<entry type="provider">gps</entry>
-		<entry type="id">1</entry>
 	</logItem>
 
 	<logItem dateTime="2014-10-07T13:58:23.794+0230">
