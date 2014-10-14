@@ -3,14 +3,15 @@ app.controller('mapController', function ($scope, Socket) {
     $scope.ids = [];
     $scope.markers = [];
     
-    $scope.areaFilterPath = [{ latitude : 0.0, longitude: 0.0 },
-                            { latitude : 1.0, longitude: 1.0 },
-                            { latitude : 2.0, longitude: 2.0 }];
+    $scope.areaFilterPath = {
+        sw: { latitude : 0.0, longitude: 0.0 },
+        ne: { latitude : 1.0, longitude: 1.0 }
+    };
     
     $scope.areaFilterVisible = false;
     
     $scope.mapEvents = {
-        'click': function ( map, eventName, args ){
+        'click': function (map, eventName, args) {
             if(!$scope.areaFilterVisible)
                 $scope.initAreaFilter();
             $scope.areaFilterVisible = !$scope.areaFilterVisible;
@@ -18,6 +19,19 @@ app.controller('mapController', function ($scope, Socket) {
     };
     
     $scope.areaFilterEvents = {
+        'dragend': function (rectangle, eventName, args) {
+            var bounds = rectangle.getBounds();
+            var markers = $scope.markers
+            for (var marker in markers) {
+                if(bounds.contains(new google.maps.LatLng(markers[marker].coords.latitude, markers[marker].coords.longitude))){
+                    // TODO Add disabled Video
+                    console.log("Add: " + markers[marker].idKey);
+                } else {
+                    // TODO Remove enable Video
+                    console.log("Remove: " + markers[marker].idKey);
+                }
+            }
+        }
     };
     
     $scope.getStreams = function () {
@@ -123,12 +137,10 @@ app.controller('mapController', function ($scope, Socket) {
             }
             var hFrame = 0.002;
             var vFrame = 0.001;
-            $scope.areaFilterPath = [
-                {'latitude': (minLatitude - vFrame), 'longitude': (minLongitude - hFrame)},
-                {'latitude': (minLatitude - vFrame), 'longitude': (maxLongitude + hFrame)},
-                {'latitude': (maxLatitude + vFrame), 'longitude': (maxLongitude + hFrame)},
-                {'latitude': (maxLatitude + vFrame), 'longitude': (minLongitude - hFrame)}
-            ];
+            $scope.areaFilterPath = {
+                sw: { latitude: (minLatitude - vFrame), 'longitude': (minLongitude - hFrame)},
+                ne: {latitude: (maxLatitude + vFrame), longitude: (maxLongitude + hFrame)}
+            };
         } catch (e) {
             console.log("error " + e);
         }

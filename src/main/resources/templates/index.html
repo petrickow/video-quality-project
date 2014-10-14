@@ -83,14 +83,15 @@
                     <div data-ng-repeat="id in getStreams()">
                         <ui-gmap-marker idKey="getMarker(id).idKey" coords="getMarker(id).coords"></ui-gmap-marker>
                     </div>
-                    <ui-gmap-polygon path="areaFilterPath"
+                    <ui-gmap-rectangle bounds="areaFilterPath"
                         fill="{'color' : '#4444BB', 'opacity' : 0.2}"
                         stroke="{'color' : '#222266', 'opacity' : 0.4, 'weight': 1}"
                         clickable="true"
                         draggable="true"
                         editable="true"
-                        visible="areaFilterVisible">
-                    </ui-gmap-polygon>
+                        visible="areaFilterVisible"
+                        events="areaFilterEvents">
+                    </ui-gmap-rectangle>
                 </ui-gmap-google-map>
             </section>
         <!--</div>-->
