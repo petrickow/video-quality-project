@@ -89,6 +89,9 @@ app.controller('mapController', function ($scope, Socket) {
             if($scope.markers[id] === undefined){
                 $scope.markers[id] = {};
                 $scope.markers[id].coords = {};
+                $scope.markers[id].options = {
+                    labelContent: "Stream: " + id
+                };
             }
             $scope.markers[id].idKey = id;
             $scope.markers[id].coords.latitude = currentValue.latitude;
