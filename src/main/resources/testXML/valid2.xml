@@ -31,8 +31,8 @@
 		<name>Location</name>
 		<entry type="speed">0.0</entry>
 		<entry type="altitude">23.0</entry>
-		<entry type="longitude">10.71814512</entry>
-		<entry type="latitude">59.94112557</entry>
+		<entry type="longitude">10.72814512</entry>
+		<entry type="latitude">59.93612557</entry>
 		<entry type="accuracy">58.0</entry>
 		<entry type="provider">gps</entry>
 	</logItem>

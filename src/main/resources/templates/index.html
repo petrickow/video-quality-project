@@ -52,7 +52,7 @@
                 </thead>
                 <tbody data-ng-repeat="id in stream.getStreams()">
                     <tr>
-                        <td>50%</td>
+                        <td>{{ stream.getQuality(id) }}%</td>
                         <td>Stream {{ id }}</td>
                         <td>
                             <b>Rotation: (Average)</b><br />

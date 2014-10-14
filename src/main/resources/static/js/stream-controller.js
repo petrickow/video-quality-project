@@ -1,24 +1,41 @@
 app.controller('StreamController', 
     function (Socket) {
         "use strict";
-        this.message = "No data received!";
-        this.latitude = "No data received!";
-        this.longitude = "No data received!";
-        this.speed = "No data received!";
-        this.accuracy = "No data received!";
-        this.altitude = "No data received!";
-        this.force = "No data received!";
-        this.azimuth = "No data received!";
-        this.pitch = "No data received!";
-        this.roll = "No data received!";
-        this.averageAzimuth = "No data received!";
-        this.averagePitch = "No data received!";
-        this.averageRoll = "No data received!";
+        this.modes = {
+            SHAKINESS: 0
+        }
+    
         this.ids = [];
-        
+        this.mode = this.modes.SHAKINESS;
+        this.quality = {};
+        this.latitude = {};
+        this.longitude = {};
+        this.speed = {};
+        this.accuracy = {};
+        this.altitude = {};
+        this.force = {};
+        this.azimuth = {};
+        this.pitch = {};
+        this.roll = {};
+        this.averageAzimuth = {};
+        this.averagePitch = {};
+        this.averageRoll = {};
+    
         this.getStreams = function () {
             this.ids = Object.keys(Socket.stream);
             return this.ids;
+        };
+    
+        this.getQuality = function (id) {
+            switch (this.mode) {
+                    case this.modes.SHAKINESS:
+                        return this.getQualityByShakiness(id);
+            }
+        }
+        
+        this.getQualityByShakiness = function (id) {
+            this.quality = 100 * Math.pow(2, (- Math.abs(this.force[id]) / 10));
+            return this.quality;
         };
 
         this.getLatitude = function (id) {
@@ -29,10 +46,10 @@ app.controller('StreamController',
                     var currentValue = parameter.data[parameter.index - 1];
                 else
                     var currentValue = parameter.data[Socket.maxCachedItems - 1];
-                this.latitude = currentValue.latitude;
+                this.latitude[id] = currentValue.latitude;
             } catch (e) {
             }
-            return this.latitude;
+            return this.latitude[id];
         };
         
         this.getLongitude = function (id) {
@@ -43,10 +60,10 @@ app.controller('StreamController',
                     var currentValue = parameter.data[parameter.index - 1];
                 else
                     var currentValue = parameter.data[Socket.maxCachedItems - 1];
-                this.longitude = currentValue.longitude;
+                this.longitude[id] = currentValue.longitude;
             } catch (e) {
             }
-            return this.longitude;
+            return this.longitude[id];
         };
         
         this.getSpeed = function (id) {
@@ -57,10 +74,10 @@ app.controller('StreamController',
                     var currentValue = parameter.data[parameter.index - 1];
                 else
                     var currentValue = parameter.data[Socket.maxCachedItems - 1];
-                this.speed = currentValue.speed;
+                this.speed[id] = currentValue.speed;
             } catch (e) {
             }
-            return this.speed;
+            return this.speed[id];
         };
         
         this.getAccuracy = function (id) {
@@ -71,10 +88,10 @@ app.controller('StreamController',
                     var currentValue = parameter.data[parameter.index - 1];
                 else
                     var currentValue = parameter.data[Socket.maxCachedItems - 1];
-                this.accuracy = currentValue.accuracy;
+                this.accuracy[id] = currentValue.accuracy;
             } catch (e) {
             }
-            return this.accuracy;
+            return this.accuracy[id];
         };
         
         this.getAltitude = function (id) {
@@ -85,10 +102,10 @@ app.controller('StreamController',
                     var currentValue = parameter.data[parameter.index - 1];
                 else
                     var currentValue = parameter.data[Socket.maxCachedItems - 1];
-                this.altitude = currentValue.altitude;
+                this.altitude[id] = currentValue.altitude;
             } catch (e) {
             }
-            return this.accuracy;
+            return this.accuracy[id];
         };
         
         this.getForce = function (id) {
@@ -99,10 +116,10 @@ app.controller('StreamController',
                     var currentValue = parameter.data[parameter.index - 1];
                 else
                     var currentValue = parameter.data[Socket.maxCachedItems - 1];
-                this.force = currentValue.force;
+                this.force[id] = currentValue.force;
             } catch (e) {
             }
-            return this.force;
+            return this.force[id];
         };
         
         this.getAzimuth = function (id) {
@@ -113,10 +130,10 @@ app.controller('StreamController',
                     var currentValue = parameter.data[parameter.index - 1];
                 else
                     var currentValue = parameter.data[Socket.maxCachedItems - 1];
-                this.azimuth = currentValue.azimuth;
+                this.azimuth[id] = currentValue.azimuth;
             } catch (e) {
             }
-            return this.azimuth;
+            return this.azimuth[id];
         };
         
         this.getPitch = function (id) {
@@ -127,10 +144,10 @@ app.controller('StreamController',
                     var currentValue = parameter.data[parameter.index - 1];
                 else
                     var currentValue = parameter.data[Socket.maxCachedItems - 1];
-                this.pitch = currentValue.pitch;
+                this.pitch[id] = currentValue.pitch;
             } catch (e) {
             }
-            return this.pitch;
+            return this.pitch[id];
         };
         
         this.getRoll = function (id) {
@@ -141,10 +158,10 @@ app.controller('StreamController',
                     var currentValue = parameter.data[parameter.index - 1];
                 else
                     var currentValue = parameter.data[Socket.maxCachedItems - 1];
-                this.roll = currentValue.roll;
+                this.roll[id] = currentValue.roll;
             } catch (e) {
             }
-            return this.roll;
+            return this.roll[id];
         };
         
         // TODO Calculate all Values at once to improve performance
@@ -156,10 +173,10 @@ app.controller('StreamController',
                 for (var i = 0; i < parameter.data.length - 1; i++){
                     sum += parseFloat(parameter.data[i].azimuth);
                 }
-                this.averageAzimuth = sum / (parameter.data.length -1);
+                this.averageAzimuth[id] = sum / (parameter.data.length -1);
             } catch (e) {
             }
-            return this.averageAzimuth;
+            return this.averageAzimuth[id];
         };
         
         this.getAveragePitch = function (id) {
@@ -170,10 +187,10 @@ app.controller('StreamController',
                 for (var i = 0; i < parameter.data.length - 1; i++){
                     sum += parseFloat(parameter.data[i].pitch);
                 }
-                this.averagePitch = sum / (parameter.data.length -1);
+                this.averagePitch[id] = sum / (parameter.data.length -1);
             } catch (e) {
             }
-            return this.averagePitch;
+            return this.averagePitch[id];
         };
         
         this.getAverageRoll = function (id) {
@@ -184,9 +201,9 @@ app.controller('StreamController',
                 for(var i = 0; i < parameter.data.length - 1; i++){
                     sum += parseFloat(parameter.data[i].roll);
                 }
-                this.averageRoll = sum / (parameter.data.length -1);
+                this.averageRoll[id] = sum / (parameter.data.length -1);
             } catch (e) {
             }
-            return this.averageRoll;
+            return this.averageRoll[id];
         };
     });
