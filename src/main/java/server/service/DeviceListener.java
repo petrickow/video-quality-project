@@ -391,7 +391,7 @@ public class DeviceListener {
 		} catch (Exception e) {
 			log.error(e.getMessage()
 					+ " "
-					+ e.getStackTrace()
+					+ e.getStackTrace() + " "+e.getCause() + " " + e.toString() 
 					+ "Great gooogelymooogley in the convert Xml to Model method");
 		}
 
