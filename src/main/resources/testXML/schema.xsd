@@ -1,40 +1,58 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-<xs:attribute name="dateTime">
-  <xs:simpleType>
-    <xs:restriction base="xs:string">
-      <xs:pattern value="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.][0-9]{3}[+][0-9]{4}"/>
-    </xs:restriction>
-  </xs:simpleType>
-</xs:attribute>
+	<xs:element name="camera">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="resolution" type="xs:string" />
+				<xs:element name="verticalViewAngle" type="xs:float" />
+				<xs:element name="horizontalViewAngle" type="xs:float" />
 
-<xs:element name="entry">
-  <xs:complexType>
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attribute name="type" type="xs:string" use="required"/>
-      </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
-</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 
-<xs:element name="logFile">
-  <xs:complexType>
-    <xs:sequence>
-      <xs:element name="appName" type="xs:string"/>
-      <xs:element name="logItem" maxOccurs="unbounded">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="name" type="xs:string"/>
-            <xs:element ref="entry" maxOccurs="unbounded"/>
-          </xs:sequence>
-          <xs:attribute ref="dateTime" use="required"/>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute ref="dateTime" use="required"/>
-  </xs:complexType>
-</xs:element>
+	<xs:element name="logItem">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="name" type="xs:string" />
+				<xs:element ref="entry" maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute ref="dateTime" use="required" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:attribute name="dateTime">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern
+					value="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.][0-9]{3}[+][0-9]{4}" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:attribute>
+
+	<xs:element name="entry">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="type" type="xs:string" use="required" />
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+
+	<!-- ROOT ELEMENT -->
+	<xs:element name="logFile">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="appName" type="xs:string" />
+				<xs:element ref="camera" />
+				<xs:element ref="logItem" maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute ref="dateTime" use="required" />
+			<xs:attribute name="id" type="xs:string" use="required" />
+			<xs:attribute name="phoneModel" type="xs:string" use="required" />
+		</xs:complexType>
+	</xs:element>
 
 </xs:schema>
