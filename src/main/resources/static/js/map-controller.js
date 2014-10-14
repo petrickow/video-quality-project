@@ -3,7 +3,9 @@ app.controller('mapController', function ($scope, Socket) {
     $scope.ids = [];
     $scope.markers = [];
     
-    $scope.areaFilterPath = [];
+    $scope.areaFilterPath = [{ latitude : 0.0, longitude: 0.0 },
+                            { latitude : 1.0, longitude: 1.0 },
+                            { latitude : 2.0, longitude: 2.0 }];
     
     $scope.areaFilterVisible = false;
     
@@ -28,7 +30,7 @@ app.controller('mapController', function ($scope, Socket) {
             latitude: 0,
             longitude: 0
         },
-        zoom: 15
+        zoom: 14
     };
     
     $scope.getCenter = function () {
@@ -48,11 +50,15 @@ app.controller('mapController', function ($scope, Socket) {
             }
             var centralLatitude = sumLatitude / $scope.getStreams().length;
             var centralLongitude = sumLongitude / $scope.getStreams().length;
-            if(centralLatitude < $scope.map.center.latitude + 1 || centralLatitude > $scope.map.center.latitude + 1)
-                $scope.map.center.latitude = currentValue.latitude;
-            if(centralLongitude < $scope.map.center.longitude + 1 || centralLongitude > $scope.map.center.longitude + 1)
-                $scope.map.center.longitude = currentValue.longitude;
+            var hThreshold = 0.002;
+            var vThreshold = 0.004;
+            if(centralLatitude < ($scope.map.center.latitude - vThreshold) || centralLatitude > ($scope.map.center.latitude + vThreshold))
+                $scope.map.center.latitude = centralLatitude;
+            if(centralLongitude < ($scope.map.center.longitude - hThreshold) || centralLongitude > ($scope.map.center.longitude + hThreshold)){
+                $scope.map.center.longitude = centralLongitude;
+            }
         } catch (e) {
+            console.log("center: " + e);
         }
         return $scope.map.center;
     };
@@ -110,7 +116,7 @@ app.controller('mapController', function ($scope, Socket) {
                     else if (latitude > maxLatitude)
                         maxLatitude = latitude;
                     if (longitude < minLongitude)
-                        minLatitude = longitude;
+                        minLongitude = longitude;
                     else if (longitude > maxLongitude)
                         maxLongitude = longitude
                 }
@@ -122,7 +128,7 @@ app.controller('mapController', function ($scope, Socket) {
                 {'latitude': (minLatitude - vFrame), 'longitude': (maxLongitude + hFrame)},
                 {'latitude': (maxLatitude + vFrame), 'longitude': (maxLongitude + hFrame)},
                 {'latitude': (maxLatitude + vFrame), 'longitude': (minLongitude - hFrame)}
-            ]
+            ];
         } catch (e) {
             console.log("error " + e);
         }

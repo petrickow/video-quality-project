@@ -7,13 +7,13 @@
     <entry type="azimuth">3.2424232</entry>
     <entry type="pitch">1.03242352</entry>
     <entry type="roll">4.23423424</entry>
-    <entry type="id">1</entry>
+    <entry type="id">2</entry>
   </logItem>
 
   <logItem dateTime="2014-10-07T13:58:23.794+0230">
     <name>Acceleration</name>
     <entry type="force">5.2342225</entry>
-    <entry type="id">1</entry>
+    <entry type="id">2</entry>
   </logItem>
 
 
@@ -21,11 +21,11 @@
 		<name>Location</name>
 		<entry type="speed">1.0</entry>
 		<entry type="altitude">156.0</entry>
-		<entry type="longitude">12.71814526</entry>
+		<entry type="longitude">10.72814526</entry>
 		<entry type="latitude">59.9411200</entry>
 		<entry type="accuracy">55.0</entry>
 		<entry type="provider">gps</entry>
-		<entry type="id">1</entry>
+		<entry type="id">2</entry>
 	</logItem>
 
 </logFile>
