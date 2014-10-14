@@ -79,8 +79,18 @@
         </div>
         <!--<div id="video-section" class="jumbotron pull-right">--> 
             <section class="map" data-ng-controller="mapController">
-                <ui-gmap-google-map center="getCenter()" zoom="map.zoom" data-ng-repeat="id in getStreams()">
-                    <ui-gmap-marker idKey="getMarker(id).idKey" coords="getMarker(id).coords"></ui-gmap-marker>
+                <ui-gmap-google-map center="getCenter()" zoom="map.zoom">
+                    <div data-ng-repeat="id in getStreams()">
+                        <ui-gmap-marker idKey="getMarker(id).idKey" coords="getMarker(id).coords"></ui-gmap-marker>
+                    </div>
+                    <ui-gmap-polygon path="areaFilterPath"
+                        fill="{'color' : '#4444BB', 'opacity' : 0.2}"
+                        stroke="{'color' : '#222266', 'opacity' : 0.4, 'weight': 1}"
+                        clickable="true"
+                        draggable="true"
+                        editable="true"
+                        visible="areaFilterVisible">
+                    </ui-gmap-polygon>
                 </ui-gmap-google-map>
             </section>
         <!--</div>-->
