@@ -1,62 +1,73 @@
 <?xml version="1.0"?>
-<logFile dateTime="2014-10-07T13:56:24.129+0320" id="fromDevice1" phoneModel="GT-I9100">
-  <appName>Visualizing Sensor Information</appName>
+<logFile dateTime="2014-10-07T13:56:24.129+0320" id="fromDevice1"
+	phoneModel="GT-I9100">
+	<appName>Visualizing Sensor Information</appName>
 
-  <camera>
-    <resolution>1920x1080</resolution>
-    <verticalViewAngle>47.1</verticalViewAngle>
-    <horizontalViewAngle>60.5</horizontalViewAngle>
-  </camera>
+	<camera>
+		<resolution>1920x1080</resolution>
+		<verticalViewAngle>47.1</verticalViewAngle>
+		<horizontalViewAngle>60.5</horizontalViewAngle>
+	</camera>
 
-  <logItem dateTime="2014-10-07T13:57:23.794+0000">
-    <name>Rotation</name>
-    <entry type="azimuth">1.2424232</entry>
-    <entry type="pitch">2.03242352</entry>
-    <entry type="roll">0.23423424</entry>
-  </logItem>
+	<logItem dateTime="2014-10-07T13:57:23.794+0000">
+		<name>Rotation</name>
+		<entry type="azimuth">1.2424232</entry>
+		<entry type="pitch">2.03242352</entry>
+		<entry type="roll">0.23423424</entry>
+	</logItem>
 
-  <logItem dateTime="2014-10-07T13:58:23.794+0230">
-    <name>Acceleration</name>
-    <entry type="force">0.2342225</entry>
-  </logItem>
+	<logItem dateTime="2014-10-07T15:58:23.794+0230">
+		<name>Location</name>
+		<entry type="speed">0.0</entry>
+		<entry type="altitude">23.0</entry>
+		<entry type="longitude">10.71814512</entry>
+		<entry type="latitude">59.94112557</entry>
+		<entry type="accuracy">58.0</entry>
+		<entry type="provider">gps</entry>
+	</logItem>
 
-  <logItem dateTime="2014-10-07T13:59:23.723+0020">
-    <name>Brightness</name>
-    <entry type="lux">100</entry>
-  </logItem>
+	<logItem dateTime="2014-10-07T13:58:23.794+0230">
+		<name>Acceleration</name>
+		<entry type="force">0.2342225</entry>
+	</logItem>
 
-  <logItem dateTime="2014-10-07T13:59:23.759+0020">
-  <name>Snapshot</name>
-    <entry type="base64jpeg">9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0a
-HBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIy
-MjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAArAC8DASIA
-AhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
-AAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3
-ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWm
-p6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEA
-AwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSEx
-BhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElK
-U1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3
-uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD2jWte
-g0Y20Hky3V9eMUtbSAAvKRyTk8Kqg5LHgD3IB5rUrjxfcTEf2xpukRJy8VtGk0qj3eVguP8AgFVr
-LxbbX/iOXXbqaG00yKKSysZLmYRrId4LuSQcFmiXaOPlXPOcB+p6t48gv3m8O6Joeo6Ux82PZeYk
-lB5JySFBJzzgigCOPRdemja5bxLrQtwm/wA6W4tyjDqSPLVcDv1PHepXt9QskBudT1Z04JdWkjwP
-q24E+igEnoBVy21/UL/4bpq+naHcPdCBGgtLkqzPtK/PhWywHLBeGbbgAEiuG1qf4k29/Z3kfiFN
-Os7g7FTV0hQSvycbUjZYgRgBXfdkctk4oEdpNc3+lWb69YarfajaW677zT7sIxMQGS8TKoIYDkcl
-WwRweR2kE8Vzbx3ELiSKVA6OvIZSMgj8K4ex8a2VrbxWV1apPqbQhri20hHvFRzndu2KQq9MZOTk
-4BwCV8I6uukwQ6XOyNpDu66XeI5IVRlvs8mQCjIAwGR0TBwQAQLnM63d3/g/wx4isbeFHns50i09
-xw4Sdl8srxnKqXXIPJTpzwiax4en0KZPDV5Y+Gbu+Kz3VtdObee4XLFkSRiAgYlgHTcBuJGDV74o
-aZPqWn+Jms3KT21pYzh1JynlyyMW45GFJPHpXk3h5PiA9slnpstndQ3sCWSJN5TjaImlSMFhwdsj
-kepBHUUDPZG8YaS3h+ys9A1PTtLgVfINvcT/AOkxKuAPLVC/zY3YJBzgHBzmm6b4t1O48Ossdm2o
-yW+Y7291NltbWFsA4csoZsArkLHg+1cR4Y0/4jSt4dnj1DS9Mt7i3e0tHS3VmRCodsqowT+6HU5y
-Pers2gaJZeMr+016W88X6qyR3cFtEwCNPgpIZI0wkWAkfL8bccnGKBWG2WqT+M/7DtrO/vBqdxcC
-5RdNt/Is9Ojjcb5PmH75sYX5iQC/QHg9PqWmXeoahd+HUlS4vri4+1zzKmEt49gUM3ozmNOB/efs
-pNXfC9tYeCfDxvNUvori/MccKQ2xVzGhLeVbxAYLEktg/wARyeg46jwxps9hpjz30aLqV9K11ebT
-uw7dEz3CLtQf7tAIp2byR+LPECIN0x+zyCIkAyReWVyD/vbvxGKx18B6Pcy+ZP4dghuAxZbq3xby
-exIQ7d3bIPJJOBnFb/i7SrO80me9kjdbuzhd7e4hlaKSM4zw6EHHAyM4PpXgvhPxj4k1vxQdM1DX
-dQltPO8vYtw0Z28/xKQ360DPVLvwT4Z0+1iW7sYvLVv3a6lqBESsc8qu7BPXjjPP1qrpumS3sD23
-hqxtBYM2TPHF9msmI4yMDfOBjIIwM8eZiu0t/BfhyCVZzpFvPOvSa6BuJB/wOQsf1rdAC4AGABwB
-QBzWheDbLSJ1vrmVr/Uhk/aZlACFsBvLQcJnABPLEdWNdNRRQB//2Q==
-</entry>
-  </logItem>
+	<logItem dateTime="2014-10-07T13:59:23.723+0020">
+		<name>Brightness</name>
+		<entry type="lux">100</entry>
+	</logItem>
+
+	<logItem dateTime="2014-10-07T13:59:23.759+0020">
+		<name>Snapshot</name>
+		<entry type="base64jpeg">9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0a
+			HBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIy
+			MjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAArAC8DASIA
+			AhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA
+			AAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3
+			ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWm
+			p6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEA
+			AwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSEx
+			BhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElK
+			U1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3
+			uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD2jWte
+			g0Y20Hky3V9eMUtbSAAvKRyTk8Kqg5LHgD3IB5rUrjxfcTEf2xpukRJy8VtGk0qj3eVguP8AgFVr
+			LxbbX/iOXXbqaG00yKKSysZLmYRrId4LuSQcFmiXaOPlXPOcB+p6t48gv3m8O6Joeo6Ux82PZeYk
+			lB5JySFBJzzgigCOPRdemja5bxLrQtwm/wA6W4tyjDqSPLVcDv1PHepXt9QskBudT1Z04JdWkjwP
+			q24E+igEnoBVy21/UL/4bpq+naHcPdCBGgtLkqzPtK/PhWywHLBeGbbgAEiuG1qf4k29/Z3kfiFN
+			Os7g7FTV0hQSvycbUjZYgRgBXfdkctk4oEdpNc3+lWb69YarfajaW677zT7sIxMQGS8TKoIYDkcl
+			WwRweR2kE8Vzbx3ELiSKVA6OvIZSMgj8K4ex8a2VrbxWV1apPqbQhri20hHvFRzndu2KQq9MZOTk
+			4BwCV8I6uukwQ6XOyNpDu66XeI5IVRlvs8mQCjIAwGR0TBwQAQLnM63d3/g/wx4isbeFHns50i09
+			xw4Sdl8srxnKqXXIPJTpzwiax4en0KZPDV5Y+Gbu+Kz3VtdObee4XLFkSRiAgYlgHTcBuJGDV74o
+			aZPqWn+Jms3KT21pYzh1JynlyyMW45GFJPHpXk3h5PiA9slnpstndQ3sCWSJN5TjaImlSMFhwdsj
+			kepBHUUDPZG8YaS3h+ys9A1PTtLgVfINvcT/AOkxKuAPLVC/zY3YJBzgHBzmm6b4t1O48Ossdm2o
+			yW+Y7291NltbWFsA4csoZsArkLHg+1cR4Y0/4jSt4dnj1DS9Mt7i3e0tHS3VmRCodsqowT+6HU5y
+			Pers2gaJZeMr+016W88X6qyR3cFtEwCNPgpIZI0wkWAkfL8bccnGKBWG2WqT+M/7DtrO/vBqdxcC
+			5RdNt/Is9Ojjcb5PmH75sYX5iQC/QHg9PqWmXeoahd+HUlS4vri4+1zzKmEt49gUM3ozmNOB/efs
+			pNXfC9tYeCfDxvNUvori/MccKQ2xVzGhLeVbxAYLEktg/wARyeg46jwxps9hpjz30aLqV9K11ebT
+			uw7dEz3CLtQf7tAIp2byR+LPECIN0x+zyCIkAyReWVyD/vbvxGKx18B6Pcy+ZP4dghuAxZbq3xby
+			exIQ7d3bIPJJOBnFb/i7SrO80me9kjdbuzhd7e4hlaKSM4zw6EHHAyM4PpXgvhPxj4k1vxQdM1DX
+			dQltPO8vYtw0Z28/xKQ360DPVLvwT4Z0+1iW7sYvLVv3a6lqBESsc8qu7BPXjjPP1qrpumS3sD23
+			hqxtBYM2TPHF9msmI4yMDfOBjIIwM8eZiu0t/BfhyCVZzpFvPOvSa6BuJB/wOQsf1rdAC4AGABwB
+			QBzWheDbLSJ1vrmVr/Uhk/aZlACFsBvLQcJnABPLEdWNdNRRQB//2Q==
+		</entry>
+	</logItem>
 </logFile>

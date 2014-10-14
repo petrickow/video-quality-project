@@ -177,7 +177,7 @@ public class DeviceListener {
 					// If we have an item element, we create a new item
 					switch (startElement.getName().getLocalPart()) {
 
-					// appname and logfile skipped
+					// appname skipped
 					case "appName":
 						break;
 
@@ -187,27 +187,26 @@ public class DeviceListener {
 						break;
 
 					case "camera":
+					
+						break;
+					case "resolution":
 						event = eventReader.nextEvent();
-						String res; // temporary storage for textual
-									// representation of the resolution
-
-						// I think this will work TODO test it
-						if (event.isStartElement()
-								&& event.asStartElement().getName()
-										.getLocalPart().equals("resolution")) {
-							res = eventReader.nextEvent().asCharacters()
-									.getData();
-							// TODO TODO TODO TODO !!!
-							// int[] xy = extractResolution(res);
-
-							cameraModel.setX(0);
-							cameraModel.setY(0);
-						} else {
-							log.warn("Something fishy about the xml, could not find resolution after camera element");
-						}
+						String resolution = event.asCharacters().getData();
+						int[] xy = extractResolution(resolution);
+						cameraModel.setX(xy[0]);
+						cameraModel.setY(xy[1]);
+						break;
+					case "verticalViewAngle":
+						event = eventReader.nextEvent();
+							cameraModel.setVerticalViewAngle(Float
+									.parseFloat(event.toString()));
+						break;
+					case "horizontalViewAngle":
+						event = eventReader.nextEvent();
+							cameraModel.setHorizontalViewAngle(Float
+									.parseFloat(event.toString()));
 
 						break;
-
 					case "logItem":
 						attributes = startElement.getAttributes();
 						attribute = attributes.next();
@@ -225,6 +224,10 @@ public class DeviceListener {
 							locationModel.setName(name);
 						} else if ("Acceleration".equals(name)) {
 							accelerationModel.setName(name);
+						} else if ("Brightness".equals(name)) {
+							brightnessModel.setName(name);
+						} else if ("Snapshot".equals(name)) {
+							snapshotModel.setName(name);
 						}
 						break;
 
@@ -287,7 +290,7 @@ public class DeviceListener {
 							break;
 
 						default:
-							log.warn("unidentified entry in xml");
+							log.warn("Unknown attribute in entry");
 							break;
 						}
 						break;
@@ -352,8 +355,9 @@ public class DeviceListener {
 						break;
 
 					case "camera":
-						log.warn("\"" + endElement.getName()
-								+ "\" has not been implemented yet");
+						cameraModel.setId(genericMetaDataModel.getId());
+						cameraModel.setDate(genericMetaDataModel.getDate());
+						models.add(cameraModel);
 						break;
 					default:
 						// just keep on truckin' for now, handle as error TODO
@@ -363,11 +367,24 @@ public class DeviceListener {
 		} catch (Exception e) {
 			log.error(e.getMessage()
 					+ " "
-					+ e.getStackTrace()
+					+ e.getStackTrace() + " "+e.getCause() + " " + e.toString() 
 					+ "Great gooogelymooogley in the convert Xml to Model method");
 		}
 
 		return models;
+	}
+
+	private static int[] extractResolution(String resolution) {
+		// parsing resolution
+		String stringArray[] = new String[2];
+		stringArray = resolution.split("x");
+		stringArray[1].replace("x", "");
+
+		// returing resolution as int
+		int res[] = new int[2];
+		res[0] = Integer.parseInt(stringArray[0]);
+		res[1] = Integer.parseInt(stringArray[1]);
+		return res;
 	}
 
 	private static boolean validateXMLSchema(String xsdPath, Document xml) {
