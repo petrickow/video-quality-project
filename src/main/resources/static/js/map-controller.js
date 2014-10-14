@@ -3,14 +3,19 @@ app.controller('mapController', function ($scope, Socket) {
     $scope.ids = [];
     $scope.markers = [];
     
-    $scope.areaFilterPath = [{ latitude : 59.94, longitude: 10.71 },
-                            { latitude : 59.94, longitude: 10.72 },
-                            { latitude : 59.95, longitude: 10.72 },
-                            { latitude : 59.95, longitude: 10.71 }];
-    $scope.areaFilterVisible = true;
+    $scope.areaFilterPath = [];
+    
+    $scope.areaFilterVisible = false;
     
     $scope.mapEvents = {
-        'click': null
+        'click': function ( map, eventName, args ){
+            if(!$scope.areaFilterVisible)
+                $scope.initAreaFilter();
+            $scope.areaFilterVisible = !$scope.areaFilterVisible;
+        }
+    };
+    
+    $scope.areaFilterEvents = {
     };
     
     $scope.getStreams = function () {
@@ -74,7 +79,7 @@ app.controller('mapController', function ($scope, Socket) {
         return $scope.markers[id];
     };
     
-    $scope.getAreaFilterPath = function () {
+    $scope.initAreaFilter = function () {
         var parameter;
         var currentValue;
         var latitude;
@@ -84,45 +89,42 @@ app.controller('mapController', function ($scope, Socket) {
         var maxLatitude;
         var maxLongitude;
         var first = true;
-//        try {
-//            // TODO remove true test once its works
-//            if ($scope.areaFilterVisible === false || $scope.areaFilterVisible === true) {
-//                for (var stream in Socket.stream) {
-//                    parameter = Socket.stream[stream].Location;
-//                    if (parameter.index !== 0)
-//                        currentValue = parameter.data[parameter.index - 1];
-//                    else
-//                        currentValue = parameter.data[Socket.maxCachedItems - 1];
-//                    latitude = parseFloat(currentValue.latitude);
-//                    longitude = parseFloat(currentValue.longitude);
-//                    if (first){
-//                        minLatitude = latitude;
-//                        minLongitude = longitude;
-//                        maxLatitude = latitude;
-//                        maxLongitude = longitude;
-//                        first = false;
-//                    } else {
-//                        if (latitude < minLatitude)
-//                            minLatitude = latitude;
-//                        else if (latitude > maxLatitude)
-//                            maxLatitude = latitude;
-//                        if (longitude < minLongitude)
-//                            minLatitude = longitude;
-//                        else if (longitude > maxLongitude)
-//                            maxLongitude = longitude
-//                    }
-//                }
-//                var frame = 0.01;
-//                $scope.areaFilterPath = [
-//                    {'latitude': (minLatitude - frame), 'longitude': (minLongitude - frame)},
-//                    {'latitude': (minLatitude - frame), 'longitude': (maxLongitude + frame)},
-//                    {'latitude': (maxLatitude + frame), 'longitude': (maxLongitude + frame)},
-//                    {'latitude': (maxLatitude + frame), 'longitude': (minLongitude - frame)}
-//                ]
-//            }
-//        } catch (e) {
-//            console.log("error " + e);
-//        }
-        return $scope.areaFilterPath;
+        try {
+            for (var stream in Socket.stream) {
+                parameter = Socket.stream[stream].Location;
+                if (parameter.index !== 0)
+                    currentValue = parameter.data[parameter.index - 1];
+                else
+                    currentValue = parameter.data[Socket.maxCachedItems - 1];
+                latitude = parseFloat(currentValue.latitude);
+                longitude = parseFloat(currentValue.longitude);
+                if (first){
+                    minLatitude = latitude;
+                    minLongitude = longitude;
+                    maxLatitude = latitude;
+                    maxLongitude = longitude;
+                    first = false;
+                } else {
+                    if (latitude < minLatitude)
+                        minLatitude = latitude;
+                    else if (latitude > maxLatitude)
+                        maxLatitude = latitude;
+                    if (longitude < minLongitude)
+                        minLatitude = longitude;
+                    else if (longitude > maxLongitude)
+                        maxLongitude = longitude
+                }
+            }
+            var hFrame = 0.002;
+            var vFrame = 0.001;
+            $scope.areaFilterPath = [
+                {'latitude': (minLatitude - vFrame), 'longitude': (minLongitude - hFrame)},
+                {'latitude': (minLatitude - vFrame), 'longitude': (maxLongitude + hFrame)},
+                {'latitude': (maxLatitude + vFrame), 'longitude': (maxLongitude + hFrame)},
+                {'latitude': (maxLatitude + vFrame), 'longitude': (minLongitude - hFrame)}
+            ]
+        } catch (e) {
+            console.log("error " + e);
+        }
     };
 });

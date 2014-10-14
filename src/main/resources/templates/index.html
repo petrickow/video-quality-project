@@ -79,7 +79,7 @@
         </div>
         <!--<div id="video-section" class="jumbotron pull-right">--> 
             <section class="map" data-ng-controller="mapController">
-                <ui-gmap-google-map center="getCenter()" zoom="map.zoom">
+                <ui-gmap-google-map center="getCenter()" zoom="map.zoom" events="mapEvents">
                     <div data-ng-repeat="id in getStreams()">
                         <ui-gmap-marker idKey="getMarker(id).idKey" coords="getMarker(id).coords"></ui-gmap-marker>
                     </div>
