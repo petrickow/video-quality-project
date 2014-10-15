@@ -188,12 +188,13 @@ public class DeviceListener {
 						genericMetaDataModel.setId(atr.getValue());
 						break;
 
-						/*== camera 
-						 * this can be extracted into a method==*/
+					/*
+					 * == camera this can be extracted into a method==
+					 */
 					case "camera":
 						cameraModel.setName("Camera");
 						break;
-						
+
 					case "resolution":
 						event = eventReader.nextEvent();
 						String resolution = event.asCharacters().getData();
@@ -201,20 +202,20 @@ public class DeviceListener {
 						cameraModel.setX(xy[0]);
 						cameraModel.setY(xy[1]);
 						break;
-						
+
 					case "verticalViewAngle":
 						event = eventReader.nextEvent();
 						cameraModel.setVerticalViewAngle(Float.parseFloat(event
 								.toString()));
 						break;
-						
+
 					case "horizontalViewAngle":
 						event = eventReader.nextEvent();
 						cameraModel.setHorizontalViewAngle(Float
 								.parseFloat(event.toString()));
 						break;
-						/*== end camera ==*/
-					
+					/* == end camera == */
+
 					case "logItem":
 						attributes = startElement.getAttributes();
 						attribute = attributes.next();
@@ -305,7 +306,10 @@ public class DeviceListener {
 							rotationModel.setRoll(Float.parseFloat(event
 									.toString()));
 							break;
-
+						case "lux":
+							brightnessModel.setLux(Float.parseFloat(event
+									.toString()));
+							break;
 						default:
 							log.warn("Unknown attribute in entry");
 							break;
@@ -436,8 +440,7 @@ public class DeviceListener {
 			ArrayList<GenericMetaDataModel> list = deviceMapping.get(key);
 			jsonString += mapper.writeValueAsString(list);
 		}
-		
 
-		return jsonString +  "}";
+		return jsonString + "}";
 	}
 }
