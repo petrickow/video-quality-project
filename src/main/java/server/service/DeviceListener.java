@@ -254,7 +254,7 @@ public class DeviceListener {
 								event = eventReader.nextEvent();
 							}
 							snapshotModel.setSnapshot(encodedImage);
-							snapshotModel.setBrightnessQuality(AnalysisService.ratePicture(encodedImage));
+							snapshotModel.setBrightnessQuality(AnalysisService.ratePicture(encodedImage, genericMetaDataModel.getId()));
 							System.out.println(genericMetaDataModel.getId() + " snap qual: " + snapshotModel.getBrightnessQuality());
 							break;
 
@@ -317,7 +317,7 @@ public class DeviceListener {
 						break;
 
 					default:
-						log.warn("Unknown start element");
+						//log.warn("Unknown start element"); //we get a lot of these
 						break;
 					}
 				}
@@ -381,6 +381,7 @@ public class DeviceListener {
 						break;
 					default:
 						// just keep on truckin' for now, handle as error TODO
+						log.warn("Unhandled element");
 					}
 				}
 			}
@@ -390,8 +391,6 @@ public class DeviceListener {
 					+ e.getStackTrace()
 					+ " "
 					+ e.getCause()
-					+ " "
-					+ e.toString()
 					+ "Great gooogelymooogley in the convert Xml to Model method");
 		}
 
