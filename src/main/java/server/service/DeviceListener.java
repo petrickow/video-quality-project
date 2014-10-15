@@ -254,7 +254,7 @@ public class DeviceListener {
 								event = eventReader.nextEvent();
 							}
 							snapshotModel.setSnapshot(encodedImage);
-							System.out.println("This is " + genericMetaDataModel.getId() + " Image is dark? " + AnalysisService.ratePicture(snapshotModel.getSnapshot()));
+							snapshotModel.setBrightnessQuality(AnalysisService.ratePicture(encodedImage));
 							break;
 
 						case "speed":
