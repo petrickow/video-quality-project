@@ -53,7 +53,7 @@
                     </tr>
                 </thead>
                 <tbody data-ng-repeat="id in stream.getStreams()">
-                    <tr>
+                    <tr data-ng-hide="stream.isHidden(id)">
                         <td>{{ stream.getQuality(id) }}%</td>
                         <td>Stream {{ id }}</td>
                         <td>

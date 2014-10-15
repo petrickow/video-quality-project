@@ -1,4 +1,4 @@
-app.controller('mapController', function ($scope, Socket) {
+app.controller('mapController', ['$scope', 'Socket', function ($scope, Socket, StreamController) {
     "use strict";
     $scope.ids = [];
     $scope.markers = [];
@@ -27,7 +27,7 @@ app.controller('mapController', function ($scope, Socket) {
                     // TODO Add disabled Video
                     console.log("Add: " + markers[marker].idKey);
                 } else {
-                    // TODO Remove enable Video
+                    
                     console.log("Remove: " + markers[marker].idKey);
                 }
             }
@@ -55,10 +55,7 @@ app.controller('mapController', function ($scope, Socket) {
         try {
             for (var stream in Socket.stream){
                 parameter = Socket.stream[stream].Location;
-                if (parameter.index !== 0)
-                    currentValue = parameter.data[parameter.index - 1];
-                else
-                    currentValue = parameter.data[Socket.maxCachedItems - 1];
+                currentValue = parameter.data[parameter.index];
                 sumLatitude += parseFloat(currentValue.latitude);
                 sumLongitude += parseFloat(currentValue.longitude);
             }
@@ -82,10 +79,7 @@ app.controller('mapController', function ($scope, Socket) {
         try {
             var currentStream = Socket.stream[id];
             var parameter = currentStream.Location;
-            if (parameter.index !== 0)
-                currentValue = parameter.data[parameter.index - 1];
-            else
-                currentValue = parameter.data[Socket.maxCachedItems - 1];
+            currentValue = parameter.data[parameter.index];
             if($scope.markers[id] === undefined){
                 $scope.markers[id] = {};
                 $scope.markers[id].coords = {};
@@ -115,10 +109,7 @@ app.controller('mapController', function ($scope, Socket) {
         try {
             for (var stream in Socket.stream) {
                 parameter = Socket.stream[stream].Location;
-                if (parameter.index !== 0)
-                    currentValue = parameter.data[parameter.index - 1];
-                else
-                    currentValue = parameter.data[Socket.maxCachedItems - 1];
+                currentValue = parameter.data[parameter.index];
                 latitude = parseFloat(currentValue.latitude);
                 longitude = parseFloat(currentValue.longitude);
                 if (first){
@@ -148,4 +139,4 @@ app.controller('mapController', function ($scope, Socket) {
             console.log("error " + e);
         }
     };
-});
+}]);

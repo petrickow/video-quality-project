@@ -1,4 +1,4 @@
-app.controller('StreamController', 
+app.controller('StreamController', ['Socket',
     function (Socket) {
         "use strict";
         this.modes = {
@@ -6,6 +6,7 @@ app.controller('StreamController',
         }
     
         this.ids = [];
+        this.hidden = {};
         this.mode = this.modes.SHAKINESS;
         this.quality = {};
         this.latitude = {};
@@ -26,6 +27,13 @@ app.controller('StreamController',
             return this.ids;
         };
     
+        this.isHidden = function (id) {
+            var hide = false;
+            if (false)
+                hide = true;
+            return hide;
+        };
+    
         this.getQuality = function (id) {
             switch (this.mode) {
                     case this.modes.SHAKINESS:
@@ -42,24 +50,18 @@ app.controller('StreamController',
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
-                if (parameter.index != 0)
-                    var currentValue = parameter.data[parameter.index - 1];
-                else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
+                var currentValue = parameter.data[parameter.index];
                 this.latitude[id] = currentValue.latitude;
             } catch (e) {
             }
             return this.latitude[id];
         };
-        
+    
         this.getLongitude = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
-                if (parameter.index != 0)
-                    var currentValue = parameter.data[parameter.index - 1];
-                else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
+                var currentValue = parameter.data[parameter.index];
                 this.longitude[id] = currentValue.longitude;
             } catch (e) {
             }
@@ -70,10 +72,7 @@ app.controller('StreamController',
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
-                if (parameter.index != 0)
-                    var currentValue = parameter.data[parameter.index - 1];
-                else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
+                var currentValue = parameter.data[parameter.index];
                 this.speed[id] = currentValue.speed;
             } catch (e) {
             }
@@ -84,10 +83,7 @@ app.controller('StreamController',
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
-                if (parameter.index != 0)
-                    var currentValue = parameter.data[parameter.index - 1];
-                else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
+                var currentValue = parameter.data[parameter.index];
                 this.accuracy[id] = currentValue.accuracy;
             } catch (e) {
             }
@@ -98,10 +94,7 @@ app.controller('StreamController',
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
-                if (parameter.index != 0)
-                    var currentValue = parameter.data[parameter.index - 1];
-                else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
+                var currentValue = parameter.data[parameter.index];
                 this.altitude[id] = currentValue.altitude;
             } catch (e) {
             }
@@ -112,10 +105,7 @@ app.controller('StreamController',
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Acceleration;
-                if (parameter.index != 0)
-                    var currentValue = parameter.data[parameter.index - 1];
-                else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
+                var currentValue = parameter.data[parameter.index];
                 this.force[id] = currentValue.force;
             } catch (e) {
             }
@@ -126,10 +116,7 @@ app.controller('StreamController',
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
-                if (parameter.index != 0)
-                    var currentValue = parameter.data[parameter.index - 1];
-                else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
+                var currentValue = parameter.data[parameter.index];
                 this.azimuth[id] = currentValue.azimuth;
             } catch (e) {
             }
@@ -140,10 +127,7 @@ app.controller('StreamController',
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
-                if (parameter.index != 0)
-                    var currentValue = parameter.data[parameter.index - 1];
-                else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
+                var currentValue = parameter.data[parameter.index];
                 this.pitch[id] = currentValue.pitch;
             } catch (e) {
             }
@@ -154,10 +138,7 @@ app.controller('StreamController',
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
-                if (parameter.index != 0)
-                    var currentValue = parameter.data[parameter.index - 1];
-                else
-                    var currentValue = parameter.data[Socket.maxCachedItems - 1];
+                var currentValue = parameter.data[parameter.index];
                 this.roll[id] = currentValue.roll;
             } catch (e) {
             }
@@ -206,4 +187,4 @@ app.controller('StreamController',
             }
             return this.averageRoll[id];
         };
-    });
+    }]);

@@ -32,7 +32,7 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
                     if (typeof Service.stream[item.id][item["name"]] === "undefined") {
                         Service.stream[item.id][item.name] = {};
                         Service.stream[item.id][item.name].data = [];
-                        Service.stream[item.id][item.name].index = 0;
+                        Service.stream[item.id][item.name].index = -1;
                     }
                 
 
@@ -41,11 +41,11 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
                     currentStream = Service.stream[item.id][item.name];
 
                     //prevents from running out of memory
-                    if (currentStream.index > Service.maxCachedItems) {
-                        currentStream.index = 0;
+                    if (currentStream.index >= Service.maxCachedItems) {
+                        currentStream.index = -1;
                     }
 
-                    currentStream.data[currentStream.index++] = item;
+                    currentStream.data[++currentStream.index] = item;
 
                     }
             });       
