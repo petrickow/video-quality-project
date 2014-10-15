@@ -5,11 +5,11 @@ import server.model.*;
 
 import org.w3c.dom.Document;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
@@ -165,8 +165,7 @@ public class DeviceListener {
 			XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 			// Setup a new eventReader
 			XMLEventReader eventReader = inputFactory
-					.createXMLEventReader(new StringBufferInputStream(
-							RestController.getStringFromDocument(xml)));
+					.createXMLEventReader(new ByteArrayInputStream(RestController.getStringFromDocument(xml).getBytes()));
 			// read the XML document
 			// genericMetaDataModel = new GenericMetaDataModel();
 			XMLEvent event;
@@ -256,6 +255,7 @@ public class DeviceListener {
 							}
 							snapshotModel.setSnapshot(encodedImage);
 							snapshotModel.setBrightnessQuality(AnalysisService.ratePicture(encodedImage));
+							System.out.println(genericMetaDataModel.getId() + " snap qual: " + snapshotModel.getBrightnessQuality());
 							break;
 
 						case "speed":
@@ -417,8 +417,8 @@ public class DeviceListener {
 					.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			Schema schema = factory.newSchema(new File(xsdPath));
 			Validator validator = schema.newValidator();
-			validator.validate(new StreamSource(new StringBufferInputStream(
-					RestController.getStringFromDocument(xml))));
+			validator.validate(new StreamSource(new ByteArrayInputStream(
+					RestController.getStringFromDocument(xml).getBytes())));
 		} catch (IOException e) {
 			log.error("Exception: " + e.getMessage());
 			return false;
