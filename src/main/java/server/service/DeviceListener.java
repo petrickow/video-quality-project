@@ -188,9 +188,12 @@ public class DeviceListener {
 						genericMetaDataModel.setId(atr.getValue());
 						break;
 
+						/*== camera 
+						 * this can be extracted into a method==*/
 					case "camera":
 						cameraModel.setName("Camera");
 						break;
+						
 					case "resolution":
 						event = eventReader.nextEvent();
 						String resolution = event.asCharacters().getData();
@@ -198,17 +201,20 @@ public class DeviceListener {
 						cameraModel.setX(xy[0]);
 						cameraModel.setY(xy[1]);
 						break;
+						
 					case "verticalViewAngle":
 						event = eventReader.nextEvent();
 						cameraModel.setVerticalViewAngle(Float.parseFloat(event
 								.toString()));
 						break;
+						
 					case "horizontalViewAngle":
 						event = eventReader.nextEvent();
 						cameraModel.setHorizontalViewAngle(Float
 								.parseFloat(event.toString()));
-
 						break;
+						/*== end camera ==*/
+					
 					case "logItem":
 						attributes = startElement.getAttributes();
 						attribute = attributes.next();
@@ -248,6 +254,7 @@ public class DeviceListener {
 								event = eventReader.nextEvent();
 							}
 							snapshotModel.setSnapshot(encodedImage);
+							System.out.println("This is " + genericMetaDataModel.getId() + " Image is dark? " + AnalysisService.ratePicture(snapshotModel.getSnapshot()));
 							break;
 
 						case "speed":
