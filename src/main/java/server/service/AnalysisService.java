@@ -2,12 +2,14 @@ package server.service;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.codec.binary.Base64;
+
 
 import javax.imageio.ImageIO;
 
@@ -39,79 +41,80 @@ public class AnalysisService {
 			 */
 		}
 
-		BufferedImage gray = convertToGrayScale(bi, id);
-
-		return rateDarkness(gray);
-
+		//gets the histogram for the picture with the coresp. id
+		int[] hist = parseHistogramForColors(bi,id);
+		
+		// calculates an average number for darkness
+		System.out.println("the hist : "+id+" is running ");
+		int sum = 0;
+		for (int i=0; i<hist.length; i++)
+		sum += hist[i];
+		
+		int average= sum/256;
+		System.out.println(average);
+		// very dark more than 8000
+		// mediocre 4000 - 8000
+		// bright 0 - 4000.
+		if (average >= 8000) return 3; //very bad
+		else
+			if (average >4000 && average < 8000) return 2; // mediocre
+			else return 1; // good
+		
 	}
 
-	/*** Testing with a stackoverflow answer :) ***/
-	private static int rateDarkness(BufferedImage bufferedImage) {
 
-		/*
-		 * These parameters can be adjusted to set granularity and max
-		 * "darkness"
-		 */
-		int imageDetailGranularity = 1; // tradeoff, speed vs granularity
-		int howDark = 75;
 
-		int imageHeight = bufferedImage.getHeight();
-		int imageWidth = bufferedImage.getWidth();
-		long pixelCount = 0;
-		long darkPixels = 0;
-		for (int y = 0; y < imageHeight; y += imageDetailGranularity) {
-			for (int x = 0; x < imageWidth; x += imageDetailGranularity) {
-				pixelCount++;
-				int rgb = bufferedImage.getRGB(x, y);
-				int red = (rgb >> 16) & 0x000000FF;
-				int green = (rgb >> 8) & 0x000000FF;
-				int blue = (rgb) & 0x000000FF;
-				if (red + green + blue < howDark) {
-					darkPixels++;
-				}
+	/**
+	 * Compute the histograms for the red, green, blue and their combinations.
+	 * @param img {@link BufferedImage} object which represents the image.
+	 */
+	private static int[] parseHistogramForColors(BufferedImage img,String id) {
+		int height = img.getHeight();
+		int width = img.getWidth();		
+		Color pixelColor = null;
+		int computedGray = 0;
+		int _redHistogram[] = new int[256];
+		int _greenHistogram[] = new int[256];
+		int _blueHistogram[] = new int[256];
+		int _computedGrayHistogram1[] = new int[256];
+		int r = 0;
+		int g = 0;
+		int b = 0;
+		
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				pixelColor = new Color(img.getRGB(x, y));
+				r = pixelColor.getRed();
+				g = pixelColor.getGreen();
+				b = pixelColor.getBlue();
+				
+				_redHistogram[r]++;
+				_greenHistogram[g]++;
+				_blueHistogram[b]++;
+				
+				
+				computedGray = computeGrayColor1(pixelColor);
+				_computedGrayHistogram1[computedGray]++;
+				
+				
 			}
 		}
-		float darkQuotient = (float) darkPixels / (float) pixelCount;
-		System.out.println("darkQuotient for image: " + darkQuotient);
+		
 
-		if (darkQuotient >= 0.7 && !(darkQuotient < 0.7)) {
-			return 3; // very dark
-		} else if (darkQuotient >= 0.4 && (darkQuotient < 0.7))
-			return 2; // mediocre
-		else {
-			return 1; // bright
-		}
-		// return darkQuotient > 0.1; // if darkQuotient is more than 0.1 it is
-		// too dark according to da interwebz
-		// (http://stackoverflow.com/questions/20341558/java-analyze-image-for-darkness)
+		return _computedGrayHistogram1;
 
-	}
-
-	private synchronized static BufferedImage convertToGrayScale(
-			BufferedImage bi, String id) {
-		for (int x = 0; x < bi.getHeight(); x++) {
-			for (int y = 0; y < bi.getWidth(); y++) {
-				Color c = new Color(bi.getRGB(y, x));
-				int red = (int) (c.getRed() * 0.299);
-				int green = (int) (c.getGreen() * 0.587);
-				int blue = (int) (c.getBlue() * 0.114);
-				Color newColor = new Color(red + green + blue, red + green
-						+ blue, red + green + blue);
-				bi.setRGB(y, x, newColor.getRGB());
-			}
-		}
-/* Proof that it is gray
-		File output = new File("gray" + id + ".jpg");
-
-		if (!output.exists()) {
-			try {
-				ImageIO.write(bi, "jpg", output);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-*/
-		return bi;
+}
+	/**
+	 * Computes the combined histogram for a color pixel based on the
+	 * following formula: RGB_Combined = R*0.2126 + G*0.7152 + B*0.0722
+	 * @param c the color of a pixel.
+	 * @return the combined value which is computed from R, G and B colors.
+	 */
+	private static int computeGrayColor1(Color c) {
+		int r = c.getRed();
+		int g = c.getGreen();
+		int b = c.getBlue();
+		int gray = (int)((double)(r*0.2126) + (double)(g*0.7152) + (double)(b*0.0722));
+		return gray;
 	}
 }
