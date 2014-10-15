@@ -311,7 +311,7 @@ public class DeviceListener {
 									.toString()));
 							break;
 						default:
-							log.warn("Unknown attribute in entry");
+							log.warn("Unknown attribute in entry ");
 							break;
 						}
 						break;
@@ -330,6 +330,8 @@ public class DeviceListener {
 
 					// finishing up log items and camera
 					switch (endElement.getName().getLocalPart()) {
+					case "logFile": 
+						break;
 					case "logItem":
 						switch (name) {
 						case "Location":
@@ -381,7 +383,6 @@ public class DeviceListener {
 						break;
 					default:
 						// just keep on truckin' for now, handle as error TODO
-						log.warn("Unhandled element");
 					}
 				}
 			}
