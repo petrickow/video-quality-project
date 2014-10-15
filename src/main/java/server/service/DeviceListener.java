@@ -9,7 +9,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +20,6 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Validator;
 import javax.xml.XMLConstants;
@@ -185,11 +183,10 @@ public class DeviceListener {
 						Attribute atr = startElement
 								.getAttributeByName(new QName("id"));
 						genericMetaDataModel.setId(atr.getValue());
+						atr = startElement.getAttributeByName(new QName("dateTime"));
+						genericMetaDataModel.setDate(atr.getValue());
 						break;
 
-					/*
-					 * == camera this can be extracted into a method==
-					 */
 					case "camera":
 						cameraModel.setName("Camera");
 						break;
@@ -398,6 +395,12 @@ public class DeviceListener {
 		return models;
 	}
 
+	
+	/**
+	 * Parses the resolution string into x and y integers for the CameraModel
+	 * @param resolution the textual representation of the resolution on the device
+	 * @return integer values x and y
+	 */
 	private static int[] extractResolution(String resolution) {
 		// parsing resolution
 		String stringArray[] = new String[2];
@@ -411,6 +414,12 @@ public class DeviceListener {
 		return res;
 	}
 
+	/**
+	 * Validates XML against schema
+	 * @param xsdPath the path to the local instance of the schema
+	 * @param xml the xml document
+	 * @return true if compliant with schema
+	 */
 	private static boolean validateXMLSchema(String xsdPath, Document xml) {
 		try {
 			SchemaFactory factory = SchemaFactory
@@ -429,8 +438,15 @@ public class DeviceListener {
 		return true;
 	}
 
+	
+	/**
+	 * Generate a json-string from all the historical data stored
+	 * in the deviceListeners device mapping.
+	 * @return A complete json-compliant string with response: accepted and historical data (if any)
+	 * @throws JsonProcessingException
+	 */
 	public static String createJsonFromHistory() throws JsonProcessingException {
-		String jsonString = "";
+		String jsonString = "{\"response\": \"accepted\"";
 		ObjectMapper mapper = new ObjectMapper();
 		int logitem = 0;
 		for (String key : deviceMapping.keySet()) { // TODO change this to
@@ -441,6 +457,6 @@ public class DeviceListener {
 			jsonString += mapper.writeValueAsString(list);
 		}
 
-		return jsonString + "}";
+		return jsonString + " }";
 	}
 }

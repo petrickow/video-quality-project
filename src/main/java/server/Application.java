@@ -21,9 +21,7 @@ public class Application {
 	private static Logger log;
 
 	public static void main(String[] args) {
-		/*
-		 * Start the services and listener
-		 */
+		
 		log = Logger.getLogger(Logger.class);
 		log.info("Logger started");
 		new Thread(new ImJustRunning("valid1.xml")).start();
@@ -58,17 +56,15 @@ class ImJustRunning implements Runnable {
 	public void run() {
 
 		/***
-		 * This part is for testing the device listener, it is not finished at
-		 * the moment It is a completely clean approach, not using StaXParser,
-		 * but using some of the code from the class
+		 * This part is for testing the device listener. Each threads keeps
+		 * sending the same xml-file until the cows come home
 		 */
-
 		holdFor(5);
 		// ugly-bugly but only for testing
-		String stringData = null;
 
 		// keep received xml every two seconds
 		while (true) {
+
 			try {
 				final URL url = new URL("http://localhost:8080/xml");
 				final URLConnection urlConnection = url.openConnection();
@@ -81,33 +77,13 @@ class ImJustRunning implements Runnable {
 						.getOutputStream();
 				outputStream.write(this.data);
 				outputStream.flush();
-				final InputStream inputStream = urlConnection.getInputStream();
+				InputStream inputStream = urlConnection.getInputStream();
 			} catch (Exception e) {
 
 			}
 
 			holdFor(2);
 		}
-		/***/
-
-		/***
-		 * For testing the StaXParserForXML //new
-		 * StaXParserForXML(this.file.toString()); //this immediately sends data
-		 ***/
-
-		/***
-		 * The good ol' somplified testing-program, no validiation of schema and
-		 * no sensor data try { FileReader in = new FileReader(this.file);
-		 * BufferedReader br = new BufferedReader(in); String line; while ((line
-		 * = br.readLine()) != null) { if (line.contains(("<rtept"))) {
-		 * Thread.sleep(3000); log.debug(line); UpdaterService.update(new
-		 * TextMessage(line)); log.debug("Sent line to Updater service"); } }
-		 * 
-		 * } catch (FileNotFoundException e) { log.error(this.file +
-		 * " was not found", e); } catch (IOException e) { log.error("IO error",
-		 * e); } catch (InterruptedException e) { log.error("Interruption", e);
-		 * }
-		 ***/
 	}
 
 	private synchronized void holdFor(int sec) {
