@@ -26,7 +26,7 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
 
                 for (var i in recvJson){
                     var item = recvJson[i];
-                    // console.log(item);
+                    console.log(item);
                     if (typeof Service.stream[item.id][item["name"]] === "undefined") {
                         Service.stream[item.id][item.name] = {};
                         Service.stream[item.id][item.name].data = [];

@@ -2,11 +2,12 @@ package server.service;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
@@ -44,8 +45,6 @@ public class AnalysisService {
 		int[] hist = parseHistogramForColors(bi, id);
 
 		// calculates an average number for darkness
-		System.out.println("ratePicture : " + id);
-		
 		int sum = 0;
 		int pixelCount = bi.getWidth() * bi.getHeight();
 		for (int i = 0; i < hist.length; i++) {
@@ -53,13 +52,11 @@ public class AnalysisService {
 		}
 		
 		int average = sum / pixelCount;
-		System.out.println("\t average: " + average + " = sum: " + sum + "/pixelCount: " + pixelCount);
 		
 		/* average is between 0-255, 0 being completely dark, and 255 completely white. */ 
-		
-		return 1; //
-			
-			
+		int percentage = 100 * average / 255 ;
+
+		return percentage;
 
 	}
 
@@ -101,7 +98,6 @@ public class AnalysisService {
 		}
 		return _computedGrayHistogram1;
 	}
-
 	/**
 	 * Computes the combined histogram for a color pixel based on the following
 	 * formula: RGB_Combined = R*0.2126 + G*0.7152 + B*0.0722
