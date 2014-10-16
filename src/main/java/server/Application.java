@@ -78,6 +78,7 @@ class ImJustRunning implements Runnable {
 				outputStream.write(this.data);
 				outputStream.flush();
 				InputStream inputStream = urlConnection.getInputStream();
+				//TODO check the response
 			} catch (Exception e) {
 
 			}
