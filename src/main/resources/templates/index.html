@@ -46,30 +46,35 @@
             <table class="video-streams-table table">
                 <thead>
                     <tr>
+                        <td>Stream</td>
                         <td>Quality</td>
                         <td>Video</td>
                         <td>Video Data</td>
                         <td>Graph</td>
                     </tr>
                 </thead>
-                <tbody data-ng-repeat="id in stream.getStreams()">
-                    <tr data-ng-hide="stream.isHidden(id)">
-                        <td>{{ stream.getQuality(id) }}%</td>
-                        <td>Stream {{ id }}</td>
+                <tbody data-ng-repeat="id in getStreams()">
+                    <tr data-ng-hide="isHidden(id)">
+                        <td>{{ id }}</td>
+                        <td>{{ getQuality(id) }}%</td>
+                        <td><img data-ng-src="{{ getSnapshot(id) }}" width="80" height="60" /></td>
                         <td>
                             <b>Rotation: (Average)</b><br />
-                            Azimuth: {{ stream.getAzimuth(id) }} ({{ stream.getAverageAzimuth(id) }}) <br />
-                            Pitch: {{ stream.getPitch(id) }} ({{ stream.getAveragePitch(id) }}) <br />
-                            Roll: {{ stream.getRoll(id) }} ({{ stream.getAverageRoll(id) }}) <br />
+                            Azimuth: {{ getAzimuth(id) }} ({{ getAverageAzimuth(id) }}) <br />
+                            Pitch: {{ getPitch(id) }} ({{ getAveragePitch(id) }}) <br />
+                            Roll: {{ getRoll(id) }} ({{ getAverageRoll(id) }}) <br />
+                            <b>Brightness: (Average)</b><br />
+                            Lux: {{ getBrightness(id) }} ({{ getAverageBrightness(id) }}) <br />
                             <b>Location:</b><br />
-                            Latitude: {{ stream.getLatitude(id) }} <br />
-                            Longitude: {{ stream.getLongitude(id) }} <br />
-                            Altitude: {{ stream.getAltitude(id) }} <br />
-                            Speed: {{ stream.getSpeed(id) }} <br />
-                            Accuracy: {{ stream.getAccuracy(id) }} <br />
+                            Latitude: {{ getLatitude(id) }} <br />
+                            Longitude: {{ getLongitude(id) }} <br />
+                            Altitude: {{ getAltitude(id) }} <br />
+                            Speed: {{ getSpeed(id) }} <br />
+                            Accuracy: {{ getAccuracy(id) }} <br />
                             <b>Acceleration:</b><br />
-                            Force: {{ stream.getForce(id) }} <br />
-
+                            Force: {{ getForce(id) }} <br />
+                            <b>Camera:</b><br />
+                            Resolution: {{ getXResolution(id) }}x{{ getYResolution(id) }} <br />
                         </td>
                         <td><linear-chart chart-data="salesData"></linear-chart></td>
                     </tr>
@@ -114,6 +119,8 @@
     <script type="text/javascript" src="../static/js/bluebird.js" th:src="@{/js/bluebird.js}"></script>
     <script type="text/javascript" src="../static/js/angular-google-maps.min.js" th:src="@{/js/angular-google-maps.min.js}"></script>
 	<script type="text/javascript" src="../static/js/app.js" th:src="@{/js/app.js}"></script>
+    <script type="text/javascript" src="../static/js/web-socket.js" th:src="@{/js/web-socket.js}"></script>
+    <script type="text/javascript" src="../static/js/map-filter-service.js" th:src="@{/js/map-filter-service.js}"></script>
 	<script type="text/javascript" src="../static/js/wstest.js" th:src="@{/js/wstest.js}"></script>
 	<script type="text/javascript" src="../static/js/stream-controller.js" th:src="@{/js/stream-controller.js}"></script>
     <script type="text/javascript" src="../static/js/map-controller.js" th:src="@{/js/map-controller.js}"></script>

@@ -1,4 +1,5 @@
-app.controller('mapController', ['$scope', 'Socket', function ($scope, Socket, StreamController) {
+app.controller('mapController', ['$scope', 'Socket', 'MapFilter',
+        function ($scope, Socket, StreamController) {
     "use strict";
     $scope.ids = [];
     $scope.markers = [];

@@ -1,152 +1,216 @@
-app.controller('StreamController', ['Socket',
-    function (Socket) {
+app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
+    function ($scope, Socket) {
         "use strict";
-        this.modes = {
+        $scope.modes = {
             SHAKINESS: 0
         }
     
-        this.ids = [];
-        this.hidden = {};
-        this.mode = this.modes.SHAKINESS;
-        this.quality = {};
-        this.latitude = {};
-        this.longitude = {};
-        this.speed = {};
-        this.accuracy = {};
-        this.altitude = {};
-        this.force = {};
-        this.azimuth = {};
-        this.pitch = {};
-        this.roll = {};
-        this.averageAzimuth = {};
-        this.averagePitch = {};
-        this.averageRoll = {};
+        $scope.ids = [];
+        $scope.hidden = {};
+        $scope.mode = $scope.modes.SHAKINESS;
+        $scope.quality = {};
+        $scope.latitude = {};
+        $scope.longitude = {};
+        $scope.speed = {};
+        $scope.accuracy = {};
+        $scope.altitude = {};
+        $scope.force = {};
+        $scope.azimuth = {};
+        $scope.pitch = {};
+        $scope.roll = {};
+        $scope.xResolution = {};
+        $scope.yResolution = {};
+        $scope.Brightness = {};
+        $scope.averageBrightness = {};
+        $scope.averageAzimuth = {};
+        $scope.averagePitch = {};
+        $scope.averageRoll = {};
     
-        this.getStreams = function () {
-            this.ids = Object.keys(Socket.stream);
-            return this.ids;
+        $scope.getStreams = function () {
+            $scope.ids = Object.keys(Socket.stream);
+            return $scope.ids;
         };
     
-        this.isHidden = function (id) {
+        $scope.isHidden = function (id) {
             var hide = false;
             if (false)
                 hide = true;
             return hide;
         };
     
-        this.getQuality = function (id) {
-            switch (this.mode) {
-                    case this.modes.SHAKINESS:
-                        return this.getQualityByShakiness(id);
+        $scope.getQuality = function (id) {
+            switch ($scope.mode) {
+                    case $scope.modes.SHAKINESS:
+                        return $scope.getQualityByShakiness(id);
             }
         }
         
-        this.getQualityByShakiness = function (id) {
-            this.quality = 100 * Math.pow(2, (- Math.abs(this.force[id]) / 10));
-            return this.quality;
+        $scope.getQualityByShakiness = function (id) {
+            $scope.quality = 100 * Math.pow(2, (- Math.abs($scope.force[id]) / 10));
+            return $scope.quality;
         };
 
-        this.getLatitude = function (id) {
+        $scope.getLatitude = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
                 var currentValue = parameter.data[parameter.index];
-                this.latitude[id] = currentValue.latitude;
+                $scope.latitude[id] = currentValue.latitude;
             } catch (e) {
             }
-            return this.latitude[id];
+            return $scope.latitude[id];
         };
     
-        this.getLongitude = function (id) {
+        $scope.getLongitude = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
                 var currentValue = parameter.data[parameter.index];
-                this.longitude[id] = currentValue.longitude;
+                $scope.longitude[id] = currentValue.longitude;
             } catch (e) {
             }
-            return this.longitude[id];
+            return $scope.longitude[id];
         };
         
-        this.getSpeed = function (id) {
+        $scope.getSpeed = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
                 var currentValue = parameter.data[parameter.index];
-                this.speed[id] = currentValue.speed;
+                $scope.speed[id] = currentValue.speed;
             } catch (e) {
             }
-            return this.speed[id];
+            return $scope.speed[id];
         };
         
-        this.getAccuracy = function (id) {
+        $scope.getAccuracy = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
                 var currentValue = parameter.data[parameter.index];
-                this.accuracy[id] = currentValue.accuracy;
+                $scope.accuracy[id] = currentValue.accuracy;
             } catch (e) {
             }
-            return this.accuracy[id];
+            return $scope.accuracy[id];
         };
         
-        this.getAltitude = function (id) {
+        $scope.getAltitude = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Location;
                 var currentValue = parameter.data[parameter.index];
-                this.altitude[id] = currentValue.altitude;
+                $scope.altitude[id] = currentValue.altitude;
             } catch (e) {
             }
-            return this.accuracy[id];
+            return $scope.accuracy[id];
         };
         
-        this.getForce = function (id) {
+        $scope.getForce = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Acceleration;
                 var currentValue = parameter.data[parameter.index];
-                this.force[id] = currentValue.force;
+                $scope.force[id] = currentValue.force;
             } catch (e) {
             }
-            return this.force[id];
+            return $scope.force[id];
         };
         
-        this.getAzimuth = function (id) {
+        $scope.getAzimuth = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
                 var currentValue = parameter.data[parameter.index];
-                this.azimuth[id] = currentValue.azimuth;
+                $scope.azimuth[id] = currentValue.azimuth;
             } catch (e) {
             }
-            return this.azimuth[id];
+            return $scope.azimuth[id];
         };
         
-        this.getPitch = function (id) {
+        $scope.getPitch = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
                 var currentValue = parameter.data[parameter.index];
-                this.pitch[id] = currentValue.pitch;
+                $scope.pitch[id] = currentValue.pitch;
             } catch (e) {
             }
-            return this.pitch[id];
+            return $scope.pitch[id];
         };
         
-        this.getRoll = function (id) {
+        $scope.getRoll = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
                 var currentValue = parameter.data[parameter.index];
-                this.roll[id] = currentValue.roll;
+                $scope.roll[id] = currentValue.roll;
             } catch (e) {
             }
-            return this.roll[id];
+            return $scope.roll[id];
+        };
+        
+        $scope.getXResolution = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Camera;
+                var currentValue = parameter.data[parameter.index];
+                $scope.xResolution[id] = currentValue.x;
+            } catch (e) {
+            }
+            return $scope.xResolution[id];
+        };
+        
+        $scope.getYResolution = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Camera;
+                var currentValue = parameter.data[parameter.index];
+                $scope.yResolution[id] = currentValue.y;
+            } catch (e) {
+            }
+            return $scope.yResolution[id];
+        };
+        
+        $scope.getSnapshot = function (id) {
+            var img;
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Snapshot;
+                var currentValue = parameter.data[parameter.index];
+                img = "data:image/jpeg;base64," + currentValue.snapshot;
+            } catch (e) {
+                console.log("ImageError: " + e);
+            }
+            return img;
+        };
+        
+        $scope.getBrightness = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Brightness;
+                var currentValue = parameter.data[parameter.index];
+                $scope.Brightness[id] = currentValue.lux;
+            } catch (e) {
+            }
+            return $scope.Brightness[id];
+        };
+        
+        $scope.getAverageBrightness = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Brightness;
+                var sum = 0.0;
+                for (var i = 0; i < parameter.data.length - 1; i++){
+                    sum += parseFloat(parameter.data[i].lux);
+                }
+                $scope.averageBrightness[id] = sum / (parameter.data.length -1);
+            } catch (e) {
+            }
+            return $scope.averageBrightness[id];
         };
         
         // TODO Calculate all Values at once to improve performance
-        this.getAverageAzimuth = function (id) {
+        $scope.getAverageAzimuth = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
@@ -154,13 +218,13 @@ app.controller('StreamController', ['Socket',
                 for (var i = 0; i < parameter.data.length - 1; i++){
                     sum += parseFloat(parameter.data[i].azimuth);
                 }
-                this.averageAzimuth[id] = sum / (parameter.data.length -1);
+                $scope.averageAzimuth[id] = sum / (parameter.data.length -1);
             } catch (e) {
             }
-            return this.averageAzimuth[id];
+            return $scope.averageAzimuth[id];
         };
         
-        this.getAveragePitch = function (id) {
+        $scope.getAveragePitch = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
@@ -168,13 +232,13 @@ app.controller('StreamController', ['Socket',
                 for (var i = 0; i < parameter.data.length - 1; i++){
                     sum += parseFloat(parameter.data[i].pitch);
                 }
-                this.averagePitch[id] = sum / (parameter.data.length -1);
+                $scope.averagePitch[id] = sum / (parameter.data.length -1);
             } catch (e) {
             }
-            return this.averagePitch[id];
+            return $scope.averagePitch[id];
         };
         
-        this.getAverageRoll = function (id) {
+        $scope.getAverageRoll = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
@@ -182,9 +246,9 @@ app.controller('StreamController', ['Socket',
                 for(var i = 0; i < parameter.data.length - 1; i++){
                     sum += parseFloat(parameter.data[i].roll);
                 }
-                this.averageRoll[id] = sum / (parameter.data.length -1);
+                $scope.averageRoll[id] = sum / (parameter.data.length -1);
             } catch (e) {
             }
-            return this.averageRoll[id];
+            return $scope.averageRoll[id];
         };
     }]);
