@@ -46,6 +46,7 @@ public class DeviceListener {
 			+ "/src/main/resources/testXML/schema.xsd";
 	private static ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>> deviceMapping = new ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>>();
 	private static Logger log = Logger.getLogger(DeviceListener.class);
+	final private static int maxBufferSize = 60;
 
 	/***
 	 * This exicst for testing purposes
@@ -72,7 +73,7 @@ public class DeviceListener {
 
 			for (GenericMetaDataModel message : messages) {
 
-				if (!message.getLast() || !message.getName().equals("Snapshot")) {
+				if (!message.getLast() || !message.getName().equals("Snapshot")) { //we don't store snapshots
 					storeMessage(message);
 				} else {
 					deviceMapping.remove(message.getId());
@@ -96,7 +97,11 @@ public class DeviceListener {
 	 */
 	private static void storeMessage(GenericMetaDataModel message) {
 		if (deviceMapping.containsKey(message.getId())) {
-			deviceMapping.get(message.getId()).add(message);
+			ArrayList<GenericMetaDataModel> list = deviceMapping.get(message.getId());
+			if (list.size() >= maxBufferSize) {
+				list.remove(0);
+			}
+			list.add(message);
 		} else {
 			ArrayList<GenericMetaDataModel> deviceMessages = new ArrayList<GenericMetaDataModel>();
 			deviceMessages.add(message);
@@ -459,4 +464,6 @@ public class DeviceListener {
 
 		return jsonString + " }";
 	}
+	
+
 }
