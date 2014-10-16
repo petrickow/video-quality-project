@@ -77,7 +77,10 @@
                             <b>Camera:</b><br />
                             Resolution: {{ getXResolution(id) }}x{{ getYResolution(id) }} <br />
                         </td>
-                        <td><highchart config="chartConfig"></highchart></td>
+                        <td data-ng-controller="ChartController">
+                            <highchart config="chartConfig">
+                            </highchart>
+                        </td>
                     </tr>
                 </tbody>
             </table>
