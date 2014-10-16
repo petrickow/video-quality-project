@@ -1,9 +1,9 @@
 app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
-    function ($scope, Socket) {
+    function ($scope, Socket, MapFilter) {
         "use strict";
         $scope.modes = {
             SHAKINESS: 0
-        }
+        };
     
         $scope.ids = [];
         $scope.hidden = {};
@@ -20,7 +20,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.roll = {};
         $scope.xResolution = {};
         $scope.yResolution = {};
-        $scope.Brightness = {};
+        $scope.brightness = {};
+        $scope.brightnessQuality = {};
+        $scope.averageBrightnessQuality = {};
         $scope.averageBrightness = {};
         $scope.averageAzimuth = {};
         $scope.averagePitch = {};
@@ -32,21 +34,52 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         };
     
         $scope.isHidden = function (id) {
+            $scope.hidden = MapFilter.getHidden();
             var hide = false;
-            if (false)
-                hide = true;
+            try {
+                if ($scope.hidden[id]) {
+                    hide = true;
+                }
+            } catch (e) {
+                
+            }
             return hide;
         };
     
         $scope.getQuality = function (id) {
             switch ($scope.mode) {
-                    case $scope.modes.SHAKINESS:
-                        return $scope.getQualityByShakiness(id);
+            case $scope.modes.SHAKINESS:
+                return $scope.getQualityByShakiness(id);
             }
-        }
+        };
         
         $scope.getQualityByShakiness = function (id) {
-            $scope.quality = 100 * Math.pow(2, (- Math.abs($scope.force[id]) / 10));
+            var average;
+            var sum = 0.0;
+            var sampleIndexes = [];
+            var sampleSize = 5;
+            var currentStream = Socket.stream[id];
+            var parameter = currentStream.Acceleration;
+            // Since the data array is rewritten starting by 0 once it reaces its maxSize the index has
+            // to continue at the end of the array if it is on the edge
+            if(parameter.data.length >= sampleSize){
+                for (var i = parameter.index; i > parameter.index - sampleSize; i--){
+                    if(i < 0){
+                        sampleIndexes.push(parameter.data.length - i);
+                    } else {
+                        sampleIndexes.push(i);
+                    }
+                    console.log("i: " + i);
+                }
+                for (var index in sampleIndexes){
+                    sum += parameter.data[sampleIndexes[index]].force;
+                    console.log("sum: " + i);
+                }
+                average = sum / sampleSize;
+                console.log("average: " + i);
+                $scope.quality = 100 * Math.pow(2, (- Math.abs(average) / 10));
+            } else
+                $scope.quality = 0.0;
             return $scope.quality;
         };
 
@@ -184,15 +217,40 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
             return img;
         };
         
+        $scope.getBrightnessQuality = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Snapshot;
+                var currentValue = parameter.data[parameter.index];
+                $scope.brightnessQuality[id] = currentValue.brightnessQuality;
+            } catch (e) {
+            }
+            return $scope.brightnessQuality[id];
+        };
+        
+        $scope.getAverageBrightnessQuality = function (id) {
+            try {
+                var currentStream = Socket.stream[id];
+                var parameter = currentStream.Snapshot;
+                var sum = 0.0;
+                for (var i = 0; i < parameter.data.length; i++){
+                    sum += parseFloat(parameter.data[i].brightnessQuality);
+                }
+                $scope.averageBrightnessQuality[id] = sum / (parameter.data.length);
+            } catch (e) {
+            }
+            return $scope.averageBrightnessQuality[id];
+        };
+        
         $scope.getBrightness = function (id) {
             try {
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Brightness;
                 var currentValue = parameter.data[parameter.index];
-                $scope.Brightness[id] = currentValue.lux;
+                $scope.brightness[id] = currentValue.lux;
             } catch (e) {
             }
-            return $scope.Brightness[id];
+            return $scope.brightness[id];
         };
         
         $scope.getAverageBrightness = function (id) {
@@ -200,10 +258,10 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Brightness;
                 var sum = 0.0;
-                for (var i = 0; i < parameter.data.length - 1; i++){
+                for (var i = 0; i < parameter.data.length; i++){
                     sum += parseFloat(parameter.data[i].lux);
                 }
-                $scope.averageBrightness[id] = sum / (parameter.data.length -1);
+                $scope.averageBrightness[id] = sum / (parameter.data.length);
             } catch (e) {
             }
             return $scope.averageBrightness[id];
@@ -215,10 +273,10 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
                 var sum = 0.0;
-                for (var i = 0; i < parameter.data.length - 1; i++){
+                for (var i = 0; i < parameter.data.length; i++){
                     sum += parseFloat(parameter.data[i].azimuth);
                 }
-                $scope.averageAzimuth[id] = sum / (parameter.data.length -1);
+                $scope.averageAzimuth[id] = sum / (parameter.data.length);
             } catch (e) {
             }
             return $scope.averageAzimuth[id];
@@ -229,10 +287,10 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
                 var sum = 0.0;
-                for (var i = 0; i < parameter.data.length - 1; i++){
+                for (var i = 0; i < parameter.data.length; i++){
                     sum += parseFloat(parameter.data[i].pitch);
                 }
-                $scope.averagePitch[id] = sum / (parameter.data.length -1);
+                $scope.averagePitch[id] = sum / (parameter.data.length);
             } catch (e) {
             }
             return $scope.averagePitch[id];
@@ -243,10 +301,10 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
                 var currentStream = Socket.stream[id];
                 var parameter = currentStream.Rotation;
                 var sum = 0.0;
-                for(var i = 0; i < parameter.data.length - 1; i++){
+                for(var i = 0; i < parameter.data.length; i++){
                     sum += parseFloat(parameter.data[i].roll);
                 }
-                $scope.averageRoll[id] = sum / (parameter.data.length -1);
+                $scope.averageRoll[id] = sum / (parameter.data.length);
             } catch (e) {
             }
             return $scope.averageRoll[id];

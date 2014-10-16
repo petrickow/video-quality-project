@@ -1,5 +1,5 @@
 app.controller('mapController', ['$scope', 'Socket', 'MapFilter',
-        function ($scope, Socket, StreamController) {
+        function ($scope, Socket, MapFilter, StreamController) {
     "use strict";
     $scope.ids = [];
     $scope.markers = [];
@@ -20,20 +20,24 @@ app.controller('mapController', ['$scope', 'Socket', 'MapFilter',
     };
     
     $scope.areaFilterEvents = {
-        'dragend': function (rectangle, eventName, args) {
+        'bounds_changed': function (rectangle, eventName, args) {
+            $scope.filterFunction(rectangle, eventName, args);
+        }
+    };
+        
+    $scope.filterFunction = function (rectangle, eventName, args) {
             var bounds = rectangle.getBounds();
             var markers = $scope.markers
             for (var marker in markers) {
                 if(bounds.contains(new google.maps.LatLng(markers[marker].coords.latitude, markers[marker].coords.longitude))){
-                    // TODO Add disabled Video
+                    MapFilter.show(markers[marker].idKey);
                     console.log("Add: " + markers[marker].idKey);
                 } else {
-                    
+                    MapFilter.hide(markers[marker].idKey);
                     console.log("Remove: " + markers[marker].idKey);
                 }
             }
         }
-    };
     
     $scope.getStreams = function () {
         $scope.ids = Object.keys(Socket.stream);
