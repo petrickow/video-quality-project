@@ -46,7 +46,7 @@ public class DeviceListener {
 			+ "/src/main/resources/testXML/schema.xsd";
 	private static ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>> deviceMapping = new ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>>();
 	private static ConcurrentHashMap<String, ArrayList<Integer>> history = new ConcurrentHashMap<String, ArrayList<Integer>>();
-	final private static int aggregateOnNumImages = 5; 
+	final private static int aggregateOnNumImages = 5;
 
 	private static Logger log = Logger.getLogger(DeviceListener.class);
 	final private static int maxBufferSize = 60;
@@ -76,11 +76,10 @@ public class DeviceListener {
 
 			for (GenericMetaDataModel message : messages) {
 
-				if (!message.getLast() || !message.getName().equals("Snapshot")) { //we don't store snapshots
+				if (!message.getLast() || !message.getName().equals("Snapshot")) { 
 					storeMessage(message);
 				} else {
 					deviceMapping.remove(message.getId());
-					history.remove(message.getId());
 				}
 			}
 
@@ -101,7 +100,8 @@ public class DeviceListener {
 	 */
 	private static void storeMessage(GenericMetaDataModel message) {
 		if (deviceMapping.containsKey(message.getId())) {
-			ArrayList<GenericMetaDataModel> list = deviceMapping.get(message.getId());
+			ArrayList<GenericMetaDataModel> list = deviceMapping.get(message
+					.getId());
 			if (list.size() >= maxBufferSize) {
 				list.remove(0);
 			}
@@ -110,9 +110,7 @@ public class DeviceListener {
 			ArrayList<GenericMetaDataModel> deviceMessages = new ArrayList<GenericMetaDataModel>();
 			deviceMessages.add(message);
 			deviceMapping.put(message.getId(), deviceMessages);
-			if (!history.contains(message.getId())) {
-				history.put(message.getId(), new ArrayList<Integer>());
-			}
+			
 		}
 	}
 
@@ -154,9 +152,9 @@ public class DeviceListener {
 	private static ArrayList<GenericMetaDataModel> convertXmlToModel(
 			Document xml) throws Exception {
 
-		ArrayList<GenericMetaDataModel> models = new ArrayList<GenericMetaDataModel>();
+		boolean aggregated = false;
 
-		// We will have to try to find a more elegant solution
+		ArrayList<GenericMetaDataModel> models = new ArrayList<GenericMetaDataModel>();
 		GenericMetaDataModel genericMetaDataModel = new GenericMetaDataModel();
 		LocationModel locationModel = new LocationModel();
 		RotationModel rotationModel = new RotationModel();
@@ -175,7 +173,9 @@ public class DeviceListener {
 			XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 			// Setup a new eventReader
 			XMLEventReader eventReader = inputFactory
-					.createXMLEventReader(new ByteArrayInputStream(RestController.getStringFromDocument(xml).getBytes()));
+					.createXMLEventReader(new ByteArrayInputStream(
+							RestController.getStringFromDocument(xml)
+									.getBytes()));
 			// read the XML document
 			// genericMetaDataModel = new GenericMetaDataModel();
 			XMLEvent event;
@@ -195,7 +195,12 @@ public class DeviceListener {
 						Attribute atr = startElement
 								.getAttributeByName(new QName("id"));
 						genericMetaDataModel.setId(atr.getValue());
-						atr = startElement.getAttributeByName(new QName("dateTime"));
+
+						if (!history.containsKey(genericMetaDataModel.getId())) {
+							history.put(genericMetaDataModel.getId(), new ArrayList<Integer>());
+						}
+						atr = startElement.getAttributeByName(new QName(
+								"dateTime"));
 						genericMetaDataModel.setDate(atr.getValue());
 						break;
 
@@ -262,23 +267,23 @@ public class DeviceListener {
 										.replaceAll("\\n", "");
 								event = eventReader.nextEvent();
 							}
-							
-							snapshotModel.setSnapshot(encodedImage);
-							snapshotModel.setBrightnessQuality(AnalysisService.ratePicture(encodedImage, genericMetaDataModel.getId()));
-							history.get(genericMetaDataModel.getId()).add(snapshotModel.getBrightnessQuality());
-							
-							ArrayList<Integer> list = history.get(genericMetaDataModel.getId()); 
+
+							int brightness = AnalysisService.ratePicture(
+									encodedImage, genericMetaDataModel.getId());
+							history.get(genericMetaDataModel.getId()).add(
+									brightness);
+
 							if (history.get(genericMetaDataModel.getId()).size() == aggregateOnNumImages) {
 								int sum = 0;
-								for (Integer i : list) {
+								for (Integer i : history.get(genericMetaDataModel.getId())) {
 									sum += i;
 								}
-								snapshotModel.setAggregatedQuality(sum/aggregateOnNumImages);
-								System.out.println("Aggregaermk: " + sum/aggregateOnNumImages);
-								list.clear();
+								snapshotModel.setAggregatedQuality(sum	/ aggregateOnNumImages);
+								history.get(genericMetaDataModel.getId()).clear();
+								aggregated = true;
+								snapshotModel.setSnapshot(encodedImage);
 							}
-							
-							System.out.println(genericMetaDataModel.getId() + " snap qual: " + snapshotModel.getBrightnessQuality());
+
 							break;
 
 						case "speed":
@@ -340,7 +345,8 @@ public class DeviceListener {
 						break;
 
 					default:
-						//log.warn("Unknown start element"); //we get a lot of these
+						// log.warn("Unknown start element"); //we get a lot of
+						// these
 						break;
 					}
 				}
@@ -353,7 +359,7 @@ public class DeviceListener {
 
 					// finishing up log items and camera
 					switch (endElement.getName().getLocalPart()) {
-					case "logFile": 
+					case "logFile":
 						break;
 					case "logItem":
 						switch (name) {
@@ -387,10 +393,13 @@ public class DeviceListener {
 							break;
 
 						case "Snapshot":
-							snapshotModel.setId(genericMetaDataModel.getId());
-							snapshotModel.setDate(genericMetaDataModel
-									.getDate());
-							models.add(snapshotModel);
+							if (aggregated) {
+								snapshotModel.setId(genericMetaDataModel
+										.getId());
+								snapshotModel.setDate(genericMetaDataModel
+										.getDate());
+								models.add(snapshotModel);
+							}
 							break;
 
 						default:
@@ -413,18 +422,17 @@ public class DeviceListener {
 			log.error(e.getMessage()
 					+ " "
 					+ e.getStackTrace()
-					+ " "
-					+ e.getCause()
-					+ "Great gooogelymooogley in the convert Xml to Model method");
+					+ " Great gooogelymooogley in the convert Xml to Model method");
 		}
 
 		return models;
 	}
 
-	
 	/**
 	 * Parses the resolution string into x and y integers for the CameraModel
-	 * @param resolution the textual representation of the resolution on the device
+	 * 
+	 * @param resolution
+	 *            the textual representation of the resolution on the device
 	 * @return integer values x and y
 	 */
 	private static int[] extractResolution(String resolution) {
@@ -442,8 +450,11 @@ public class DeviceListener {
 
 	/**
 	 * Validates XML against schema
-	 * @param xsdPath the path to the local instance of the schema
-	 * @param xml the xml document
+	 * 
+	 * @param xsdPath
+	 *            the path to the local instance of the schema
+	 * @param xml
+	 *            the xml document
 	 * @return true if compliant with schema
 	 */
 	private static boolean validateXMLSchema(String xsdPath, Document xml) {
@@ -464,11 +475,12 @@ public class DeviceListener {
 		return true;
 	}
 
-	
 	/**
-	 * Generate a json-string from all the historical data stored
-	 * in the deviceListeners device mapping.
-	 * @return A complete json-compliant string with response: accepted and historical data (if any)
+	 * Generate a json-string from all the historical data stored in the
+	 * deviceListeners device mapping.
+	 * 
+	 * @return A complete json-compliant string with response: accepted and
+	 *         historical data (if any)
 	 * @throws JsonProcessingException
 	 */
 	public static String createJsonFromHistory() throws JsonProcessingException {
@@ -485,6 +497,5 @@ public class DeviceListener {
 
 		return jsonString + " }";
 	}
-	
 
 }
