@@ -45,6 +45,9 @@ public class DeviceListener {
 	final public static String schemaPath = System.getProperty("user.dir")
 			+ "/src/main/resources/testXML/schema.xsd";
 	private static ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>> deviceMapping = new ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>>();
+	private static ConcurrentHashMap<String, ArrayList<Integer>> history = new ConcurrentHashMap<String, ArrayList<Integer>>();
+	final private static int aggregateOnNumImages = 5; 
+
 	private static Logger log = Logger.getLogger(DeviceListener.class);
 	final private static int maxBufferSize = 60;
 
@@ -77,6 +80,7 @@ public class DeviceListener {
 					storeMessage(message);
 				} else {
 					deviceMapping.remove(message.getId());
+					history.remove(message.getId());
 				}
 			}
 
@@ -106,6 +110,9 @@ public class DeviceListener {
 			ArrayList<GenericMetaDataModel> deviceMessages = new ArrayList<GenericMetaDataModel>();
 			deviceMessages.add(message);
 			deviceMapping.put(message.getId(), deviceMessages);
+			if (!history.contains(message.getId())) {
+				history.put(message.getId(), new ArrayList<Integer>());
+			}
 		}
 	}
 
@@ -255,8 +262,22 @@ public class DeviceListener {
 										.replaceAll("\\n", "");
 								event = eventReader.nextEvent();
 							}
+							
 							snapshotModel.setSnapshot(encodedImage);
 							snapshotModel.setBrightnessQuality(AnalysisService.ratePicture(encodedImage, genericMetaDataModel.getId()));
+							history.get(genericMetaDataModel.getId()).add(snapshotModel.getBrightnessQuality());
+							
+							ArrayList<Integer> list = history.get(genericMetaDataModel.getId()); 
+							if (history.get(genericMetaDataModel.getId()).size() == aggregateOnNumImages) {
+								int sum = 0;
+								for (Integer i : list) {
+									sum += i;
+								}
+								snapshotModel.setAggregatedQuality(sum/aggregateOnNumImages);
+								System.out.println("Aggregaermk: " + sum/aggregateOnNumImages);
+								list.clear();
+							}
+							
 							System.out.println(genericMetaDataModel.getId() + " snap qual: " + snapshotModel.getBrightnessQuality());
 							break;
 
