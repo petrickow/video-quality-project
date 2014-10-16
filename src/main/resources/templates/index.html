@@ -77,7 +77,7 @@
                             <b>Camera:</b><br />
                             Resolution: {{ getXResolution(id) }}x{{ getYResolution(id) }} <br />
                         </td>
-                        <td><linear-chart chart-data="salesData"></linear-chart></td>
+                        <td><highchart config="chartConfig"></highchart></td>
                     </tr>
                 </tbody>
             </table>
@@ -119,11 +119,14 @@
     <script type="text/javascript" src="../static/js/lodash.min.js" th:src="@{/js/lodash.min.js}"></script>
     <script type="text/javascript" src="../static/js/bluebird.js" th:src="@{/js/bluebird.js}"></script>
     <script type="text/javascript" src="../static/js/angular-google-maps.min.js" th:src="@{/js/angular-google-maps.min.js}"></script>
+    <script type="text/javascript" src="../static/js/standalone-framework.js" th:src="@{/js/standalone-framework.js}"></script>
+    <script type="text/javascript" src="../static/js/highcharts.js" th:src="@{/js/highcharts.js}"></script>
+    <script type="text/javascript" src="../static/js/highcharts-ng.js" th:src="@{/js/highcharts-ng.js}"></script>
 	<script type="text/javascript" src="../static/js/app.js" th:src="@{/js/app.js}"></script>
     <script type="text/javascript" src="../static/js/web-socket.js" th:src="@{/js/web-socket.js}"></script>
     <script type="text/javascript" src="../static/js/map-filter-service.js" th:src="@{/js/map-filter-service.js}"></script>
-	<script type="text/javascript" src="../static/js/wstest.js" th:src="@{/js/wstest.js}"></script>
 	<script type="text/javascript" src="../static/js/stream-controller.js" th:src="@{/js/stream-controller.js}"></script>
+    <script type="text/javascript" src="../static/js/chart-controller.js" th:src="@{/js/chart-controller.js}"></script>
     <script type="text/javascript" src="../static/js/map-controller.js" th:src="@{/js/map-controller.js}"></script>
     
 <!--    <script type="text/javascript" src="../static/js/ang-map.min.js" th:src="@{/js/ng-map.min.js}"></script>-->

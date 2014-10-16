@@ -19,6 +19,7 @@ app.controller('mapController', ['$scope', 'Socket', 'MapFilter',
         }
     };
     
+    // TODO handle rootScope apply exception (inprog)
     $scope.areaFilterEvents = {
         'bounds_changed': function (rectangle, eventName, args) {
             $scope.filterFunction(rectangle, eventName, args);

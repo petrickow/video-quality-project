@@ -1,4 +1,4 @@
-var app = angular.module('video-quality-manager', [ 'google-maps'.ns()]);
+var app = angular.module('video-quality-manager', [ 'google-maps'.ns(), 'highcharts-ng']);
 
 app.directive('linearChart', function($parse, $window){
    return{

@@ -69,14 +69,11 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
                     } else {
                         sampleIndexes.push(i);
                     }
-                    console.log("i: " + i);
                 }
                 for (var index in sampleIndexes){
                     sum += parameter.data[sampleIndexes[index]].force;
-                    console.log("sum: " + i);
                 }
                 average = sum / sampleSize;
-                console.log("average: " + i);
                 $scope.quality = 100 * Math.pow(2, (- Math.abs(average) / 10));
             } else
                 $scope.quality = 0.0;
