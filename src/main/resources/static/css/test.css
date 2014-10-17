@@ -1,35 +1,31 @@
-body {
-	margin-left: 0%;
-	margin-right: 0%;
+body.container.ng-scope {
+	margin-left: 10%;
+	margin-right: 10%;
+  width: 80%;
 	text-align: center;
+}
+
+
+div.col-lg-2 {
+  width: 15%;
+}
+
+div#video-section.col-lg-7 {
+  width: 65%;
+}
+
+div.col-lg-3 {
+  width: 20%;
 }
 
 button {
 		
 }
 
-map, div[map] {display:block; width: 400px; height: 500px}
+/*map, div[map] {display:block; width: 400px; height: 500px}
+*/
 
-#video-section {
-	height: 500px;
-	width: 540px;
-}
 
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
 
-.x.axis path {
-  display: none;
-}
-
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 1.5px;
-}
 
 .angular-google-map-container { height: 400px; }

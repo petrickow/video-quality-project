@@ -9,6 +9,11 @@ app.controller('ChartController', ['$scope', 'Socket',  function ($scope, Socket
         series: [{
             data: []
         }],
+        size: {
+           width: 400,
+           height: 300
+        },
+             
         loading: false
     };
 

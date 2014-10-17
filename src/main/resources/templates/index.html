@@ -35,7 +35,7 @@
           </div>
 
         <!-- <div id="video-section" class="jumbotron pull-left">            -->
-        <div id="video-section" class="col-lg-7" style="width: 650px;">
+        <div id="video-section" class="col-lg-7">
         <section class="video-streams-pane" data-ng-controller="StreamController as stream">
             <section class="sort-selections">
 
@@ -77,19 +77,17 @@
                             <b>Camera:</b><br />
                             Resolution: {{ getXResolution(id) }}x{{ getYResolution(id) }} <br />
                         </td>
-<!--                         <td data-ng-controller="ChartController">
-                            <highchart config="highchartsNG">
-                            </highchart>
-                        </td> -->
+                        <td data-ng-controller="ChartController">
+                            <highchart config="getHighchartsNG()"></highchart>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </section>
-        <div ng-controller="ChartController">
-            <highchart config="getHighchartsNG()"></highchart>
-        </div>
+        
         <section class="history">
         </section>
+        
         </div>
         <div class="col-lg-3">
             <section data-ng-controller="mapController">
