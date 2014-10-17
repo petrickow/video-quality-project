@@ -26,26 +26,27 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
 
                 for (var i in recvJson){
                     var item = recvJson[i];
-                    console.log(item);
+                    //console.log(item);
                     if (typeof Service.stream[item.id][item["name"]] === "undefined") {
                         Service.stream[item.id][item.name] = {};
-                        Service.stream[item.id][item.name].data = [];
-                        Service.stream[item.id][item.name].index = -1;
+                        for (var j in item){
+                            Service.stream[item.id][item.name][j] = [];
+                        }
                     }
-                
 
                     var currentStream;
 
                     currentStream = Service.stream[item.id][item.name];
 
-                    //prevents from running out of memory
-                    if (currentStream.index >= Service.maxCachedItems) {
-                        currentStream.index = -1;
-                    }
+                    for (var j in item){
 
-                    currentStream.data[++currentStream.index] = item;
-
+                        //prevents from running out of memory
+                        if (currentStream[j].length > Service.maxCachedItems) {
+                            currentStream[j].shift();
+                        }
+                        currentStream[j].push(item[j]);
                     }
+                }
             });       
         }
 

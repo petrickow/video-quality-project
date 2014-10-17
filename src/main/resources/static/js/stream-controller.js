@@ -56,22 +56,14 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getQualityByShakiness = function (id) {
             var average;
             var sum = 0.0;
-            var sampleIndexes = [];
             var sampleSize = 5;
             var currentStream = Socket.stream[id];
-            var parameter = currentStream.Acceleration;
+            var parameter = currentStream.Acceleration.force;
             // Since the data array is rewritten starting by 0 once it reaces its maxSize the index has
             // to continue at the end of the array if it is on the edge
-            if(parameter.data.length >= sampleSize){
-                for (var i = parameter.index; i > parameter.index - sampleSize; i--){
-                    if(i < 0){
-                        sampleIndexes.push(parameter.data.length - i);
-                    } else {
-                        sampleIndexes.push(i);
-                    }
-                }
-                for (var index in sampleIndexes){
-                    sum += parameter.data[sampleIndexes[index]].force;
+            if(parameter.length >= sampleSize){
+                for (var i = parameter.length - 1; i >= parameter.length - sampleSize; i--){
+                    sum += parameter[i];
                 }
                 average = sum / sampleSize;
                 $scope.quality = 100 * Math.pow(2, (- Math.abs(average) / 10));
@@ -83,9 +75,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getLatitude = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Location;
-                var currentValue = parameter.data[parameter.index];
-                $scope.latitude[id] = currentValue.latitude;
+                var parameter = currentStream.Location.latitude;
+                var currentValue = parameter[parameter.length - 1];
+                $scope.latitude[id] = currentValue;
             } catch (e) {
             }
             return $scope.latitude[id];
@@ -94,9 +86,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getLongitude = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Location;
-                var currentValue = parameter.data[parameter.index];
-                $scope.longitude[id] = currentValue.longitude;
+                var parameter = currentStream.Location.longitude;
+                var currentValue = parameter[parameter.length - 1];
+                $scope.longitude[id] = currentValue;
             } catch (e) {
             }
             return $scope.longitude[id];
@@ -105,9 +97,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getSpeed = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Location;
-                var currentValue = parameter.data[parameter.index];
-                $scope.speed[id] = currentValue.speed;
+                var parameter = currentStream.Location.speed;
+                var currentValue = parameter[parameter.length - 1];
+                $scope.speed[id] = currentValue;
             } catch (e) {
             }
             return $scope.speed[id];
@@ -116,9 +108,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getAccuracy = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Location;
-                var currentValue = parameter.data[parameter.index];
-                $scope.accuracy[id] = currentValue.accuracy;
+                var parameter = currentStream.Location.accuracy;
+                var currentValue = parameter[parameter.length - 1];
+                $scope.accuracy[id] = currentValue;
             } catch (e) {
             }
             return $scope.accuracy[id];
@@ -127,9 +119,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getAltitude = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Location;
-                var currentValue = parameter.data[parameter.index];
-                $scope.altitude[id] = currentValue.altitude;
+                var parameter = currentStream.Location.altitude;
+                var currentValue = parameter[parameter.length - 1];
+                $scope.altitude[id] = currentValue;
             } catch (e) {
             }
             return $scope.accuracy[id];
@@ -138,9 +130,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getForce = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Acceleration;
-                var currentValue = parameter.data[parameter.index];
-                $scope.force[id] = currentValue.force;
+                var parameter = currentStream.Acceleration.force;
+                var currentValue = parameter[parameter.length - 1];
+                $scope.force[id] = currentValue;
             } catch (e) {
             }
             return $scope.force[id];
@@ -149,9 +141,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getAzimuth = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Rotation;
-                var currentValue = parameter.data[parameter.index];
-                $scope.azimuth[id] = currentValue.azimuth;
+                var parameter = currentStream.Rotation.azimuth;
+                var currentValue = parameter[parameter.length - 1];
+                $scope.azimuth[id] = currentValue;
             } catch (e) {
             }
             return $scope.azimuth[id];
@@ -160,9 +152,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getPitch = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Rotation;
-                var currentValue = parameter.data[parameter.index];
-                $scope.pitch[id] = currentValue.pitch;
+                var parameter = currentStream.Rotation.pitch;
+                var currentValue = parameter[parameter.length - 1];
+                $scope.pitch[id] = currentValue;
             } catch (e) {
             }
             return $scope.pitch[id];
@@ -171,9 +163,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getRoll = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Rotation;
-                var currentValue = parameter.data[parameter.index];
-                $scope.roll[id] = currentValue.roll;
+                var parameter = currentStream.Rotation.roll;
+                var currentValue = parameter[parameter.length - 1];
+                $scope.roll[id] = currentValue;
             } catch (e) {
             }
             return $scope.roll[id];
@@ -182,9 +174,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getXResolution = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Camera;
-                var currentValue = parameter.data[parameter.index];
-                $scope.xResolution[id] = currentValue.x;
+                var parameter = currentStream.Camera.x;
+                var currentValue = parameter[parameter.length - 1];
+                $scope.xResolution[id] = currentValue;
             } catch (e) {
             }
             return $scope.xResolution[id];
@@ -193,9 +185,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getYResolution = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Camera;
-                var currentValue = parameter.data[parameter.index];
-                $scope.yResolution[id] = currentValue.y;
+                var parameter = currentStream.Camera.y;
+                var currentValue = parameter[parameter.length - 1];
+                $scope.yResolution[id] = currentValue;
             } catch (e) {
             }
             return $scope.yResolution[id];
@@ -205,9 +197,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
             var img;
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Snapshot;
-                var currentValue = parameter.data[parameter.index];
-                img = "data:image/jpeg;base64," + currentValue.snapshot;
+                var parameter = currentStream.Snapshot.snapshot;
+                var currentValue = parameter[parameter.length - 1];
+                img = "data:image/jpeg;base64," + currentValue;
             } catch (e) {
                 console.log("ImageError: " + e);
             }
@@ -217,9 +209,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getBrightnessQuality = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Snapshot;
-                var currentValue = parameter.data[parameter.index];
-                $scope.brightnessQuality[id] = currentValue.brightnessQuality;
+                var parameter = currentStream.Snapshot.brightnessQuality;
+                var currentValue = parameter[parameter.length - 1];
+                $scope.brightnessQuality[id] = currentValue;
             } catch (e) {
             }
             return $scope.brightnessQuality[id];
@@ -228,12 +220,12 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getAverageBrightnessQuality = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Snapshot;
+                var parameter = currentStream.Snapshot.brightnessQuality;
                 var sum = 0.0;
-                for (var i = 0; i < parameter.data.length; i++){
-                    sum += parseFloat(parameter.data[i].brightnessQuality);
+                for (var i in parameter){
+                    sum += parseFloat(parameter[i]);
                 }
-                $scope.averageBrightnessQuality[id] = sum / (parameter.data.length);
+                $scope.averageBrightnessQuality[id] = sum / (parameter.length);
             } catch (e) {
             }
             return $scope.averageBrightnessQuality[id];
@@ -242,9 +234,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getBrightness = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Brightness;
-                var currentValue = parameter.data[parameter.index];
-                $scope.brightness[id] = currentValue.lux;
+                var parameter = currentStream.Brightness.lux;
+                var currentValue = parameter[parameter.length - 1];
+                $scope.brightness[id] = currentValue;
             } catch (e) {
             }
             return $scope.brightness[id];
@@ -253,12 +245,12 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getAverageBrightness = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Brightness;
+                var parameter = currentStream.Brightness.lux;
                 var sum = 0.0;
-                for (var i = 0; i < parameter.data.length; i++){
-                    sum += parseFloat(parameter.data[i].lux);
+                for (var i in parameter){
+                    sum += parseFloat(parameter[i]);
                 }
-                $scope.averageBrightness[id] = sum / (parameter.data.length);
+                $scope.averageBrightness[id] = sum / (parameter.length);
             } catch (e) {
             }
             return $scope.averageBrightness[id];
@@ -268,12 +260,12 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getAverageAzimuth = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Rotation;
+                var parameter = currentStream.Rotation.azimuth;
                 var sum = 0.0;
-                for (var i = 0; i < parameter.data.length; i++){
-                    sum += parseFloat(parameter.data[i].azimuth);
+                for (var i in parameter){
+                    sum += parseFloat(parameter[i]);
                 }
-                $scope.averageAzimuth[id] = sum / (parameter.data.length);
+                $scope.averageAzimuth[id] = sum / (parameter.length);
             } catch (e) {
             }
             return $scope.averageAzimuth[id];
@@ -282,12 +274,12 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getAveragePitch = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Rotation;
+                var parameter = currentStream.Rotation.pitch;
                 var sum = 0.0;
-                for (var i = 0; i < parameter.data.length; i++){
-                    sum += parseFloat(parameter.data[i].pitch);
+                for (var i in parameter){
+                    sum += parseFloat(parameter[i]);
                 }
-                $scope.averagePitch[id] = sum / (parameter.data.length);
+                $scope.averagePitch[id] = sum / (parameter.length);
             } catch (e) {
             }
             return $scope.averagePitch[id];
@@ -296,12 +288,12 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         $scope.getAverageRoll = function (id) {
             try {
                 var currentStream = Socket.stream[id];
-                var parameter = currentStream.Rotation;
+                var parameter = currentStream.Rotation.roll;
                 var sum = 0.0;
-                for(var i = 0; i < parameter.data.length; i++){
-                    sum += parseFloat(parameter.data[i].roll);
+                for (var i in parameter){
+                    sum += parseFloat(parameter[i]);
                 }
-                $scope.averageRoll[id] = sum / (parameter.data.length);
+                $scope.averageRoll[id] = sum / (parameter.length);
             } catch (e) {
             }
             return $scope.averageRoll[id];

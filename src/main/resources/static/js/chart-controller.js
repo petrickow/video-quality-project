@@ -1,15 +1,39 @@
-app.controller('ChartController', function ($scope) {
+app.controller('ChartController', ['$scope', 'Socket',  function ($scope, Socket) {
     "use strict";
-    $scope.chartConfig = {
+    $scope.highchartsNG = {
         options: {
             chart: {
                 type: 'line'
             }
         },
         series: [{
-            data: [10, 15, 12, 8, 7, 1, 1, 19, 15, 10]
+            data: []
         }],
         loading: false
     };
 
-});
+
+
+    $scope.getHighchartsNG = function () {
+        // try {
+        //     console.log("Get Stream: " + Socket);
+        //     for (var i in Socket.stream){
+        //         console.log(i);
+        //     }
+        //     var ids = Object.keys(Socket.stream);
+        //     console.log("IDs: " + ids + " : " + ids[0]);
+        //     var tmp = Socket.stream[ids[0]].Acceleration.data[Socket.stream[ids[0]].Acceleration.index].force;
+        //     $scope.highchartsNG.series[0].data.push(tmp);
+        // } catch (e) {
+        //     console.log("Get Chart: " + e);
+        // }
+        try {
+            var ids = Object.keys(Socket.stream);
+            $scope.highchartsNG.series[0].data = Socket.stream[ids[0]].Acceleration.force;
+        } catch (e) {
+            console.log("Get Chart: " + e);
+        }
+        return $scope.highchartsNG;
+    };
+
+}]);

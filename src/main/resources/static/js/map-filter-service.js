@@ -15,6 +15,7 @@ app.factory('MapFilter', function () {
         }
     }
     
+    // TODO reset not yet working check map controller
     Service.resetHidden = function () {
         hidden = {};
     }

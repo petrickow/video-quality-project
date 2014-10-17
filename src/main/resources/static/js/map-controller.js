@@ -15,6 +15,8 @@ app.controller('mapController', ['$scope', 'Socket', 'MapFilter',
         'click': function (map, eventName, args) {
             if(!$scope.areaFilterVisible)
                 $scope.initAreaFilter();
+            else
+                MapFilter.resetHidden();
             $scope.areaFilterVisible = !$scope.areaFilterVisible;
         }
     };
@@ -54,16 +56,16 @@ app.controller('mapController', ['$scope', 'Socket', 'MapFilter',
     };
     
     $scope.getCenter = function () {
-        var parameter;
-        var currentValue;
+        var latitude;
+        var longitude;
         var sumLongitude = 0;
         var sumLatitude = 0;
         try {
             for (var stream in Socket.stream){
-                parameter = Socket.stream[stream].Location;
-                currentValue = parameter.data[parameter.index];
-                sumLatitude += parseFloat(currentValue.latitude);
-                sumLongitude += parseFloat(currentValue.longitude);
+                latitude = Socket.stream[stream].Location.latitude;
+                longitude = Socket.stream[stream].Location.longitude;
+                sumLatitude += parseFloat(latitude[latitude.length - 1]);
+                sumLongitude += parseFloat(longitude[longitude.length - 1]);
             }
             var centralLatitude = sumLatitude / $scope.getStreams().length;
             var centralLongitude = sumLongitude / $scope.getStreams().length;
@@ -81,11 +83,12 @@ app.controller('mapController', ['$scope', 'Socket', 'MapFilter',
     };
     
     $scope.getMarker = function (id) {
-        var currentValue;
+        var latitude;
+        var longitude;
         try {
             var currentStream = Socket.stream[id];
-            var parameter = currentStream.Location;
-            currentValue = parameter.data[parameter.index];
+            latitude = currentStream.Location.latitude;
+            longitude = currentStream.Location.longitude;
             if($scope.markers[id] === undefined){
                 $scope.markers[id] = {};
                 $scope.markers[id].coords = {};
@@ -94,8 +97,8 @@ app.controller('mapController', ['$scope', 'Socket', 'MapFilter',
                 };
             }
             $scope.markers[id].idKey = id;
-            $scope.markers[id].coords.latitude = currentValue.latitude;
-            $scope.markers[id].coords.longitude = currentValue.longitude;
+            $scope.markers[id].coords.latitude = latitude[latitude.length - 1];
+            $scope.markers[id].coords.longitude = longitude[longitude.length - 1];
         } catch (e) {
             console.log("error: " +e);
         }
@@ -104,7 +107,6 @@ app.controller('mapController', ['$scope', 'Socket', 'MapFilter',
     
     $scope.initAreaFilter = function () {
         var parameter;
-        var currentValue;
         var latitude;
         var longitude;
         var minLatitude;
@@ -115,9 +117,8 @@ app.controller('mapController', ['$scope', 'Socket', 'MapFilter',
         try {
             for (var stream in Socket.stream) {
                 parameter = Socket.stream[stream].Location;
-                currentValue = parameter.data[parameter.index];
-                latitude = parseFloat(currentValue.latitude);
-                longitude = parseFloat(currentValue.longitude);
+                latitude = parseFloat(parameter.latitude[parameter.latitude.length - 1]);
+                longitude = parseFloat(parameter.longitude[parameter.longitude.length - 1]);
                 if (first){
                     minLatitude = latitude;
                     minLongitude = longitude;
@@ -138,7 +139,7 @@ app.controller('mapController', ['$scope', 'Socket', 'MapFilter',
             var hFrame = 0.002;
             var vFrame = 0.001;
             $scope.areaFilterPath = {
-                sw: { latitude: (minLatitude - vFrame), 'longitude': (minLongitude - hFrame)},
+                sw: {latitude: (minLatitude - vFrame), longitude: (minLongitude - hFrame)},
                 ne: {latitude: (maxLatitude + vFrame), longitude: (maxLongitude + hFrame)}
             };
         } catch (e) {
