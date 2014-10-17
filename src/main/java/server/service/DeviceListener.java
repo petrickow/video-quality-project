@@ -46,11 +46,13 @@ public class DeviceListener {
 			+ "/src/main/resources/testXML/schema.xsd";
 	private static ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>> deviceMapping = new ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>>();
 	private static ConcurrentHashMap<String, ArrayList<Integer>> history = new ConcurrentHashMap<String, ArrayList<Integer>>();
-	final private static int aggregateOnNumImages = 5;
+
 
 	private static Logger log = Logger.getLogger(DeviceListener.class);
+	
+	/* Tweakable parameters*/
 	final private static int maxBufferSize = 60;
-
+	final private static int aggregateOnNumImages = 3;
 	/***
 	 * This exicst for testing purposes
 	 * 

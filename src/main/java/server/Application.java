@@ -24,8 +24,8 @@ public class Application {
 		
 		log = Logger.getLogger(Logger.class);
 		log.info("Logger started");
-		new Thread(new ImJustRunning("valid1.xml")).start();
-		new Thread(new ImJustRunning("valid2.xml")).start();
+		new Thread(new ImJustRunning("valid1")).start();
+		new Thread(new ImJustRunning("valid2")).start();
 
 		SpringApplication.run(Application.class, args);
 	}
@@ -39,31 +39,36 @@ class ImJustRunning implements Runnable {
 
 	private static Logger log;
 	byte[] data;
-
+	private String xmlName;
+	
 	public ImJustRunning(String xml) {
 		log = Logger.getLogger(Logger.class);
-
-		Path path = Paths.get(System.getProperty("user.dir")
-				+ "/src/main/resources/testXML/" + xml);
-		try {
-			this.data = Files.readAllBytes(path);
-		} catch (IOException e) {
-			log.error("Could not find xml file " + path);
-		}
+		xmlName = xml;
+		
 	}
 
 	@Override
 	public void run() {
-
 		/***
 		 * This part is for testing the device listener. Each threads keeps
 		 * sending the same xml-file until the cows come home
 		 */
 		holdFor(5);
 		// ugly-bugly but only for testing
-
+		int i = 1;
 		// keep received xml every two seconds
 		while (true) {
+			Path path = Paths.get(System.getProperty("user.dir")
+					+ "/src/main/resources/testXML/" + xmlName + "_" + i++ + ".xml");
+
+			if (i == 5) { i = 1; }
+			
+			try {
+				this.data = Files.readAllBytes(path);
+			} catch (IOException e) {
+				log.error("Could not find xml file " + path);
+			}
+			System.out.println("Sending " +path );
 
 			try {
 				final URL url = new URL("http://localhost:8080/xml");

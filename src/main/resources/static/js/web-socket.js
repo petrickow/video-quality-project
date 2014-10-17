@@ -18,6 +18,7 @@ app.factory('Socket', [ '$rootScope', function ($rootScope) {
 			console.log("Historical data will be inserted in this json object");
 			// make call to appropriate function
 		} else {
+			console.log(recvJson);
             $rootScope.$apply(function () {
                 // console.log(recvJson);
                 if (typeof Service.stream[recvJson[0].id] === "undefined") {
