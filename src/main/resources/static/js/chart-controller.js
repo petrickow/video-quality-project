@@ -1,14 +1,41 @@
-app.controller('ChartController', ['$scope', 'Socket',  function ($scope, Socket) {
+app.controller('ChartController', ['$scope', 'Socket',  
+    function ($scope, Socket) {
     "use strict";
+
     $scope.highchartsNG = {
         options: {
             chart: {
-                type: 'line'
+                type: 'line',
+                animation: Highcharts.svg // don't animate in old IE
             }
         },
-        series: [{
-            data: []
-        }],
+        xAxis: {
+            // type: 'datetime',
+            tickPixelInterval: 150
+        },
+        yAxis: {
+            title: {
+                text: 'Value'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            formatter: function () {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    Highcharts.dateFormat('%H:%M:%S', this.x) + '<br/>' +
+                    Highcharts.numberFormat(this.y, 2);
+            }
+        },
+        series: [
+            {
+                name: 'Shakiness',
+                data: []
+            } 
+        ],
         size: {
            width: 400,
            height: 300
@@ -17,9 +44,7 @@ app.controller('ChartController', ['$scope', 'Socket',  function ($scope, Socket
         loading: false
     };
 
-
-
-    $scope.getHighchartsNG = function () {
+    $scope.getHighchartsNG = function (id) {
         // try {
         //     console.log("Get Stream: " + Socket);
         //     for (var i in Socket.stream){
@@ -33,12 +58,67 @@ app.controller('ChartController', ['$scope', 'Socket',  function ($scope, Socket
         //     console.log("Get Chart: " + e);
         // }
         try {
-            var ids = Object.keys(Socket.stream);
-            $scope.highchartsNG.series[0].data = Socket.stream[ids[0]].Acceleration.force;
+            switch ($scope.getChart) {
+            case 0:
+                $scope.highchartsNG.series[0].data = Socket.stream[id].Acceleration.force;
+                break;
+            case 1:
+                $scope.highchartsNG.series[0].data = Socket.stream[id].Brightness.lux;
+                break;
+            case 2:
+                $scope.highchartsNG.series[2].data = Socket.stream[id].Snapshot.brightnessQuality;
+                break;
+            default:
+                $scope.highchartsNG.series[0].data = Socket.stream[id].Acceleration.force;
+
+            }
+           
         } catch (e) {
             console.log("Get Chart: " + e);
         }
         return $scope.highchartsNG;
     };
+
+    $scope.getShChart = function () {
+        if ($scope.highchartsNG.series[0].data.length=1) {
+            $scope.highchartsNG.series.splice(0,1);
+            $scope.highchartsNG.series.push({
+                name: 'Shakiness',
+                data: []
+            })
+        }
+        // if($scope.highchartsNG.series.length>1){
+        //     $scope.highchartsNG.series.splice(0,1);
+        // } 
+        // else if($scope.highchartsNG.series[1].data.length!=0){
+        //     $scope.highchartsNG.series.splice(1,1);
+        // }
+
+        $scope.getChart = 0;
+    }; 
+
+    $scope.getBrChart = function () {
+        if ($scope.highchartsNG.series[0].data.length=1) {
+            $scope.highchartsNG.series.splice(0,1);
+            $scope.highchartsNG.series.push({
+                name: 'Brightness',
+                data: []
+            })
+        }
+
+        $scope.getChart = 1;
+    }; 
+
+    $scope.getQuChart = function () {
+        if ($scope.highchartsNG.series[0].data.length=1) {
+            $scope.highchartsNG.series.splice(0,1);
+            $scope.highchartsNG.series.push({
+                name: 'BrightnQuality',
+                data: []
+            })
+        }
+        
+        $scope.getChart = 2;
+    }; 
 
 }]);

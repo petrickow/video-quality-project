@@ -56,29 +56,32 @@
                 <tbody data-ng-repeat="id in getStreams()">
                     <tr data-ng-hide="isHidden(id)">
                         <td>{{ id }}</td>
-                        <td>{{ getQuality(id) | number: 4 }}%</td>
+                        <td>{{ getQuality(id) | number: 2 }}%</td>
                         <td><img data-ng-src="{{ getSnapshot(id) }}" width="80" height="60" /></td>
                         <td>
                             <b>Rotation: (Average)</b><br />
-                            Azimuth: {{ getAzimuth(id) | number: 4 }} ({{ getAverageAzimuth(id) | number :4 }}) <br />
-                            Pitch: {{ getPitch(id) | number: 4}} ({{ getAveragePitch(id) | number: 4}}) <br />
-                            Roll: {{ getRoll(id) | number: 4}} ({{ getAverageRoll(id) | number: 4}}) <br />
+                            Azimuth: {{ getAzimuth(id) | number: 2 }} ({{ getAverageAzimuth(id) | number: 2 }}) <br />
+                            Pitch: {{ getPitch(id) | number: 2}} ({{ getAveragePitch(id) | number: 2}}) <br />
+                            Roll: {{ getRoll(id) | number: 2}} ({{ getAverageRoll(id) | number: 2}}) <br />
                             <b>Brightness: (Average)</b><br />
-                            Lux: {{ getBrightness(id) | number: 4}} ({{ getAverageBrightness(id) | number: 4}}) <br />
-                            Brightnessquality: {{ getBrightnessQuality(id) | number: 4}} ({{ getAverageBrightnessQuality(id) | number: 4}}) <br />
+                            Lux: {{ getBrightness(id) | number: 2}} ({{ getAverageBrightness(id) | number: 2}}) <br />
+                            Brightnessquality: {{ getBrightnessQuality(id) | number: 2}} ({{ getAverageBrightnessQuality(id) | number: 2}}) <br />
                             <b>Location:</b><br />
-                            Latitude: {{ getLatitude(id) | number: 4}} <br />
-                            Longitude: {{ getLongitude(id) | number: 4}} <br />
-                            Altitude: {{ getAltitude(id) | number: 4}} <br />
-                            Speed: {{ getSpeed(id) | number: 4}} <br />
-                            Accuracy: {{ getAccuracy(id) | number: 4}} <br />
+                            Latitude: {{ getLatitude(id) | number: 2}} <br />
+                            Longitude: {{ getLongitude(id) | number: 2}} <br />
+                            Altitude: {{ getAltitude(id) | number: 2}} <br />
+                            Speed: {{ getSpeed(id) | number: 2}} <br />
+                            Accuracy: {{ getAccuracy(id) | number: 2}} <br />
                             <b>Acceleration:</b><br />
-                            Force: {{ getForce(id) | number: 4}} <br />
+                            Force: {{ getForce(id) | number: 2}} <br />
                             <b>Camera:</b><br />
                             Resolution: {{ getXResolution(id) }}x{{ getYResolution(id) }} <br />
                         </td>
                         <td data-ng-controller="ChartController">
-                            <highchart config="getHighchartsNG()"></highchart>
+                            <button type="button" class="btn btn-primary btn-sm" ng-click="getQuChart()">Quality</button>
+                            <button type="button" class="btn btn-primary btn-sm" ng-click="getShChart()">Shakiness</button>
+                            <button type="button" class="btn btn-primary btn-sm" ng-click="getBrChart()">Brightness</button>
+                            <highchart config="getHighchartsNG(id)"></highchart>
                         </td>
                     </tr>
                 </tbody>
