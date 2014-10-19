@@ -42,7 +42,7 @@
             <section class="filter-selections">
             </section>
 
-            <table class="video-streams-table table">
+            <table class="video-streams-table table table-hover">
                 <thead>
                     <tr>
                         <td>Stream</td>
@@ -53,7 +53,7 @@
                     </tr>
                 </thead>
                 <tbody data-ng-repeat="id in getStreams()">
-                    <tr data-ng-hide="isHidden(id)">
+                    <tr data-ng-class="getRowClass(id)" data-ng-click="selectStream(id)" data-ng-hide="isHidden(id)">
                         <td>{{ id }}</td>
                         <td>{{ getQuality(id) | number: 2 }}%</td>
                         <td><img data-ng-src="{{ getSnapshot(id) }}" width="80" height="60" /></td>

@@ -7,6 +7,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
             SHAKINESS: 0,
             AGGREGATED: 1
         };
+        
+        // The selected Stream that gets max bandwidth
+        $scope.selectedStream;
     
         // Classes for Quality Selection "Links/ Buttons"
         $scope.qsShakinessClass = "active";
@@ -53,6 +56,19 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
             }
             return hide;
         };
+        
+        $scope.selectStream = function (id) {
+            // TODO Give that stream full bandthwidth
+            $scope.selectedStream = id;
+            console.log("Stream " + id + " is now selected!");
+        };
+        
+        $scope.getRowClass = function (id) {
+            var cssClass = "";
+            if($scope.selectedStream === id)
+                cssClass = "highlight";
+            return cssClass;
+        }
     
         $scope.getQuality = function (id) {
             switch ($scope.mode) {

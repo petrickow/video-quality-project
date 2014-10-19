@@ -7,6 +7,10 @@ body.container.ng-scope {
 	text-align: center;
 }
 
+.table-hover tbody tr.highlight td { 
+    background-color: #cccccc; 
+}
+
 
 div.col-lg-2 {
   width: 15%;
