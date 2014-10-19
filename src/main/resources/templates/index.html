@@ -16,27 +16,26 @@
 
     	<section class="main-contend">
 
-          <div class="col-lg-2">
+        <!-- <div id="video-section" class="jumbotron pull-left">            -->
+        <section class="video-streams-pane" data-ng-controller="StreamController as stream">
+            <div class="col-lg-2">
               <section class="profiles">
                 <ul class="nav nav-pills nav-stacked">
-                  <li class="active">
-                    <a href="#">
-                      <span class="badge pull-right">2</span>
+                  <li data-ng-class="qsShakinessClass">
+                    <a data-ng-click="setQuality('SHAKINESS')">
                       Lowest shakiness
                     </a>
                   </li>
-                  <li class="">
-                    <a href="#">                      
-                      Highest sound quality
+                  <li data-ng-class="qsAggregatedClass">
+                    <a data-ng-click="setQuality('AGGREGATED')">                      
+                      Aggregated Brightness
                     </a>
                   </li>        
                 </ul>
               </section>
           </div>
-
-        <!-- <div id="video-section" class="jumbotron pull-left">            -->
-        <div id="video-section" class="col-lg-7">
-        <section class="video-streams-pane" data-ng-controller="StreamController as stream">
+            
+            <div id="video-section" class="col-lg-7">
             <section class="sort-selections">
 
             </section>
@@ -65,7 +64,6 @@
                             Roll: {{ getRoll(id) | number: 2}} ({{ getAverageRoll(id) | number: 2}}) <br />
                             <b>Brightness: (Average)</b><br />
                             Lux: {{ getBrightness(id) | number: 2}} ({{ getAverageBrightness(id) | number: 2}}) <br />
-                            Brightnessquality: {{ getBrightnessQuality(id) | number: 2}} ({{ getAverageBrightnessQuality(id) | number: 2}}) <br />
                             <b>Location:</b><br />
                             Latitude: {{ getLatitude(id) | number: 2}} <br />
                             Longitude: {{ getLongitude(id) | number: 2}} <br />
@@ -86,12 +84,13 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
         </section>
         
         <section class="history">
         </section>
         
-        </div>
+        
         <div class="col-lg-3">
             <section data-ng-controller="mapController">
                 <ui-gmap-google-map center="getCenter()" zoom="map.zoom" events="mapEvents">

@@ -1,10 +1,18 @@
 app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
     function ($scope, Socket, MapFilter) {
         "use strict";
+        
+        // Selectable Quality Modes
         $scope.modes = {
-            SHAKINESS: 0
+            SHAKINESS: 0,
+            AGGREGATED: 1
         };
     
+        // Classes for Quality Selection "Links/ Buttons"
+        $scope.qsShakinessClass = "active";
+        $scope.qsAggregatedClass = "";
+        
+        // Meta Data Values
         $scope.ids = [];
         $scope.hidden = {};
         $scope.mode = $scope.modes.SHAKINESS;
@@ -50,6 +58,8 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
             switch ($scope.mode) {
             case $scope.modes.SHAKINESS:
                 return $scope.getQualityByShakiness(id);
+            case $scope.modes.AGGREGATED:
+                return $scope.getQualityByAggregated(id);
             }
         };
         
@@ -59,8 +69,6 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
             var sampleSize = 5;
             var currentStream = Socket.stream[id];
             var parameter = currentStream.Acceleration.force;
-            // Since the data array is rewritten starting by 0 once it reaces its maxSize the index has
-            // to continue at the end of the array if it is on the edge
             if(parameter.length >= sampleSize){
                 for (var i = parameter.length - 1; i >= parameter.length - sampleSize; i--){
                     sum += parameter[i];
@@ -71,6 +79,32 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
                 $scope.quality = 0.0;
             return $scope.quality;
         };
+
+        $scope.getQualityByAggregated = function (id) {
+            var currentStream = Socket.stream[id];
+            try {
+                var parameter = currentStream.Snapshot.aggregatedQuality;
+                $scope.quality = parameter[parameter.length - 1];
+            } catch (e) {
+                $scope.quality = 0.0;
+            }
+            return $scope.quality;
+        };
+
+        $scope.setQuality = function (quality) {
+            
+            // TODO make this dynamic
+            if(quality === "SHAKINESS"){
+                $scope.mode = $scope.modes.SHAKINESS;
+                $scope.qsShakinessClass = "active";
+                $scope.qsAggregatedClass = "";
+            } else {
+                $scope.mode = $scope.modes.AGGREGATED;
+                $scope.qsShakinessClass = "";
+                $scope.qsAggregatedClass = "active";
+            }
+                
+        }
 
         $scope.getLatitude = function (id) {
             try {
@@ -201,34 +235,9 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
                 var currentValue = parameter[parameter.length - 1];
                 img = "data:image/jpeg;base64," + currentValue;
             } catch (e) {
-                console.log("ImageError: " + e);
+                
             }
             return img;
-        };
-        
-        $scope.getBrightnessQuality = function (id) {
-            try {
-                var currentStream = Socket.stream[id];
-                var parameter = currentStream.Snapshot.brightnessQuality;
-                var currentValue = parameter[parameter.length - 1];
-                $scope.brightnessQuality[id] = currentValue;
-            } catch (e) {
-            }
-            return $scope.brightnessQuality[id];
-        };
-        
-        $scope.getAverageBrightnessQuality = function (id) {
-            try {
-                var currentStream = Socket.stream[id];
-                var parameter = currentStream.Snapshot.brightnessQuality;
-                var sum = 0.0;
-                for (var i in parameter){
-                    sum += parseFloat(parameter[i]);
-                }
-                $scope.averageBrightnessQuality[id] = sum / (parameter.length);
-            } catch (e) {
-            }
-            return $scope.averageBrightnessQuality[id];
         };
         
         $scope.getBrightness = function (id) {
