@@ -47,20 +47,23 @@ public class DeviceListener {
 	private static ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>> deviceMapping = new ConcurrentHashMap<String, ArrayList<GenericMetaDataModel>>();
 	private static ConcurrentHashMap<String, ArrayList<Integer>> history = new ConcurrentHashMap<String, ArrayList<Integer>>();
 
-
 	private static Logger log = Logger.getLogger(DeviceListener.class);
-	
-	/* Tweakable parameters*/
+
+	/* Tweakable parameters */
 	final private static int maxBufferSize = 60;
 	final private static int aggregateOnNumImages = 3;
-	
-	// these can be tweaked for max and min brightness based on experiments
+
+	// these can be tweaked for max and min brightness based on experiments 0 to
+	// 255
 	final private static int lowerThreshold = 70;
 	final private static int upperThreshold = 210;
-	
+
 	final private static int idealMin = 110;
 	final private static int idealMax = 250;
 
+	// Logging variables 
+	private static long startTime, endTime, analyzeBrightnessStart,
+			analyzeBrightnessEnd, aggregateStart, aggregateEnd;
 	/***
 	 * This exicst for testing purposes
 	 * 
@@ -71,8 +74,9 @@ public class DeviceListener {
 	 *             this will not be an issue when we read data from device
 	 */
 	public static void restReceivedMetaData(Document xml) {
-
 		if (validateXMLSchema(schemaPath, xml)) {
+
+			startTime = System.nanoTime();
 
 			ArrayList<GenericMetaDataModel> messages = new ArrayList<GenericMetaDataModel>();
 
@@ -86,7 +90,7 @@ public class DeviceListener {
 
 			for (GenericMetaDataModel message : messages) {
 
-				if (!message.getLast() || !message.getName().equals("Snapshot")) { 
+				if (!message.getLast() || !message.getName().equals("Snapshot")) {
 					storeMessage(message);
 				} else {
 					deviceMapping.remove(message.getId());
@@ -120,7 +124,7 @@ public class DeviceListener {
 			ArrayList<GenericMetaDataModel> deviceMessages = new ArrayList<GenericMetaDataModel>();
 			deviceMessages.add(message);
 			deviceMapping.put(message.getId(), deviceMessages);
-			
+
 		}
 	}
 
@@ -207,7 +211,8 @@ public class DeviceListener {
 						genericMetaDataModel.setId(atr.getValue());
 
 						if (!history.containsKey(genericMetaDataModel.getId())) {
-							history.put(genericMetaDataModel.getId(), new ArrayList<Integer>());
+							history.put(genericMetaDataModel.getId(),
+									new ArrayList<Integer>());
 						}
 						atr = startElement.getAttributeByName(new QName(
 								"dateTime"));
@@ -277,20 +282,30 @@ public class DeviceListener {
 										.replaceAll("\\n", "");
 								event = eventReader.nextEvent();
 							}
-
+							analyzeBrightnessStart = System.nanoTime();
 							int brightness = AnalysisService.ratePicture(
 									encodedImage, genericMetaDataModel.getId());
+							analyzeBrightnessEnd = System.nanoTime();
+
 							history.get(genericMetaDataModel.getId()).add(
 									brightness);
 
-							if (history.get(genericMetaDataModel.getId()).size() == aggregateOnNumImages) {
+							if (history.get(genericMetaDataModel.getId())
+									.size() == aggregateOnNumImages) {
 								int sum = 0;
-								for (Integer i : history.get(genericMetaDataModel.getId())) {
+								for (Integer i : history
+										.get(genericMetaDataModel.getId())) {
 									sum += i;
 								}
-								snapshotModel.setAggregatedQuality(getQualityPercentage( sum / aggregateOnNumImages));
-								System.out.println(snapshotModel.getAggregatedQuality());
-								history.get(genericMetaDataModel.getId()).clear();
+								aggregateStart = System.nanoTime();
+								snapshotModel
+										.setAggregatedQuality(getQualityPercentage(sum
+												/ aggregateOnNumImages));
+								aggregateEnd = System.nanoTime();
+								System.out.println(snapshotModel
+										.getAggregatedQuality());
+								history.get(genericMetaDataModel.getId())
+										.clear();
 								aggregated = true;
 								snapshotModel.setSnapshot(encodedImage);
 							}
@@ -371,6 +386,14 @@ public class DeviceListener {
 					// finishing up log items and camera
 					switch (endElement.getName().getLocalPart()) {
 					case "logFile":
+						endTime = System.nanoTime();
+						System.out.println("Total time (ms):\t"
+								+ ((endTime - startTime) / 1000000)
+								+ "\nTime spent on image analysis (ms):\t"
+								+ ((analyzeBrightnessEnd - analyzeBrightnessStart) / 1000000));
+						if (aggregated) {
+							System.out.println("Time spent on aggregated analysis (ns):\t" + (aggregateEnd - aggregateStart) + "\n#####################");
+						}
 						break;
 					case "logItem":
 						switch (name) {
@@ -498,7 +521,7 @@ public class DeviceListener {
 		String jsonString = "{\"response\": \"accepted\"";
 		ObjectMapper mapper = new ObjectMapper();
 		int logitem = 0;
-		for (String key : deviceMapping.keySet()) { 
+		for (String key : deviceMapping.keySet()) {
 			jsonString += ", \"logitem" + logitem++ + "\":";
 			ArrayList<GenericMetaDataModel> list = deviceMapping.get(key);
 			jsonString += mapper.writeValueAsString(list);
@@ -506,23 +529,24 @@ public class DeviceListener {
 
 		return jsonString + " }";
 	}
-	
-	/* TODO:
-	 * Calculate the percentage of "quality" based on our average 
-	 * brightness level of the last "aggregateOnNumImages" of snapshots
-	 * received from recording device
-	 * Lower and Upper thresholds define where a snapshot is too dark and over exposed 
+
+	/*
+	 * TODO: Calculate the percentage of "quality" based on our average
+	 * brightness level of the last "aggregateOnNumImages" of snapshots received
+	 * from recording device Lower and Upper thresholds define where a snapshot
+	 * is too dark and over exposed
 	 * 
-	 *     @param average - the average luminousness of the the aggregated snapshots 
-	 *     @return a percentage based on our formula
-	 *     
-	 *     b-splines might have been implemented in order to 
-	 *     make a more interesting and flexible results
+	 * @param average - the average luminousness of the the aggregated snapshots
+	 * 
+	 * @return a percentage based on our formula
+	 * 
+	 * b-splines might have been implemented in order to make a more interesting
+	 * and flexible results
 	 */
 	private static int getQualityPercentage(int average) {
-		
-		//a=lowThreshold b=idealMin c=idealMax d=upperThreshold x=average 
-		
+
+		// a=lowThreshold b=idealMin c=idealMax d=upperThreshold x=average
+
 		// x is below lt or above ut, 0 %
 		if (average < lowerThreshold || average > upperThreshold) {
 			return 0;
@@ -531,15 +555,14 @@ public class DeviceListener {
 		if (average > idealMin && average <= idealMax) {
 			return 100;
 		}
-		//[p1, p2]
+		// [p1, p2]
 		if (average > lowerThreshold && average < idealMin) {
-			return (int) ((100/(idealMin - lowerThreshold)) * (average - lowerThreshold));
-		}						// b 		- 		a	  	 *    x 	- 	a + 0
+			return (int) ((100 / (idealMin - lowerThreshold)) * (average - lowerThreshold));
+		} // b - a * x - a + 0
 		if (average < upperThreshold && average > idealMax) {
-			return (int) (((-100/(upperThreshold-idealMax)) * ((average - idealMax) + 100)));
-		}			//				d 			-    c		 * 		x	 - 	c		  + 100
-		
-		
+			return (int) (((-100 / (upperThreshold - idealMax)) * ((average - idealMax) + 100)));
+		} // d - c * x - c + 100
+
 		return 0;
 	}
 }
