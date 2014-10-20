@@ -56,7 +56,8 @@ public class AnalysisService {
 		/* average is between 0-255, 0 being completely dark, and 255 completely white. */ 
 		int percentage = 100 * average / 255 ;
 
-		return percentage;
+		
+		return average;
 
 	}
 

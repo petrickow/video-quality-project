@@ -53,6 +53,14 @@ public class DeviceListener {
 	/* Tweakable parameters*/
 	final private static int maxBufferSize = 60;
 	final private static int aggregateOnNumImages = 3;
+	
+	// these can be tweaked for max and min brightness based on experiments
+	final private static int lowerThreshold = 70;
+	final private static int upperThreshold = 210;
+	
+	final private static int idealMin = 110;
+	final private static int idealMax = 250;
+
 	/***
 	 * This exicst for testing purposes
 	 * 
@@ -280,7 +288,8 @@ public class DeviceListener {
 								for (Integer i : history.get(genericMetaDataModel.getId())) {
 									sum += i;
 								}
-								snapshotModel.setAggregatedQuality(sum	/ aggregateOnNumImages);
+								snapshotModel.setAggregatedQuality(getQualityPercentage( sum / aggregateOnNumImages));
+								System.out.println(snapshotModel.getAggregatedQuality());
 								history.get(genericMetaDataModel.getId()).clear();
 								aggregated = true;
 								snapshotModel.setSnapshot(encodedImage);
@@ -489,9 +498,7 @@ public class DeviceListener {
 		String jsonString = "{\"response\": \"accepted\"";
 		ObjectMapper mapper = new ObjectMapper();
 		int logitem = 0;
-		for (String key : deviceMapping.keySet()) { // TODO change this to
-													// datetime or some other
-													// descriptive entry?
+		for (String key : deviceMapping.keySet()) { 
 			jsonString += ", \"logitem" + logitem++ + "\":";
 			ArrayList<GenericMetaDataModel> list = deviceMapping.get(key);
 			jsonString += mapper.writeValueAsString(list);
@@ -499,5 +506,40 @@ public class DeviceListener {
 
 		return jsonString + " }";
 	}
-
+	
+	/* TODO:
+	 * Calculate the percentage of "quality" based on our average 
+	 * brightness level of the last "aggregateOnNumImages" of snapshots
+	 * received from recording device
+	 * Lower and Upper thresholds define where a snapshot is too dark and over exposed 
+	 * 
+	 *     @param average - the average luminousness of the the aggregated snapshots 
+	 *     @return a percentage based on our formula
+	 *     
+	 *     b-splines might have been implemented in order to 
+	 *     make a more interesting and flexible results
+	 */
+	private static int getQualityPercentage(int average) {
+		
+		//a=lowThreshold b=idealMin c=idealMax d=upperThreshold x=average 
+		
+		// x is below lt or above ut, 0 %
+		if (average < lowerThreshold || average > upperThreshold) {
+			return 0;
+		}
+		// x is within ideal zone
+		if (average > idealMin && average <= idealMax) {
+			return 100;
+		}
+		//[p1, p2]
+		if (average > lowerThreshold && average < idealMin) {
+			return (int) ((100/(idealMin - lowerThreshold)) * (average - lowerThreshold));
+		}						// b 		- 		a	  	 *    x 	- 	a + 0
+		if (average < upperThreshold && average > idealMax) {
+			return (int) (((-100/(upperThreshold-idealMax)) * ((average - idealMax) + 100)));
+		}			//				d 			-    c		 * 		x	 - 	c		  + 100
+		
+		
+		return 0;
+	}
 }
