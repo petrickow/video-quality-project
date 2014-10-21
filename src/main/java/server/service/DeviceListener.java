@@ -51,7 +51,7 @@ public class DeviceListener {
 
 	/* Tweakable parameters */
 	final private static int maxBufferSize = 60;
-	final private static int aggregateOnNumImages = 3;
+	final private static int aggregateOnNumImages = 5;
 
 	// these can be tweaked for max and min brightness based on experiments 0 to
 	// 255
@@ -283,24 +283,17 @@ public class DeviceListener {
 								event = eventReader.nextEvent();
 							}
 							analyzeBrightnessStart = System.nanoTime();
-							int brightness = AnalysisService.ratePicture(
-									encodedImage, genericMetaDataModel.getId());
+							int brightness = AnalysisService.ratePicture(encodedImage, genericMetaDataModel.getId());
 							analyzeBrightnessEnd = System.nanoTime();
+							history.get(genericMetaDataModel.getId()).add(brightness);
 
-							history.get(genericMetaDataModel.getId()).add(
-									brightness);
-
-							if (history.get(genericMetaDataModel.getId())
-									.size() == aggregateOnNumImages) {
+							if (history.get(genericMetaDataModel.getId()).size() == aggregateOnNumImages) {
 								int sum = 0;
-								for (Integer i : history
-										.get(genericMetaDataModel.getId())) {
+								for (Integer i : history.get(genericMetaDataModel.getId())) {
 									sum += i;
 								}
 								aggregateStart = System.nanoTime();
-								snapshotModel
-										.setAggregatedQuality(getQualityPercentage(sum
-												/ aggregateOnNumImages));
+								snapshotModel.setAggregatedQuality(getQualityPercentage(sum / aggregateOnNumImages));
 								aggregateEnd = System.nanoTime();
 								System.out.println(snapshotModel
 										.getAggregatedQuality());
@@ -308,6 +301,8 @@ public class DeviceListener {
 										.clear();
 								aggregated = true;
 								snapshotModel.setSnapshot(encodedImage);
+							} else {
+								snapshotModel.setCurrentBrightness(brightness);
 							}
 
 							break;

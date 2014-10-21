@@ -80,9 +80,10 @@ public class AnalysisService {
 		int r = 0;
 		int g = 0;
 		int b = 0;
-
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+		ArrayList<Integer> lux = new ArrayList<Integer>();
+		
+		for (int x = 0; x < width; x += 4) {
+			for (int y = 0; y < height; y+= 4) {
 				pixelColor = new Color(img.getRGB(x, y));
 				r = pixelColor.getRed();
 				g = pixelColor.getGreen();
@@ -92,11 +93,18 @@ public class AnalysisService {
 				_greenHistogram[g]++;
 				_blueHistogram[b]++;
 
+				lux.add((int) (r*0.265074126 + g*0.670114631 + b*0.064811243) * 179);
 				computedGray = computeGrayColor1(pixelColor);
 				_computedGrayHistogram1[computedGray]++;
 
 			}
 		}
+		int averageLux = 0;
+		for (Integer i : lux) {
+			averageLux += i;
+		}
+		averageLux = averageLux / (img.getHeight()*img.getWidth());
+		System.out.println("AVERAGE LUX: " + averageLux);
 		return _computedGrayHistogram1;
 	}
 	/**
