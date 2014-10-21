@@ -2,6 +2,8 @@ app.controller('ChartController', ['$scope', 'Socket',
     function ($scope, Socket) {
     "use strict";
 
+    $scope.qly = [];
+
     $scope.highchartsNG = {
         options: {
             chart: {
@@ -32,12 +34,12 @@ app.controller('ChartController', ['$scope', 'Socket',
         },
         series: [
             {
-                name: 'Shakiness',
+                name: 'Quality',
                 data: []
             } 
         ],
         size: {
-           width: 400,
+           width: 500,
            height: 300
         },
              
@@ -58,6 +60,7 @@ app.controller('ChartController', ['$scope', 'Socket',
         //     console.log("Get Chart: " + e);
         // }
         try {
+            
             switch ($scope.getChart) {
             case 0:
                 $scope.highchartsNG.series[0].data = Socket.stream[id].Acceleration.force;
@@ -66,10 +69,13 @@ app.controller('ChartController', ['$scope', 'Socket',
                 $scope.highchartsNG.series[0].data = Socket.stream[id].Brightness.lux;
                 break;
             case 2:
-                $scope.highchartsNG.series[2].data = Socket.stream[id].Snapshot.brightnessQuality;
+                // TODO: pushing quality causes errors in the console and array history is not cleared anymore when switching
+                $scope.qly.push($scope.getQuality(id));
+                $scope.highchartsNG.series[0].data = $scope.qly;
                 break;
-            default:
-                $scope.highchartsNG.series[0].data = Socket.stream[id].Acceleration.force;
+            default:                
+                $scope.qly.push($scope.getQuality(id));
+                $scope.highchartsNG.series[0].data = $scope.qly;
 
             }
            
@@ -113,7 +119,7 @@ app.controller('ChartController', ['$scope', 'Socket',
         if ($scope.highchartsNG.series[0].data.length=1) {
             $scope.highchartsNG.series.splice(0,1);
             $scope.highchartsNG.series.push({
-                name: 'BrightnQuality',
+                name: 'Quality',
                 data: []
             })
         }
