@@ -81,19 +81,21 @@ app.controller('StreamController', ['$scope', 'Socket', 'MapFilter',
         
         $scope.getQualityByShakiness = function (id) {
             var average;
+            var threshold = 0.1;
             var sum = 0.0;
             var sampleSize = 5;
             var currentStream = Socket.stream[id];
             var parameter = currentStream.Acceleration.force;
-            if(parameter.length >= sampleSize){
+            if(parameter.length % sampleSize === 0){
                 for (var i = parameter.length - 1; i >= parameter.length - sampleSize; i--){
                     sum += parameter[i];
                 }
                 average = sum / sampleSize;
-                $scope.quality = 100 * Math.pow(2, (- Math.abs(average) / 10));
-            } else
-                $scope.quality = 0.0;
-            return $scope.quality;
+                
+                $scope.quality[id] = 100 * Math.pow(2, (- Math.abs(average) / threshold));
+            } else if(parameter.length < sampleSize)
+                $scope.quality[id] = 0.0;
+            return $scope.quality[id];
         };
 
         $scope.getQualityByAggregated = function (id) {
