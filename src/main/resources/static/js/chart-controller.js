@@ -11,9 +11,13 @@ app.controller('ChartController', ['$scope', 'Socket',
                 animation: Highcharts.svg // don't animate in old IE
             }
         },
+        title: {
+            text: 'Stream history'
+        },
         xAxis: {
             // type: 'datetime',
-            tickPixelInterval: 150
+            tickPixelInterval: 150,
+            text: 'Time-line'
         },
         yAxis: {
             title: {
